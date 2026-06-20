@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>未来大 情報デザインコース 特設サイト</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif; }
+    body { background: #FFF2EF; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+
+    /* ── Variables ── */
+    :root {
+      --text: #7A0026;
+      --sub: #FF1E8F;
+      --yellow: #FFF3AD;
+      --pink: #FFB3D1;
+      --blue: #AEE4FF;
+      --orange: #FF4B2B;
+      --border: #FF1E8F;
+      --bg: #FFFFFF;
+      --page-bg: #FFF2EF;
+    }
+
+    /* ── Animations ── */
+    @keyframes scrollUp {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-50%); }
+    }
+    @keyframes scrollDown {
+      from { transform: translateY(-50%); }
+      to   { transform: translateY(0); }
+    }
+    @keyframes hintSlide {
+      0%   { transform: translateX(-60px) translateY(0); opacity: 0.3; }
+      60%  { transform: translateX(10px) translateY(-30px); opacity: 1; }
+      100% { transform: translateX(10px) translateY(-30px); opacity: 0; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Screen management ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── Prologue ── */
+    #screen-prologue {
+      background: var(--bg);
+      min-height: 100svh;
+      display: none;
+      flex-direction: column;
+    }
+    #screen-prologue.active { display: flex; }
+
+    .prologue-header {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 2px solid var(--border);
+      background: var(--bg);
+      flex-shrink: 0;
+    }
+    .prologue-header span {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .prologue-main {
+      flex: 1;
+      padding: 32px 16px 96px;
+    }
+
+    #skip-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      background: rgba(255,30,143,0.15);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      font-family: inherit;
+      z-index: 100;
+    }
+
+    /* ── Poster Game ── */
+    .game-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .poster-frame-wrap {
+      position: relative;
+      width: 272px;
+      height: 368px;
+      margin: 0 auto;
+    }
+
+    .poster-frame {
+      position: absolute;
+      inset: 0;
+      background: white;
+      border-radius: 12px;
+      border: 3px solid var(--border);
+      box-shadow: 6px 6px 0 rgba(174,228,255,1);
+      overflow: hidden;
+    }
+
+    .zone-large {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      border: 1px dashed rgba(255,30,143,0.2);
+      transition: background-color 0.15s, border 0.15s;
+      padding: 6px;
+    }
+    .zone-large.hover {
+      border: 2px dashed var(--border);
+      background: rgba(255,30,143,0.04);
+    }
+
+    .zone-large-label {
+      font-size: 10px;
+      color: var(--sub);
+      opacity: 0.8;
+    }
+    .zone-large-chip {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text);
+    }
+
+    .center-card {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 64px;
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 2px 2px 0 rgba(174,228,255,0.7);
+    }
+    .center-card-header {
+      padding: 12px 12px 8px;
+      border-bottom: 2px solid var(--border);
+    }
+    .center-card-header .sub-label {
+      font-size: 8px;
+      color: var(--sub);
+    }
+    .center-card-header .title {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .zone-center {
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0 0 4px 4px;
+      transition: background-color 0.15s, outline 0.15s;
+    }
+    .zone-center.hover {
+      background: rgba(255,30,143,0.04);
+      outline: 2px dashed var(--border);
+    }
+    .zone-center-label {
+      font-size: 10px;
+      color: var(--sub);
+      opacity: 0.8;
+    }
+    .zone-center-chip {
+      margin: 8px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    .zone-small {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      min-width: 72px;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 9999px;
+      border: 2px dashed rgba(255,30,143,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.15s, border 0.15s;
+    }
+    .zone-small.hover {
+      border: 2px dashed var(--border);
+      background: rgba(255,30,143,0.06);
+    }
+    .zone-small.filled {
+      border: 2px solid var(--border);
+    }
+    .zone-small-label {
+      font-size: 10px;
+      color: var(--sub);
+      opacity: 0.8;
+    }
+    .zone-small-chip {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+    }
+
+    /* ── Chip tray ── */
+    .chip-tray {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      padding: 0 8px;
+    }
+
+    .chip {
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 13px;
+      border: 3px solid var(--border);
+      box-shadow: 4px 4px 0 rgba(255,30,143,1);
+      touch-action: none;
+      user-select: none;
+      color: var(--text);
+      cursor: grab;
+      transition: opacity 0.2s, transform 0.2s;
+      -webkit-user-select: none;
+    }
+    .chip.placed { opacity: 0.28; cursor: default; }
+    .chip[data-id="fun"]     { background: var(--yellow); transform: rotate(-2deg); }
+    .chip[data-id="concept"] { background: var(--pink);   transform: rotate(2deg); }
+    .chip[data-id="oc"]      { background: var(--blue);   transform: rotate(-1deg); }
+
+    /* ── Floating ghost chip ── */
+    #ghost-chip {
+      position: fixed;
+      z-index: 999;
+      pointer-events: none;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 13px;
+      border: 3px solid var(--border);
+      box-shadow: 8px 8px 0 rgba(255,30,143,1);
+      color: var(--text);
+      transform: scale(1.1) rotate(-3deg);
+      display: none;
+    }
+    #ghost-chip.active { display: block; }
+
+    /* ── Drag hint ── */
+    .drag-hint {
+      position: absolute;
+      pointer-events: none;
+      font-size: 22px;
+      animation: hintSlide 1.4s cubic-bezier(0.25,0.1,0.25,1) forwards;
+      bottom: 108px;
+      left: calc(50% - 24px);
+    }
+
+    /* ── Diagnose button ── */
+    .diagnose-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 16px;
+      font-weight: 700;
+      font-size: 16px;
+      border-radius: 9999px;
+      background: var(--orange);
+      color: white;
+      border: 3px solid var(--border);
+      box-shadow: 4px 4px 0 rgba(255,30,143,1);
+      cursor: pointer;
+      font-family: inherit;
+      display: none;
+    }
+    .diagnose-btn.visible { display: block; }
+
+    /* ── Diagnosis result ── */
+    .diagnosis-result {
+      margin-top: 20px;
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      display: none;
+    }
+    .diagnosis-result.visible { display: block; }
+
+    .mini-poster {
+      width: 110px;
+      height: 149px;
+      border: 2px solid var(--border);
+      box-shadow: 3px 3px 0 rgba(174,228,255,0.7);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0 auto 16px;
+      position: relative;
+    }
+    .mini-poster-bg { position: absolute; inset: 0; }
+    .mini-poster-card {
+      position: absolute;
+      inset: 8px 8px 32px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 4px;
+    }
+    .mini-poster-card .card-title {
+      font-size: 6px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .mini-poster-card .card-chip {
+      font-size: 5px;
+      border-radius: 2px;
+      padding: 1px 3px;
+      color: var(--text);
+      margin-top: 2px;
+      display: inline-block;
+    }
+    .mini-poster-badge {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      border-radius: 9999px;
+      padding: 2px 4px;
+      font-size: 5px;
+      font-weight: 700;
+      color: var(--text);
+      min-height: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    .result-type-badge {
+      display: inline-block;
+      border: 2px solid var(--border);
+      font-weight: 700;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--text);
+      transform: rotate(-1.5deg);
+      margin-bottom: 12px;
+    }
+    .result-hook {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .result-structure {
+      font-size: 12px;
+      color: var(--sub);
+      margin-bottom: 4px;
+    }
+    .result-detail {
+      font-size: 12px;
+      color: var(--sub);
+      opacity: 0.8;
+    }
+    .result-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .result-btns button {
+      flex: 1;
+      padding: 8px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      background: transparent;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ══════════════════════════════
+       TOP PAGE
+    ══════════════════════════════ */
+    #screen-top {
+      background: var(--bg);
+      max-width: 390px;
+      margin: 0 auto;
+    }
+
+    /* ── Top header ── */
+    #top-header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 390px;
+      height: 44px;
+      background: var(--bg);
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 50;
+    }
+    #top-header .logo {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+    }
+    #menu-btn {
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      padding: 4px;
+    }
+    #menu-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 9999px;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    #menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #menu-btn.open span:nth-child(2) { opacity: 0; }
+    #menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Drawer ── */
+    #drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,30,143,0.35);
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    #drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    #drawer-panel {
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 220px;
+      background: var(--bg);
+      border-left: 2px solid var(--border);
+      z-index: 41;
+      padding: 56px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.25,0.1,0.25,1);
+    }
+    #drawer-panel.open { transform: translateX(0); }
+    #drawer-panel a {
+      display: block;
+      padding: 16px 0;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,30,143,0.15);
+    }
+    #drawer-panel a:last-child { border-bottom: none; }
+
+    /* ── Page body ── */
+    #top-body { padding-top: 44px; }
+
+    /* ── Key Visual (B1) ── */
+    #section-kv {
+      position: relative;
+      height: 100svh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+
+    /* Photo grid */
+    .kv-grid {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      gap: 8px;
+      padding: 0 8px;
+    }
+    .kv-col { flex: 1; overflow: hidden; padding: 0 8px; }
+    .kv-col-inner { }
+    .kv-col.left .kv-col-inner { animation: scrollUp 18s linear infinite; }
+    .kv-col.right .kv-col-inner { animation: scrollDown 18s linear infinite; }
+    .kv-block {
+      height: 96px;
+      border-radius: 32px;
+      border: 3px solid var(--border);
+      box-shadow: 4px 4px 0 rgba(174,228,255,1);
+      margin-bottom: 16px;
+    }
+    .kv-col.left  .kv-block:nth-child(odd)  { transform: rotate(3deg); height: 110px; }
+    .kv-col.left  .kv-block:nth-child(even) { transform: rotate(-3deg); }
+    .kv-col.right .kv-block:nth-child(odd)  { transform: rotate(-4deg); height: 80px; border-radius: 50%; }
+    .kv-col.right .kv-block:nth-child(even) { transform: rotate(4deg); height: 80px; }
+    .kv-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,242,239,0.7);
+    }
+
+    /* Concept background variant */
+    .kv-bg-concept {
+      position: absolute;
+      inset: 0;
+      background: #C5003B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kv-bg-concept .ghost-text {
+      font-size: 72px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.06);
+      line-height: 1.1;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* OC background variant */
+    .kv-bg-oc {
+      position: absolute;
+      inset: 0;
+      background: var(--sub);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kv-oc-poster {
+      width: 280px;
+      height: 400px;
+      background: var(--orange);
+      border: 3px solid var(--border);
+      box-shadow: 6px 6px 0 rgba(174,228,255,1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* Center card */
+    .kv-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .kv-card {
+      background: white;
+      border: 2px solid var(--border);
+      box-shadow: 6px 6px 0 rgba(174,228,255,0.9);
+      border-radius: 4px;
+      width: 240px;
+      padding: 16px 16px 20px;
+      transform: rotate(-1deg);
+    }
+    .kv-card .futu-label {
+      font-size: 10px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+    .kv-card .kv-title {
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .kv-card .kv-badge {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 10px;
+      background: var(--orange);
+      color: white;
+      white-space: nowrap;
+    }
+
+    /* Corner badge */
+    .kv-corner-badge {
+      position: absolute;
+      bottom: 24px;
+      right: 16px;
+      border-radius: 9999px;
+      padding: 8px 16px;
+      font-weight: 700;
+      font-size: 12px;
+      border: 2px solid var(--border);
+      box-shadow: 3px 3px 0 rgba(174,228,255,1);
+    }
+
+    /* Scroll hint */
+    .kv-scroll-hint {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .kv-scroll-hint span { font-size: 10px; color: var(--sub); }
+
+    /* ── Welcome (B2) ── */
+    #section-welcome {
+      padding: 48px 20px;
+      background: var(--bg);
+    }
+    #section-welcome h2 {
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+
+    .fade-block {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s, transform 0.6s;
+    }
+    .fade-block.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .venn-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .venn-wrap { position: relative; width: 140px; height: 100px; flex-shrink: 0; }
+    .venn-circle {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+      top: 10px;
+      opacity: 0;
+      transition: left 0.8s cubic-bezier(0.25,0.1,0.25,1), opacity 0.8s;
+    }
+    .venn-circle.left-c  { background: rgba(174,228,255,0.8); left: 20px; }
+    .venn-circle.right-c { background: rgba(255,243,173,0.8); left: 40px; transition-delay: 0.1s; }
+    .venn-wrap.visible .venn-circle.left-c  { left: 0; opacity: 1; }
+    .venn-wrap.visible .venn-circle.right-c { left: 60px; opacity: 1; }
+    .venn-overlap {
+      position: absolute;
+      left: 40px;
+      top: 34px;
+      width: 60px;
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.4s 0.6s;
+    }
+    .venn-wrap.visible .venn-overlap { opacity: 1; }
+    .venn-text { flex: 1; font-size: 12px; color: var(--text); line-height: 1.7; }
+
+    .cycle-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .cycle-text { flex: 1; font-size: 12px; color: var(--text); line-height: 1.7; }
+    .cycle-svg-wrap { flex-shrink: 0; }
+    .cycle-svg-wrap svg circle,
+    .cycle-svg-wrap svg text,
+    .cycle-svg-wrap svg path,
+    .cycle-svg-wrap svg polygon {
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .cycle-svg-wrap.visible svg circle,
+    .cycle-svg-wrap.visible svg text,
+    .cycle-svg-wrap.visible svg path,
+    .cycle-svg-wrap.visible svg polygon { opacity: 1; }
+
+    .facility-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .facility-tile { }
+    .facility-img {
+      height: 80px;
+      border-radius: 16px;
+      border: 3px solid var(--border);
+      box-shadow: 3px 3px 0 rgba(174,228,255,1);
+      margin-bottom: 6px;
+    }
+    .facility-name { font-weight: 700; font-size: 11px; color: var(--text); }
+    .facility-desc { font-size: 9px; color: var(--sub); line-height: 1.4; }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .tool-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 4px;
+      background: var(--page-bg);
+      border: 2px solid var(--border);
+      box-shadow: 2px 2px 0 rgba(174,228,255,1);
+      border-radius: 12px;
+    }
+    .tool-icon {
+      width: 28px;
+      height: 28px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 10px;
+      color: var(--text);
+    }
+    .tool-name { font-size: 8px; color: var(--sub); text-align: center; }
+
+    .oc-note { font-size: 12px; color: var(--sub); line-height: 1.6; }
+
+    /* ── Learning (B3) ── */
+    #section-learning {
+      background: var(--page-bg);
+    }
+    .learning-head {
+      padding: 40px 20px 16px;
+    }
+    .learning-head h2 {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .learning-body { position: relative; }
+
+    .side-nav {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding-left: 12px;
+      z-index: 10;
+    }
+    .side-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255,30,143,0.28);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: width 0.2s, height 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+    .side-dot.active {
+      width: 7px;
+      height: 7px;
+      background: var(--text);
+    }
+
+    .card-track {
+      height: 85svh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-left: 28px;
+      padding-right: 16px;
+      padding-bottom: 16px;
+    }
+
+    .assignment-slot {
+      height: 85svh;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+    }
+    .assignment-slot:first-child { padding-top: 8px; }
+
+    .assignment-card {
+      width: 100%;
+      background: white;
+      border: 3px solid var(--border);
+      box-shadow: 6px 6px 0 rgba(174,228,255,1);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .assignment-card:nth-child(odd)  { transform: rotate(1deg); }
+    .assignment-card:nth-child(even) { transform: rotate(-1deg); }
+
+    .assignment-inner { }
+    .assignment-num {
+      padding: 20px 16px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--sub);
+    }
+    .assignment-title {
+      padding: 0 16px 12px;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .assignment-img {
+      margin: 0 16px 16px;
+      height: 160px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,30,143,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .assignment-img span { font-size: 11px; color: var(--text); opacity: 0.5; }
+    .assignment-desc {
+      padding: 0 16px 20px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    /* ── Diagnosis section (B4) ── */
+    #section-diagnosis {
+      padding: 40px 20px;
+      background: var(--bg);
+    }
+    .section-label {
+      font-size: 10px;
+      color: var(--sub);
+      margin-bottom: 4px;
+    }
+    #section-diagnosis h2 {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+      margin-bottom: 24px;
+      padding-top: 24px;
+      border-top: 2px solid var(--border);
+    }
+
+    /* ── CTA (B5) ── */
+    #section-cta {
+      padding: 48px 20px;
+      background: var(--page-bg);
+    }
+    .cta-eyebrow {
+      font-size: 10px;
+      color: var(--sub);
+      margin-bottom: 6px;
+    }
+    #section-cta h2 {
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .cta-info {
+      font-size: 13px;
+      color: var(--sub);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .oc-poster-placeholder {
+      width: 220px;
+      height: 310px;
+      background: var(--sub);
+      border: 3px solid var(--border);
+      box-shadow: 6px 6px 0 rgba(174,228,255,1);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      transform: rotate(2deg);
+      margin: 0 auto 24px;
+    }
+    .oc-poster-placeholder .emoji { font-size: 32px; }
+    .oc-poster-placeholder .small { font-size: 11px; opacity: 0.8; }
+    .cta-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+      border-radius: 9999px;
+      background: var(--orange);
+      color: white;
+      border: 3px solid var(--border);
+      box-shadow: 4px 4px 0 rgba(255,30,143,1);
+      text-decoration: none;
+      transition: transform 0.1s;
+    }
+    .cta-btn:active { transform: scale(0.97); }
+    .site-footer {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,30,143,0.2);
+      font-size: 10px;
+      color: var(--sub);
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════
+     PROLOGUE SCREEN
+════════════════════════════ -->
+<div id="screen-prologue" class="active">
+  <div class="prologue-header">
+    <span>ポスター制作タイプ別診断</span>
+  </div>
+  <div class="prologue-main">
+    <div id="prologue-game"></div>
+  </div>
+  <button id="skip-btn">スキップ</button>
+</div>
+
+<!-- ════════════════════════════
+     TOP PAGE
+════════════════════════════ -->
+<div id="screen-top" class="screen">
+  <header id="top-header">
+    <span class="logo">未来大 情報デザインコース</span>
+    <button id="menu-btn" aria-label="メニュー">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <div id="drawer-backdrop"></div>
+  <nav id="drawer-panel">
+    <a href="#section-welcome" class="nav-link">コースについて</a>
+    <a href="#section-learning" class="nav-link">1年間の学び</a>
+    <a href="#section-diagnosis" class="nav-link">タイプ診断</a>
+    <a href="#section-cta" class="nav-link">オープンキャンパス</a>
+  </nav>
+
+  <div id="top-body">
+    <!-- B1: Key Visual -->
+    <section id="section-kv"></section>
+
+    <!-- B2: Welcome -->
+    <section id="section-welcome">
+      <h2 class="fade-block">未来大の情報デザインコースって<br>どんなとこ？</h2>
+
+      <div class="fade-block venn-row" style="transition-delay:0.1s">
+        <div class="venn-wrap">
+          <div class="venn-circle left-c">情報</div>
+          <div class="venn-circle right-c">デザイン</div>
+          <div class="venn-overlap">情報<br>デザイン</div>
+        </div>
+        <p class="venn-text">「情報」と「デザイン」が重なる場所を探求するコース。人・社会・テクノロジーをつなぐ視点で、伝わる表現を学びます。</p>
+      </div>
+
+      <div class="fade-block cycle-row" style="transition-delay:0.1s">
+        <p class="cycle-text">リサーチ・アイデア・制作・発表を繰り返す制作サイクルで、実践的なデザイン思考を身につけます。</p>
+        <div class="cycle-svg-wrap">
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="52" fill="none" stroke="#FF1E8F" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4" style="transition-delay:0.2s"/>
+            <path d="M 122,70 A 52,52 0 1 1 121,62" fill="none" stroke="#FF1E8F" stroke-width="2" stroke-linecap="round" style="transition-delay:0.4s"/>
+            <polygon points="121,62 115,66 123,68" fill="#FF1E8F" style="transition-delay:0.4s"/>
+            <!-- Steps -->
+            <circle cx="122" cy="70" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.37s"/>
+            <text x="122" y="71" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.44s">リサーチ</text>
+            <circle cx="96" cy="18" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.44s"/>
+            <text x="96" y="19" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.51s">アイデア</text>
+            <circle cx="44" cy="18" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.51s"/>
+            <text x="44" y="19" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.58s">制作</text>
+            <circle cx="18" cy="70" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.58s"/>
+            <text x="18" y="71" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.65s">発表</text>
+            <circle cx="44" cy="122" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.65s"/>
+            <text x="44" y="123" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.72s">改善</text>
+            <circle cx="96" cy="122" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.72s"/>
+            <text x="96" y="123" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.79s">提案</text>
+            <!-- Center -->
+            <text x="70" y="70" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">制作</text>
+            <text x="70" y="81" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">サイクル</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="fade-block" style="transition-delay:0.05s">
+        <div class="facility-grid">
+          <div class="facility-tile">
+            <div class="facility-img" style="background:#FFF3AD"></div>
+            <div class="facility-name">工房</div>
+            <div class="facility-desc">レーザーカッターや3Dプリンタを備えた制作空間</div>
+          </div>
+          <div class="facility-tile">
+            <div class="facility-img" style="background:#FFB3D1; transform:rotate(-2deg)"></div>
+            <div class="facility-name">アトリエ</div>
+            <div class="facility-desc">大型スクリーンと可動家具で柔軟なワークスペース</div>
+          </div>
+          <div class="facility-tile">
+            <div class="facility-img" style="background:#AEE4FF; transform:rotate(2deg)"></div>
+            <div class="facility-name">ミュージアム</div>
+            <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-block" style="transition-delay:0.1s">
+        <div class="tools-grid">
+          <div class="tool-tile"><div class="tool-icon">✦</div><div class="tool-name">Figma</div></div>
+          <div class="tool-tile"><div class="tool-icon">Ai</div><div class="tool-name">Illustrator</div></div>
+          <div class="tool-tile"><div class="tool-icon">Ps</div><div class="tool-name">Photoshop</div></div>
+          <div class="tool-tile"><div class="tool-icon">Ae</div><div class="tool-name">After Effects</div></div>
+          <div class="tool-tile"><div class="tool-icon">Pr</div><div class="tool-name">Processing</div></div>
+          <div class="tool-tile"><div class="tool-icon">⌁</div><div class="tool-name">Arduino</div></div>
+          <div class="tool-tile"><div class="tool-icon">K</div><div class="tool-name">Keynote</div></div>
+          <div class="tool-tile"><div class="tool-icon">N</div><div class="tool-name">Notion</div></div>
+        </div>
+      </div>
+
+      <div class="fade-block" style="transition-delay:0.05s">
+        <p class="oc-note">8/3オープンキャンパスでも、情報デザインコースブースにて詳しくお話します</p>
+      </div>
+    </section>
+
+    <!-- B3: Learning -->
+    <section id="section-learning">
+      <div class="learning-head">
+        <h2 class="fade-block">情報デザインコース<br>２年生の１年間の学び</h2>
+      </div>
+      <div class="learning-body">
+        <div class="side-nav" id="side-nav"></div>
+        <div class="card-track" id="card-track"></div>
+      </div>
+    </section>
+
+    <!-- B4: Diagnosis -->
+    <section id="section-diagnosis">
+      <div class="fade-block">
+        <div class="section-label">SECTION 04</div>
+        <h2>ポスター制作タイプ別診断</h2>
+      </div>
+      <div id="full-game"></div>
+    </section>
+
+    <!-- B5: CTA -->
+    <section id="section-cta">
+      <div class="fade-block">
+        <div class="cta-eyebrow">OPEN CAMPUS</div>
+        <h2>8/3<br>オープンキャンパス</h2>
+        <div class="cta-info">
+          公立はこだて未来大学<br>
+          土曜日 10:00–16:00<br>
+          情報デザインコース ブース
+        </div>
+      </div>
+      <div class="fade-block" style="transition-delay:0.1s">
+        <div class="oc-poster-placeholder">
+          <span class="emoji">🎨</span>
+          <span>OC POSTER</span>
+          <span class="small">oc-poster.jpg</span>
+        </div>
+      </div>
+      <div class="fade-block" style="transition-delay:0.15s">
+        <a href="#" class="cta-btn">申し込みはこちら →</a>
+      </div>
+      <div class="site-footer">
+        公立はこだて未来大学<br>
+        情報デザインコース特設サイト<br>
+        © 2024 Future University Hakodate
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Ghost chip (floating while dragging) -->
+<div id="ghost-chip"></div>
+
+<script>
+'use strict';
+
+/* ══════════════════════════════
+   CONSTANTS
+══════════════════════════════ */
+const CHIPS = {
+  fun:     { label: 'デザインって楽しい', color: '#FFF3AD' },
+  concept: { label: 'デザインとは何か',   color: '#FFB3D1' },
+  oc:      { label: 'オープンキャンパスへ', color: '#AEE4FF' },
+};
+
+const DIAGNOSES = {
+  'fun-concept-oc': { type: '部活勧誘ポスター', hook: '「雰囲気で引き込んでから問いかける」構成。', structure: '楽しさが背景を埋め、タイトルと概念が中央に、OCへの誘いがバッジに。', detail: '押しつけがましくなく、来てくれる人を待つスタンスが伝わります。まず雰囲気で心をつかみ、「どんなとこ？」という興味へとつながる流れ。' },
+  'fun-oc-concept': { type: 'ライブのフライヤー', hook: '「楽しさを見せてすぐ行動に誘う」構成。', structure: '楽しさが背景を埋め、タイトルとOC日程が中央に、概念の問いがバッジに。', detail: '細かい説明より雰囲気と日程だけあれば十分、というフライヤーらしい割り切りが出ています。勢いで動かすデザイン。' },
+  'concept-fun-oc': { type: '博物館の解説パネル', hook: '「問いを立ててから楽しさを添える」構成。', structure: '概念が背景を埋め、タイトルと楽しさが中央に、OCへの誘いがバッジに。', detail: '「デザインとは何か」を先に見せることで、興味を持った人を確実に引き込みます。楽しさはその後押し。' },
+  'concept-oc-fun': { type: 'セミナーの告知チラシ', hook: '「問いかけてから行動へ誘う」構成。', structure: '概念が背景を埋め、タイトルとOC日程が中央に、楽しさのバッジが和らげる。', detail: '「デザインとは何か」を先に提示してからOCに誘う丁寧な導線。参加者に内容を吟味してほしいセミナー告知に近い構成。' },
+  'oc-fun-concept':  { type: 'タイムセールのポスター', hook: '「まず来てもらって、楽しさで後押しする」構成。', structure: 'OCポスターが背景を埋め、タイトルと楽しさが中央に、概念の問いがバッジに。', detail: '「来て！」が最前面に出て、楽しさで背中を押す。とにかく足を運んでもらうことが最優先の、勢いのある構成。' },
+  'oc-concept-fun':  { type: '求人広告', hook: '「行動を前面に出して問いで補強する」構成。', structure: 'OCポスターが背景を埋め、タイトルと概念が中央に、楽しさのバッジが締める。', detail: '「来てほしい」を最前面に出してから、デザインとは何かで理由を補足する。誠実さと勢いが両立した構成。' },
+};
+
+const ASSIGNMENTS = [
+  { num: '01', title: 'フィールドリサーチ',       desc: '街に出て、人々の行動や場の様子を観察・記録する。カメラと手書きメモで現場を読み取り、課題を発見する。', color: '#FFF3AD' },
+  { num: '02', title: '仮想生物デザイン',          desc: '実在しない生物を設定から造形まで一貫してデザインする。生態・環境・機能を考え、説得力ある形にまとめる。',       color: '#FFB3D1' },
+  { num: '04', title: '情報設計・ポスター制作',    desc: '収集した情報を整理・階層化し、伝わるポスターに落とし込む。タイポグラフィと構図を意識したビジュアル表現。',       color: '#FFF3AD' },
+  { num: '05', title: 'アプリ・サービス提案',      desc: '社会課題や日常のニーズを起点に、デジタルサービスを企画・プロトタイプ。UXフローからUI設計まで担う。',           color: '#AEE4FF' },
+];
+
+const GRID_L = ['#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B'];
+const GRID_R = ['#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F'];
+
+/* ══════════════════════════════
+   POSTER GAME FACTORY
+══════════════════════════════ */
+function createPosterGame(container, mode, onComplete) {
+  let placement = { large: null, center: null, small: null };
+  let allPlaced = false;
+  let showResult = false;
+  let dragging = null; // { chipId, startX, startY }
+
+  const ghost = document.getElementById('ghost-chip');
+  const zoneEls = {};
+  let diagnoseBtnEl = null;
+  let resultEl = null;
+
+  /* Build DOM */
+  container.innerHTML = '';
+
+  // Title
+  const title = document.createElement('p');
+  title.className = 'game-title';
+  title.textContent = 'ブロックを好きな位置に配置してみよう';
+  container.appendChild(title);
+
+  // Poster wrap
+  const wrap = document.createElement('div');
+  wrap.className = 'poster-frame-wrap';
+  container.appendChild(wrap);
+
+  const frame = document.createElement('div');
+  frame.className = 'poster-frame';
+  wrap.appendChild(frame);
+
+  // Large zone
+  const zLarge = document.createElement('div');
+  zLarge.className = 'zone-large';
+  zLarge.innerHTML = '<span class="zone-large-label">大（背景）</span>';
+  frame.appendChild(zLarge);
+  zoneEls.large = zLarge;
+
+  // Center card
+  const centerCard = document.createElement('div');
+  centerCard.className = 'center-card';
+  centerCard.innerHTML = `
+    <div class="center-card-header">
+      <div class="sub-label">FUTURE UNIVERSITY HAKODATE</div>
+      <div class="title">未来大<br>情報デザインコース<br>特設サイト</div>
+    </div>`;
+  frame.appendChild(centerCard);
+
+  const zCenter = document.createElement('div');
+  zCenter.className = 'zone-center';
+  zCenter.innerHTML = '<span class="zone-center-label">中（メイン）</span>';
+  centerCard.appendChild(zCenter);
+  zoneEls.center = zCenter;
+
+  // Small badge
+  const zSmall = document.createElement('div');
+  zSmall.className = 'zone-small';
+  zSmall.innerHTML = '<span class="zone-small-label">小</span>';
+  frame.appendChild(zSmall);
+  zoneEls.small = zSmall;
+
+  // Drag hint
+  const hint = document.createElement('div');
+  hint.className = 'drag-hint';
+  hint.textContent = '☞';
+  wrap.appendChild(hint);
+  setTimeout(() => hint.remove(), 1800);
+
+  // Chip tray
+  const tray = document.createElement('div');
+  tray.className = 'chip-tray';
+  container.appendChild(tray);
+
+  ['fun', 'concept', 'oc'].forEach(id => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.dataset.id = id;
+    chip.textContent = CHIPS[id].label;
+    chip.addEventListener('pointerdown', e => onChipDown(e, id));
+    tray.appendChild(chip);
+  });
+
+  // Diagnose button (full mode only)
+  if (mode === 'full') {
+    diagnoseBtnEl = document.createElement('button');
+    diagnoseBtnEl.className = 'diagnose-btn';
+    diagnoseBtnEl.textContent = '診断する →';
+    diagnoseBtnEl.addEventListener('click', showDiagnosis);
+    container.appendChild(diagnoseBtnEl);
+
+    resultEl = document.createElement('div');
+    resultEl.className = 'diagnosis-result';
+    container.appendChild(resultEl);
+  }
+
+  /* ── Helpers ── */
+  function isPlaced(id) {
+    return placement.large === id || placement.center === id || placement.small === id;
+  }
+
+  function getZone(x, y) {
+    const priority = ['small', 'center', 'large'];
+    for (const id of priority) {
+      const el = zoneEls[id];
+      if (!el) continue;
+      let { left, right, top, bottom } = el.getBoundingClientRect();
+      if (id === 'small')  { left -= 40; top -= 40; right += 20; bottom += 20; }
+      if (id === 'center') { top -= 20; bottom += 20; }
+      if (x >= left && x <= right && y >= top && y <= bottom) return id;
+    }
+    return null;
+  }
+
+  function updateZoneDisplay(zone, chipId) {
+    const el = zoneEls[zone];
+    if (zone === 'large') {
+      if (chipId) {
+        el.style.backgroundColor = CHIPS[chipId].color + '80';
+        el.innerHTML = `<div class="zone-large-chip" style="background:${CHIPS[chipId].color}">${CHIPS[chipId].label}</div>`;
+      } else {
+        el.style.backgroundColor = '';
+        el.innerHTML = '<span class="zone-large-label">大（背景）</span>';
+      }
+    } else if (zone === 'center') {
+      if (chipId) {
+        el.innerHTML = `<div class="zone-center-chip" style="background:${CHIPS[chipId].color}">${CHIPS[chipId].label}</div>`;
+      } else {
+        el.innerHTML = '<span class="zone-center-label">中（メイン）</span>';
+      }
+    } else if (zone === 'small') {
+      if (chipId) {
+        el.classList.add('filled');
+        el.innerHTML = `<span class="zone-small-chip">${CHIPS[chipId].label}</span>`;
+        el.style.backgroundColor = CHIPS[chipId].color;
+      } else {
+        el.classList.remove('filled');
+        el.style.backgroundColor = '';
+        el.innerHTML = '<span class="zone-small-label">小</span>';
+      }
+    }
+  }
+
+  function updateChipTray() {
+    tray.querySelectorAll('.chip').forEach(el => {
+      const id = el.dataset.id;
+      el.classList.toggle('placed', isPlaced(id));
+    });
+  }
+
+  function checkAllPlaced() {
+    if (placement.large && placement.center && placement.small && !allPlaced) {
+      allPlaced = true;
+      if (mode === 'prologue' && onComplete) {
+        setTimeout(() => onComplete(placement), 500);
+      } else if (mode === 'full' && diagnoseBtnEl) {
+        diagnoseBtnEl.classList.add('visible');
+      }
+    }
+  }
+
+  /* ── Drag ── */
+  function onChipDown(e, chipId) {
+    if (isPlaced(chipId)) return;
+    e.preventDefault();
+    dragging = { chipId };
+    ghost.textContent = CHIPS[chipId].label;
+    ghost.style.background = CHIPS[chipId].color;
+    ghost.classList.add('active');
+    moveGhost(e.clientX, e.clientY);
+  }
+
+  function moveGhost(x, y) {
+    ghost.style.left = (x - 44) + 'px';
+    ghost.style.top  = (y - 18) + 'px';
+  }
+
+  document.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    e.preventDefault();
+    moveGhost(e.clientX, e.clientY);
+    // Hover highlight
+    const zone = getZone(e.clientX, e.clientY);
+    ['large', 'center', 'small'].forEach(z => zoneEls[z].classList.toggle('hover', z === zone));
+  }, { passive: false });
+
+  document.addEventListener('pointerup', e => {
+    if (!dragging) return;
+    const chipId = dragging.chipId;
+    const zone = getZone(e.clientX, e.clientY);
+    if (zone) {
+      // Remove this chip from any zone it was already in
+      Object.keys(placement).forEach(z => { if (placement[z] === chipId) { placement[z] = null; updateZoneDisplay(z, null); } });
+      placement[zone] = chipId;
+      updateZoneDisplay(zone, chipId);
+    }
+    dragging = null;
+    ghost.classList.remove('active');
+    ['large', 'center', 'small'].forEach(z => zoneEls[z].classList.remove('hover'));
+    updateChipTray();
+    checkAllPlaced();
+  });
+
+  /* ── Diagnosis ── */
+  function showDiagnosis() {
+    if (!resultEl) return;
+    showResult = true;
+    diagnoseBtnEl.classList.remove('visible');
+    const key = `${placement.large}-${placement.center}-${placement.small}`;
+    const d = DIAGNOSES[key];
+    if (!d) return;
+
+    const largeBg = placement.large ? CHIPS[placement.large].color + '55' : '#F1EFE8';
+    const centerChip = placement.center ? `<div class="card-chip" style="background:${CHIPS[placement.center].color}">${CHIPS[placement.center].label}</div>` : '';
+    const badgeBg = placement.small ? CHIPS[placement.small].color : '#FFB3D1';
+    const badgeText = placement.small ? CHIPS[placement.small].label : '角';
+
+    resultEl.innerHTML = `
+      <div class="mini-poster">
+        <div class="mini-poster-bg" style="background:${largeBg}"></div>
+        <div class="mini-poster-card">
+          <div class="card-title">未来大<br>情報デザイン</div>
+          ${centerChip}
+        </div>
+        <div class="mini-poster-badge" style="background:${badgeBg}">${badgeText}</div>
+      </div>
+      <div class="result-type-badge">${d.type}</div>
+      <p class="result-hook">${d.hook}</p>
+      <p class="result-structure">${d.structure}</p>
+      <p class="result-detail">${d.detail}</p>
+      <div class="result-btns">
+        <button id="reset-btn">もう一度</button>
+        <button id="share-btn">シェア ↗</button>
+      </div>`;
+    resultEl.classList.add('visible');
+
+    resultEl.querySelector('#reset-btn').addEventListener('click', resetGame);
+    resultEl.querySelector('#share-btn').addEventListener('click', shareResult);
+  }
+
+  function resetGame() {
+    placement = { large: null, center: null, small: null };
+    allPlaced = false;
+    showResult = false;
+    ['large', 'center', 'small'].forEach(z => updateZoneDisplay(z, null));
+    updateChipTray();
+    if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
+    if (resultEl) resultEl.classList.remove('visible');
+  }
+
+  function shareResult() {
+    const key = `${placement.large}-${placement.center}-${placement.small}`;
+    const d = DIAGNOSES[key];
+    if (!d) return;
+    const text = `私のポスタータイプは「${d.type}」！\n${d.hook}\n未来大 情報デザインコース 特設サイト`;
+    if (navigator.share) {
+      navigator.share({ text });
+    } else {
+      navigator.clipboard.writeText(text).then(() => alert('クリップボードにコピーしました'));
+    }
+  }
+}
+
+/* ══════════════════════════════
+   KEY VISUAL
+══════════════════════════════ */
+function buildKeyVisual(placement) {
+  const kv = document.getElementById('section-kv');
+  const large = placement ? placement.large : null;
+  const small = placement ? placement.small : null;
+
+  let bgHTML = '';
+  if (large === 'concept') {
+    bgHTML = `<div class="kv-bg-concept"><div class="ghost-text">デザインとは<br>何か</div></div>`;
+  } else if (large === 'oc') {
+    bgHTML = `<div class="kv-bg-oc"><div class="kv-oc-poster">OC POSTER</div></div>`;
+  } else {
+    const makeBlocks = (colors, isLeft) => colors.concat(colors).map((c, i) => {
+      const rot = isLeft ? (i % 2 === 0 ? 3 : -3) : (i % 2 === 0 ? -4 : 4);
+      const br = (!isLeft && i % 3 === 0) ? '50%' : '32px';
+      return `<div class="kv-block" style="background:${c};transform:rotate(${rot}deg);border-radius:${br}"></div>`;
+    }).join('');
+    bgHTML = `
+      <div class="kv-grid">
+        <div class="kv-col left"><div class="kv-col-inner">${makeBlocks(GRID_L, true)}</div></div>
+        <div class="kv-col right"><div class="kv-col-inner">${makeBlocks(GRID_R, false)}</div></div>
+      </div>
+      <div class="kv-overlay"></div>`;
+  }
+
+  const badgeBg = small === 'fun' ? '#FFF3AD' : small === 'oc' ? 'white' : '#FF1E8F';
+  const badgeColor = small === 'oc' ? '#7A0026' : 'white';
+  const badgeText = small === 'fun' ? '楽しい！' : small === 'oc' ? '8.1 OC →' : '情報デザインコースってどんなとこ？';
+
+  kv.innerHTML = `
+    ${bgHTML}
+    <div class="kv-center">
+      <div class="kv-card">
+        <div class="futu-label">FUTURE UNIVERSITY HAKODATE</div>
+        <div class="kv-title">未来大<br>情報デザインコース<br>特設サイト</div>
+        <div class="kv-badge">「デザイン」の解像度を上げるサイト</div>
+      </div>
+    </div>
+    <div class="kv-corner-badge" style="background:${badgeBg};color:${badgeColor}">${badgeText}</div>
+    <div class="kv-scroll-hint"><span>スクロール</span><span>↓</span></div>`;
+}
+
+/* ══════════════════════════════
+   LEARNING SECTION
+══════════════════════════════ */
+function buildLearning() {
+  const nav  = document.getElementById('side-nav');
+  const track = document.getElementById('card-track');
+  const cardEls = [];
+
+  ASSIGNMENTS.forEach((a, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'side-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => cardEls[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+    nav.appendChild(dot);
+
+    const slot = document.createElement('div');
+    slot.className = 'assignment-slot';
+    slot.innerHTML = `
+      <div class="assignment-card" style="transform:rotate(${i % 2 === 0 ? 1 : -1}deg)">
+        <div class="assignment-num">課題 ${a.num}</div>
+        <div class="assignment-title">${a.title}</div>
+        <div class="assignment-img" style="background:${a.color}"><span>制作物イメージ</span></div>
+        <div class="assignment-desc">${a.desc}</div>
+      </div>`;
+    track.appendChild(slot);
+    cardEls.push(slot);
+  });
+
+  // Intersection observer for side nav
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const idx = cardEls.indexOf(e.target);
+        if (idx !== -1) {
+          nav.querySelectorAll('.side-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+      }
+    });
+  }, { threshold: 0.6, root: track });
+  cardEls.forEach(el => obs.observe(el));
+}
+
+/* ══════════════════════════════
+   SCROLL FADE-IN
+══════════════════════════════ */
+function initFadeIn() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // Also trigger venn/cycle animations
+        const vennWrap = e.target.querySelector('.venn-wrap');
+        if (vennWrap) vennWrap.classList.add('visible');
+        const cycleWrap = e.target.querySelector('.cycle-svg-wrap');
+        if (cycleWrap) cycleWrap.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-block').forEach(el => observer.observe(el));
+
+  // Also observe venn-wrap and cycle-svg-wrap directly
+  const vennObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.venn-wrap, .cycle-svg-wrap').forEach(el => vennObs.observe(el));
+}
+
+/* ══════════════════════════════
+   NAVIGATION
+══════════════════════════════ */
+function initNav() {
+  const btn      = document.getElementById('menu-btn');
+  const backdrop = document.getElementById('drawer-backdrop');
+  const panel    = document.getElementById('drawer-panel');
+
+  function closeMenu() {
+    btn.classList.remove('open');
+    backdrop.classList.remove('open');
+    panel.classList.remove('open');
+  }
+
+  btn.addEventListener('click', () => {
+    const isOpen = btn.classList.toggle('open');
+    backdrop.classList.toggle('open', isOpen);
+    panel.classList.toggle('open', isOpen);
+  });
+
+  backdrop.addEventListener('click', closeMenu);
+
+  document.querySelectorAll('.nav-link').forEach(a => {
+    a.addEventListener('click', () => {
+      closeMenu();
+    });
+  });
+}
+
+/* ══════════════════════════════
+   SCREEN TRANSITION
+══════════════════════════════ */
+function transitionToTop(placement) {
+  document.getElementById('screen-prologue').classList.remove('active');
+  const top = document.getElementById('screen-top');
+  top.classList.remove('screen');
+  top.classList.add('active');
+  window.scrollTo(0, 0);
+  buildKeyVisual(placement);
+}
+
+/* ══════════════════════════════
+   INIT
+══════════════════════════════ */
+(function init() {
+  // Build prologue game
+  createPosterGame(
+    document.getElementById('prologue-game'),
+    'prologue',
+    placement => transitionToTop(placement)
+  );
+
+  // Skip button
+  document.getElementById('skip-btn').addEventListener('click', () => {
+    transitionToTop({ large: null, center: null, small: null });
+  });
+
+  // Build static sections
+  buildLearning();
+
+  // Build full game (diagnosis section)
+  createPosterGame(document.getElementById('full-game'), 'full', null);
+
+  // Navigation
+  initNav();
+
+  // Scroll animations (run after top page becomes visible)
+  initFadeIn();
+
+  // Default key visual (before prologue)
+  buildKeyVisual(null);
+})();
+</script>
+</body>
+</html>
