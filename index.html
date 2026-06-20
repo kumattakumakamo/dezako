@@ -18,6 +18,7 @@
 
     html {
       font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+      scroll-snap-type: y proximity;
     }
 
     body {
@@ -1066,14 +1067,10 @@
     .cards-flow {
       flex: 1;
       padding: 8px 16px 16px 4px;
-      /* ↓ scroll-snap を使う場合はここに追加 (例: overflow-y: scroll; scroll-snap-type: y mandatory;) */
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
     }
 
     .assignment-slot {
       margin-bottom: 24px;
-      /* ↓ scroll-snap を使う場合はここに追加 (例: scroll-snap-align: start;) */
       scroll-snap-align: start;
     }
 
