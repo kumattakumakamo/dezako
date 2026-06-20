@@ -11,7 +11,6 @@
     html { font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif; }
     body { background: #FFF2EF; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
 
-    /* ── Variables ── */
     :root {
       --text: #7A0026;
       --sub: #FF1E8F;
@@ -33,15 +32,18 @@
       from { transform: translateY(-50%); }
       to   { transform: translateY(0); }
     }
-    @keyframes hintSlide {
-      0%   { transform: translateX(-60px) translateY(0); opacity: 0.3; }
-      60%  { transform: translateX(10px) translateY(-30px); opacity: 1; }
-      100% { transform: translateX(10px) translateY(-30px); opacity: 0; }
+    /* Hint: finger slides right-up then back, 3 times */
+    @keyframes hintPing {
+      0%   { transform: translate(0,0); opacity: 0; }
+      10%  { opacity: 1; }
+      45%  { transform: translate(55px,-25px); opacity: 1; }
+      55%  { transform: translate(55px,-25px); opacity: 1; }
+      90%  { transform: translate(0,0); opacity: 1; }
+      100% { transform: translate(0,0); opacity: 0; }
     }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    /* Transition flash */
+    @keyframes flashIn  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes flashOut { from { opacity: 1; } to { opacity: 0; } }
 
     /* ── Screen management ── */
     .screen { display: none; }
@@ -71,10 +73,7 @@
       color: var(--text);
     }
 
-    .prologue-main {
-      flex: 1;
-      padding: 32px 16px 96px;
-    }
+    .prologue-main { flex: 1; padding: 32px 16px 96px; }
 
     #skip-btn {
       position: fixed;
@@ -102,6 +101,9 @@
       margin-bottom: 20px;
     }
 
+    .game-elements { transition: opacity 0.35s, transform 0.35s; }
+    .game-elements.hiding { opacity: 0; transform: scale(0.9); pointer-events: none; }
+
     .poster-frame-wrap {
       position: relative;
       width: 272px;
@@ -117,35 +119,18 @@
       border: 3px solid var(--border);
       box-shadow: 6px 6px 0 rgba(174,228,255,1);
       overflow: hidden;
+      transition: background-color 0.3s;
     }
 
+    /* Large zone — fills entire frame bg */
     .zone-large {
       position: absolute;
       inset: 0;
       border-radius: 12px;
-      border: 1px dashed rgba(255,30,143,0.2);
-      transition: background-color 0.15s, border 0.15s;
-      padding: 6px;
-    }
-    .zone-large.hover {
-      border: 2px dashed var(--border);
-      background: rgba(255,30,143,0.04);
+      transition: background-color 0.3s;
     }
 
-    .zone-large-label {
-      font-size: 10px;
-      color: var(--sub);
-      opacity: 0.8;
-    }
-    .zone-large-chip {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: var(--text);
-    }
-
+    /* Center card */
     .center-card {
       position: absolute;
       left: 16px;
@@ -160,10 +145,7 @@
       padding: 12px 12px 8px;
       border-bottom: 2px solid var(--border);
     }
-    .center-card-header .sub-label {
-      font-size: 8px;
-      color: var(--sub);
-    }
+    .center-card-header .sub-label { font-size: 8px; color: var(--sub); }
     .center-card-header .title {
       font-weight: 700;
       font-size: 13px;
@@ -177,25 +159,31 @@
       align-items: center;
       justify-content: center;
       border-radius: 0 0 4px 4px;
-      transition: background-color 0.15s, outline 0.15s;
+      transition: background-color 0.3s, outline 0.15s;
     }
-    .zone-center.hover {
-      background: rgba(255,30,143,0.04);
-      outline: 2px dashed var(--border);
-    }
-    .zone-center-label {
-      font-size: 10px;
-      color: var(--sub);
-      opacity: 0.8;
-    }
+    .zone-center.hover { background: rgba(255,30,143,0.04); outline: 2px dashed var(--border); }
     .zone-center-chip {
-      margin: 8px;
-      padding: 6px 12px;
-      border-radius: 9999px;
+      width: 100%;
+      height: 100%;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: 700;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--text);
+      border-radius: 0 0 4px 4px;
     }
+    .zone-center-placeholder {
+      width: 100%;
+      min-height: 60px;
+      border: 2px dashed rgba(255,30,143,0.2);
+      border-radius: 0 0 4px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .zone-center-placeholder.hover { border-color: var(--border); background: rgba(255,30,143,0.04); }
 
     .zone-small {
       position: absolute;
@@ -205,24 +193,15 @@
       min-height: 32px;
       padding: 0 12px;
       border-radius: 9999px;
-      border: 2px dashed rgba(255,30,143,0.35);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background-color 0.15s, border 0.15s;
+      transition: background-color 0.3s, border 0.15s;
+      border: 2px dashed rgba(255,30,143,0.35);
     }
-    .zone-small.hover {
-      border: 2px dashed var(--border);
-      background: rgba(255,30,143,0.06);
-    }
-    .zone-small.filled {
-      border: 2px solid var(--border);
-    }
-    .zone-small-label {
-      font-size: 10px;
-      color: var(--sub);
-      opacity: 0.8;
-    }
+    .zone-small.hover { border-color: var(--border); background: rgba(255,30,143,0.06); }
+    .zone-small.filled { border: none; }
+    .zone-small-placeholder { width: 32px; height: 2px; background: rgba(255,30,143,0.2); border-radius: 1px; }
     .zone-small-chip {
       font-size: 10px;
       font-weight: 700;
@@ -251,7 +230,7 @@
       user-select: none;
       color: var(--text);
       cursor: grab;
-      transition: opacity 0.2s, transform 0.2s;
+      transition: opacity 0.2s;
       -webkit-user-select: none;
     }
     .chip.placed { opacity: 0.28; cursor: default; }
@@ -259,7 +238,7 @@
     .chip[data-id="concept"] { background: var(--pink);   transform: rotate(2deg); }
     .chip[data-id="oc"]      { background: var(--blue);   transform: rotate(-1deg); }
 
-    /* ── Floating ghost chip ── */
+    /* ── Ghost chip ── */
     #ghost-chip {
       position: fixed;
       z-index: 999;
@@ -281,9 +260,9 @@
       position: absolute;
       pointer-events: none;
       font-size: 22px;
-      animation: hintSlide 1.4s cubic-bezier(0.25,0.1,0.25,1) forwards;
+      animation: hintPing 1.0s ease-in-out 3 both;
       bottom: 108px;
-      left: calc(50% - 24px);
+      left: calc(50% - 16px);
     }
 
     /* ── Diagnose button ── */
@@ -306,18 +285,21 @@
 
     /* ── Diagnosis result ── */
     .diagnosis-result {
-      margin-top: 20px;
-      background: white;
+      background: #FFF0F7;
       border: 2px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 20px 16px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.45s, transform 0.45s;
+      pointer-events: none;
       display: none;
     }
-    .diagnosis-result.visible { display: block; }
+    .diagnosis-result.entering { display: block; }
+    .diagnosis-result.visible  { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
     .mini-poster {
-      width: 110px;
-      height: 149px;
+      width: 110px; height: 149px;
       border: 2px solid var(--border);
       box-shadow: 3px 3px 0 rgba(174,228,255,0.7);
       border-radius: 4px;
@@ -325,7 +307,7 @@
       margin: 0 auto 16px;
       position: relative;
     }
-    .mini-poster-bg { position: absolute; inset: 0; }
+    .mini-poster-bg  { position: absolute; inset: 0; }
     .mini-poster-card {
       position: absolute;
       inset: 8px 8px 32px;
@@ -334,129 +316,69 @@
       border-radius: 2px;
       padding: 4px;
     }
-    .mini-poster-card .card-title {
-      font-size: 6px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.4;
-    }
-    .mini-poster-card .card-chip {
-      font-size: 5px;
-      border-radius: 2px;
-      padding: 1px 3px;
-      color: var(--text);
-      margin-top: 2px;
-      display: inline-block;
-    }
+    .mini-poster-card .card-title { font-size: 6px; font-weight: 700; color: var(--text); line-height: 1.4; }
+    .mini-poster-card .card-chip  { font-size: 5px; border-radius: 2px; padding: 1px 3px; color: var(--text); margin-top: 2px; display: inline-block; }
     .mini-poster-badge {
       position: absolute;
-      bottom: 6px;
-      right: 6px;
+      bottom: 6px; right: 6px;
       border-radius: 9999px;
       padding: 2px 4px;
-      font-size: 5px;
-      font-weight: 700;
+      font-size: 5px; font-weight: 700;
       color: var(--text);
       min-height: 12px;
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
     }
 
     .result-type-badge {
       display: inline-block;
       border: 2px solid var(--border);
-      font-weight: 700;
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 4px;
+      font-weight: 700; font-size: 11px;
+      padding: 2px 8px; border-radius: 4px;
       color: var(--text);
       transform: rotate(-1.5deg);
       margin-bottom: 12px;
     }
-    .result-hook {
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-    .result-structure {
-      font-size: 12px;
-      color: var(--sub);
-      margin-bottom: 4px;
-    }
-    .result-detail {
-      font-size: 12px;
-      color: var(--sub);
-      opacity: 0.8;
-    }
-    .result-btns {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-    }
+    .result-hook      { font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 8px; }
+    .result-structure { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+    .result-detail    { font-size: 12px; color: var(--sub); opacity: 0.8; }
+    .result-btns      { display: flex; gap: 8px; margin-top: 16px; }
     .result-btns button {
-      flex: 1;
-      padding: 8px;
+      flex: 1; padding: 8px;
       border: 2px solid var(--border);
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text);
-      background: transparent;
-      cursor: pointer;
-      font-family: inherit;
+      border-radius: 4px; font-size: 12px; font-weight: 500;
+      color: var(--text); background: transparent;
+      cursor: pointer; font-family: inherit;
     }
 
-    /* ══════════════════════════════
+    /* ════════════════════════════
        TOP PAGE
-    ══════════════════════════════ */
-    #screen-top {
-      background: var(--bg);
-      max-width: 390px;
-      margin: 0 auto;
-    }
+    ════════════════════════════ */
+    #screen-top { background: var(--bg); max-width: 390px; margin: 0 auto; }
 
     /* ── Top header ── */
     #top-header {
       position: fixed;
-      top: 0;
-      left: 50%;
+      top: 0; left: 50%;
       transform: translateX(-50%);
-      width: 100%;
-      max-width: 390px;
+      width: 100%; max-width: 390px;
       height: 44px;
       background: var(--bg);
       border-bottom: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 0 16px;
       z-index: 50;
     }
-    #top-header .logo {
-      font-weight: 700;
-      font-size: 13px;
-      color: var(--text);
-    }
+    #top-header .logo { font-weight: 700; font-size: 13px; color: var(--text); }
+
     #menu-btn {
-      width: 32px;
-      height: 32px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
+      width: 32px; height: 32px;
+      background: none; border: none; cursor: pointer;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
       padding: 4px;
     }
     #menu-btn span {
-      display: block;
-      width: 20px;
-      height: 2px;
-      background: var(--text);
-      border-radius: 9999px;
+      display: block; width: 20px; height: 2px;
+      background: var(--text); border-radius: 9999px;
       transition: transform 0.2s, opacity 0.2s;
     }
     #menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -465,132 +387,79 @@
 
     /* ── Drawer ── */
     #drawer-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(255,30,143,0.35);
+      position: fixed; inset: 0;
+      background: rgba(160, 90, 120, 0.30); /* 彩度を下げたピンク */
       z-index: 40;
-      opacity: 0;
-      pointer-events: none;
+      opacity: 0; pointer-events: none;
       transition: opacity 0.25s;
     }
     #drawer-backdrop.open { opacity: 1; pointer-events: auto; }
 
     #drawer-panel {
-      position: fixed;
-      right: 0;
-      top: 0;
-      bottom: 0;
+      position: fixed; right: 0; top: 0; bottom: 0;
       width: 220px;
       background: var(--bg);
       border-left: 2px solid var(--border);
       z-index: 41;
       padding: 56px 24px 32px;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       transform: translateX(100%);
       transition: transform 0.25s cubic-bezier(0.25,0.1,0.25,1);
     }
     #drawer-panel.open { transform: translateX(0); }
     #drawer-panel a {
-      display: block;
-      padding: 16px 0;
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--text);
-      text-decoration: none;
+      display: block; padding: 16px 0;
+      font-weight: 700; font-size: 14px;
+      color: var(--text); text-decoration: none;
       border-bottom: 1px solid rgba(255,30,143,0.15);
     }
     #drawer-panel a:last-child { border-bottom: none; }
 
-    /* ── Page body ── */
     #top-body { padding-top: 44px; }
 
     /* ── Key Visual (B1) ── */
-    #section-kv {
-      position: relative;
-      height: 100svh;
-      min-height: 600px;
-      overflow: hidden;
-    }
+    #section-kv { position: relative; height: 100svh; min-height: 600px; overflow: hidden; }
 
-    /* Photo grid */
-    .kv-grid {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      gap: 8px;
-      padding: 0 8px;
-    }
-    .kv-col { flex: 1; overflow: hidden; padding: 0 8px; }
-    .kv-col-inner { }
-    .kv-col.left .kv-col-inner { animation: scrollUp 18s linear infinite; }
+    .kv-grid { position: absolute; inset: 0; display: flex; gap: 8px; padding: 0 8px; }
+    .kv-col  { flex: 1; overflow: hidden; padding: 0 8px; }
+    .kv-col.left  .kv-col-inner { animation: scrollUp   18s linear infinite; }
     .kv-col.right .kv-col-inner { animation: scrollDown 18s linear infinite; }
     .kv-block {
-      height: 96px;
-      border-radius: 32px;
+      height: 96px; border-radius: 32px;
       border: 3px solid var(--border);
       box-shadow: 4px 4px 0 rgba(174,228,255,1);
       margin-bottom: 16px;
     }
-    .kv-col.left  .kv-block:nth-child(odd)  { transform: rotate(3deg); height: 110px; }
-    .kv-col.left  .kv-block:nth-child(even) { transform: rotate(-3deg); }
-    .kv-col.right .kv-block:nth-child(odd)  { transform: rotate(-4deg); height: 80px; border-radius: 50%; }
-    .kv-col.right .kv-block:nth-child(even) { transform: rotate(4deg); height: 80px; }
-    .kv-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(255,242,239,0.7);
-    }
+    .kv-overlay { position: absolute; inset: 0; background: rgba(255,242,239,0.7); }
 
-    /* Concept background variant */
     .kv-bg-concept {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background: #C5003B;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
     .kv-bg-concept .ghost-text {
-      font-size: 72px;
-      font-weight: 700;
+      font-size: 72px; font-weight: 700;
       color: rgba(255,255,255,0.06);
-      line-height: 1.1;
-      text-align: center;
-      user-select: none;
+      line-height: 1.1; text-align: center; user-select: none;
     }
-
-    /* OC background variant */
     .kv-bg-oc {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background: var(--sub);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
     .kv-oc-poster {
-      width: 280px;
-      height: 400px;
+      width: 280px; height: 400px;
       background: var(--orange);
       border: 3px solid var(--border);
       box-shadow: 6px 6px 0 rgba(174,228,255,1);
       border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
-      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 700; color: white;
     }
 
-    /* Center card */
     .kv-center {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
       pointer-events: none;
     }
     .kv-card {
@@ -602,150 +471,99 @@
       padding: 16px 16px 20px;
       transform: rotate(-1deg);
     }
-    .kv-card .futu-label {
-      font-size: 10px;
-      color: #888;
-      margin-bottom: 4px;
-    }
-    .kv-card .kv-title {
-      font-weight: 700;
-      font-size: 22px;
-      color: var(--text);
-      line-height: 1.3;
-    }
+    .kv-card .futu-label { font-size: 10px; color: #888; margin-bottom: 4px; }
+    .kv-card .kv-title   { font-weight: 700; font-size: 22px; color: var(--text); line-height: 1.3; }
     .kv-card .kv-badge {
       display: inline-block;
-      margin-top: 12px;
-      padding: 4px 10px;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 10px;
-      background: var(--orange);
-      color: white;
+      margin-top: 12px; padding: 4px 10px;
+      border-radius: 4px; /* バッジらしく見えないよう角丸を減らす */
+      font-weight: 700; font-size: 10px;
+      background: var(--orange); color: white;
       white-space: nowrap;
+      cursor: default; pointer-events: none; /* 押せそうに見えない */
     }
 
-    /* Corner badge */
     .kv-corner-badge {
-      position: absolute;
-      bottom: 24px;
-      right: 16px;
-      border-radius: 9999px;
-      padding: 8px 16px;
-      font-weight: 700;
-      font-size: 12px;
+      position: absolute; bottom: 24px; right: 16px;
+      border-radius: 9999px; padding: 8px 16px;
+      font-weight: 700; font-size: 12px;
       border: 2px solid var(--border);
       box-shadow: 3px 3px 0 rgba(174,228,255,1);
+      cursor: default; pointer-events: none; /* 押せそうに見えない */
     }
 
-    /* Scroll hint */
     .kv-scroll-hint {
-      position: absolute;
-      bottom: 24px;
-      left: 50%;
+      position: absolute; bottom: 24px; left: 50%;
       transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
     }
     .kv-scroll-hint span { font-size: 10px; color: var(--sub); }
 
     /* ── Welcome (B2) ── */
-    #section-welcome {
-      padding: 48px 20px;
-      background: var(--bg);
-    }
+    #section-welcome { padding: 48px 20px; background: var(--bg); }
     #section-welcome h2 {
-      font-weight: 700;
-      font-size: 20px;
-      color: var(--text);
-      line-height: 1.5;
+      font-weight: 700; font-size: 20px;
+      color: var(--text); line-height: 1.5;
       margin-bottom: 32px;
     }
 
     .fade-block {
-      opacity: 0;
-      transform: translateY(20px);
+      opacity: 0; transform: translateY(20px);
       transition: opacity 0.6s, transform 0.6s;
     }
-    .fade-block.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .fade-block.visible { opacity: 1; transform: translateY(0); }
+
+    /* Venn & Cycle – stack vertically on small screens */
+    .venn-row, .cycle-row {
+      display: flex; gap: 16px; align-items: center; margin-bottom: 40px;
+    }
+    @media (max-width: 400px) {
+      .venn-row, .cycle-row {
+        flex-direction: column; align-items: flex-start; gap: 12px;
+      }
     }
 
-    .venn-row {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 40px;
-    }
-    .venn-wrap { position: relative; width: 140px; height: 100px; flex-shrink: 0; }
+    .venn-wrap { position: relative; width: 150px; height: 110px; flex-shrink: 0; }
     .venn-circle {
       position: absolute;
-      width: 80px;
-      height: 80px;
+      width: 86px; height: 86px;
       border-radius: 50%;
       border: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 13px;
-      color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: var(--text);
       top: 10px;
       opacity: 0;
       transition: left 0.8s cubic-bezier(0.25,0.1,0.25,1), opacity 0.8s;
     }
-    .venn-circle.left-c  { background: rgba(174,228,255,0.8); left: 20px; }
-    .venn-circle.right-c { background: rgba(255,243,173,0.8); left: 40px; transition-delay: 0.1s; }
+    .venn-circle.left-c  { background: rgba(174,228,255,0.8); left: 22px; }
+    .venn-circle.right-c { background: rgba(255,243,173,0.8); left: 44px; transition-delay: 0.1s; }
     .venn-wrap.visible .venn-circle.left-c  { left: 0; opacity: 1; }
-    .venn-wrap.visible .venn-circle.right-c { left: 60px; opacity: 1; }
+    .venn-wrap.visible .venn-circle.right-c { left: 64px; opacity: 1; }
     .venn-overlap {
-      position: absolute;
-      left: 40px;
-      top: 34px;
-      width: 60px;
-      font-size: 8px;
-      font-weight: 700;
-      color: var(--text);
-      text-align: center;
-      opacity: 0;
-      transition: opacity 0.4s 0.6s;
+      position: absolute; left: 42px; top: 36px; width: 66px;
+      font-size: 9px; font-weight: 700; color: var(--text); text-align: center;
+      opacity: 0; transition: opacity 0.4s 0.6s;
     }
     .venn-wrap.visible .venn-overlap { opacity: 1; }
-    .venn-text { flex: 1; font-size: 12px; color: var(--text); line-height: 1.7; }
+    .venn-text { flex: 1; font-size: 13px; color: var(--text); line-height: 1.7; }
 
-    .cycle-row {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 40px;
-    }
-    .cycle-text { flex: 1; font-size: 12px; color: var(--text); line-height: 1.7; }
+    .cycle-text { flex: 1; font-size: 13px; color: var(--text); line-height: 1.7; }
     .cycle-svg-wrap { flex-shrink: 0; }
     .cycle-svg-wrap svg circle,
     .cycle-svg-wrap svg text,
     .cycle-svg-wrap svg path,
-    .cycle-svg-wrap svg polygon {
-      opacity: 0;
-      transition: opacity 0.5s;
-    }
+    .cycle-svg-wrap svg polygon { opacity: 0; transition: opacity 0.5s; }
     .cycle-svg-wrap.visible svg circle,
     .cycle-svg-wrap.visible svg text,
     .cycle-svg-wrap.visible svg path,
     .cycle-svg-wrap.visible svg polygon { opacity: 1; }
 
     .facility-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 32px;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; margin-bottom: 32px;
     }
-    .facility-tile { }
     .facility-img {
-      height: 80px;
-      border-radius: 16px;
+      height: 80px; border-radius: 16px;
       border: 3px solid var(--border);
       box-shadow: 3px 3px 0 rgba(174,228,255,1);
       margin-bottom: 6px;
@@ -753,243 +571,135 @@
     .facility-name { font-weight: 700; font-size: 11px; color: var(--text); }
     .facility-desc { font-size: 9px; color: var(--sub); line-height: 1.4; }
 
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 32px;
+    /* Tools — 5 items, single row */
+    .tools-row {
+      display: flex; gap: 6px; margin-bottom: 32px;
+      overflow-x: auto;
     }
     .tool-tile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 12px 4px;
+      flex: 1; min-width: 58px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 10px 4px;
       background: var(--page-bg);
       border: 2px solid var(--border);
       box-shadow: 2px 2px 0 rgba(174,228,255,1);
       border-radius: 12px;
     }
     .tool-icon {
-      width: 28px;
-      height: 28px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 10px;
-      color: var(--text);
+      width: 30px; height: 30px;
+      background: white; border: 1px solid var(--border); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 11px; color: var(--text);
     }
-    .tool-name { font-size: 8px; color: var(--sub); text-align: center; }
+    .tool-name { font-size: 9px; color: var(--sub); text-align: center; }
 
     .oc-note { font-size: 12px; color: var(--sub); line-height: 1.6; }
 
     /* ── Learning (B3) ── */
-    #section-learning {
-      background: var(--page-bg);
-    }
-    .learning-head {
-      padding: 40px 20px 16px;
-    }
-    .learning-head h2 {
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--text);
-      line-height: 1.5;
-    }
+    #section-learning { background: var(--page-bg); }
+    .learning-head { padding: 40px 20px 16px; }
+    .learning-head h2 { font-weight: 700; font-size: 18px; color: var(--text); line-height: 1.5; }
 
-    .learning-body { position: relative; }
-
+    /* Side nav: bar/line style, sticky */
+    .learning-body { display: flex; gap: 0; }
     .side-nav {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 20px;
+      position: sticky;
+      top: 60px;
+      align-self: flex-start;
+      width: 32px;
+      padding: 8px 0 8px 12px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding-left: 12px;
-      z-index: 10;
-    }
-    .side-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: rgba(255,30,143,0.28);
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      transition: width 0.2s, height 0.2s, background 0.2s;
+      gap: 14px;
       flex-shrink: 0;
     }
-    .side-dot.active {
-      width: 7px;
-      height: 7px;
+    .side-bar {
+      width: 3px; height: 20px;
+      background: rgba(255,30,143,0.2);
+      border-radius: 2px;
+      border: none; cursor: pointer; padding: 0;
+      transition: height 0.2s, background 0.2s;
+    }
+    .side-bar.active {
+      height: 28px;
       background: var(--text);
     }
 
-    .card-track {
-      height: 85svh;
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
-      -webkit-overflow-scrolling: touch;
-      padding-left: 28px;
-      padding-right: 16px;
-      padding-bottom: 16px;
-    }
-
-    .assignment-slot {
-      height: 85svh;
-      scroll-snap-align: start;
-      display: flex;
-      align-items: center;
-    }
-    .assignment-slot:first-child { padding-top: 8px; }
+    /* Cards — normal page flow (no nested scroll) */
+    .cards-flow { flex: 1; padding: 8px 16px 16px 4px; }
+    .assignment-slot { margin-bottom: 24px; }
 
     .assignment-card {
-      width: 100%;
-      background: white;
+      width: 100%; background: white;
       border: 3px solid var(--border);
       box-shadow: 6px 6px 0 rgba(174,228,255,1);
-      border-radius: 16px;
-      overflow: hidden;
+      border-radius: 16px; overflow: hidden;
     }
     .assignment-card:nth-child(odd)  { transform: rotate(1deg); }
     .assignment-card:nth-child(even) { transform: rotate(-1deg); }
 
-    .assignment-inner { }
-    .assignment-num {
-      padding: 20px 16px 4px;
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--sub);
-    }
-    .assignment-title {
-      padding: 0 16px 12px;
-      font-weight: 700;
-      font-size: 22px;
-      color: var(--text);
-      line-height: 1.3;
-    }
+    .assignment-num   { padding: 20px 16px 4px; font-size: 10px; font-weight: 700; color: var(--sub); }
+    .assignment-title { padding: 0 16px 12px; font-weight: 700; font-size: 22px; color: var(--text); line-height: 1.3; }
     .assignment-img {
-      margin: 0 16px 16px;
-      height: 160px;
-      border-radius: 4px;
+      margin: 0 16px 16px; height: 160px; border-radius: 4px;
       border: 1px solid rgba(255,30,143,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
     .assignment-img span { font-size: 11px; color: var(--text); opacity: 0.5; }
-    .assignment-desc {
-      padding: 0 16px 20px;
-      font-size: 13px;
-      color: var(--text);
-      line-height: 1.75;
-    }
+    .assignment-desc { padding: 0 16px 20px; font-size: 13px; color: var(--text); line-height: 1.75; }
 
     /* ── Diagnosis section (B4) ── */
-    #section-diagnosis {
-      padding: 40px 20px;
-      background: var(--bg);
-    }
-    .section-label {
-      font-size: 10px;
-      color: var(--sub);
-      margin-bottom: 4px;
-    }
+    #section-diagnosis { padding: 40px 20px; background: var(--bg); }
     #section-diagnosis h2 {
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--text);
+      font-weight: 700; font-size: 18px; color: var(--text);
       margin-bottom: 24px;
       padding-top: 24px;
       border-top: 2px solid var(--border);
     }
 
     /* ── CTA (B5) ── */
-    #section-cta {
-      padding: 48px 20px;
-      background: var(--page-bg);
-    }
-    .cta-eyebrow {
-      font-size: 10px;
-      color: var(--sub);
-      margin-bottom: 6px;
-    }
-    #section-cta h2 {
-      font-weight: 700;
-      font-size: 28px;
-      color: var(--text);
-      line-height: 1.2;
-      margin-bottom: 12px;
-    }
-    .cta-info {
-      font-size: 13px;
-      color: var(--sub);
-      line-height: 1.8;
-      margin-bottom: 24px;
-    }
+    #section-cta { padding: 48px 20px; background: var(--page-bg); }
+    .cta-eyebrow { font-size: 10px; color: var(--sub); margin-bottom: 6px; }
+    #section-cta h2 { font-weight: 700; font-size: 28px; color: var(--text); line-height: 1.2; margin-bottom: 12px; }
+    .cta-info { font-size: 13px; color: var(--sub); line-height: 1.8; margin-bottom: 24px; }
     .oc-poster-placeholder {
-      width: 220px;
-      height: 310px;
+      width: 220px; height: 310px;
       background: var(--sub);
       border: 3px solid var(--border);
       box-shadow: 6px 6px 0 rgba(174,228,255,1);
       border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      color: white;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; font-size: 16px; font-weight: 700; color: white;
       transform: rotate(2deg);
       margin: 0 auto 24px;
     }
     .oc-poster-placeholder .emoji { font-size: 32px; }
     .oc-poster-placeholder .small { font-size: 11px; opacity: 0.8; }
     .cta-btn {
-      display: block;
-      width: 100%;
-      padding: 16px;
-      text-align: center;
-      font-weight: 700;
-      font-size: 16px;
-      border-radius: 9999px;
-      background: var(--orange);
-      color: white;
+      display: block; width: 100%; padding: 16px;
+      text-align: center; font-weight: 700; font-size: 16px;
+      border-radius: 9999px; background: var(--orange); color: white;
       border: 3px solid var(--border);
       box-shadow: 4px 4px 0 rgba(255,30,143,1);
-      text-decoration: none;
-      transition: transform 0.1s;
+      text-decoration: none; transition: transform 0.1s;
     }
     .cta-btn:active { transform: scale(0.97); }
     .site-footer {
-      margin-top: 40px;
-      padding-top: 24px;
+      margin-top: 40px; padding-top: 24px;
       border-top: 1px solid rgba(255,30,143,0.2);
-      font-size: 10px;
-      color: var(--sub);
-      line-height: 1.7;
+      font-size: 10px; color: var(--sub); line-height: 1.7;
     }
   </style>
 </head>
 <body>
 
 <!-- ════════════════════════════
-     PROLOGUE SCREEN
+     PROLOGUE
 ════════════════════════════ -->
 <div id="screen-prologue" class="active">
   <div class="prologue-header">
-    <span>ポスター制作タイプ別診断</span>
+    <span>イントロダクション：ポスターを作ってみよう！</span>
   </div>
   <div class="prologue-main">
     <div id="prologue-game"></div>
@@ -1036,44 +746,43 @@
       <div class="fade-block cycle-row" style="transition-delay:0.1s">
         <p class="cycle-text">リサーチ・アイデア・制作・発表を繰り返す制作サイクルで、実践的なデザイン思考を身につけます。</p>
         <div class="cycle-svg-wrap">
-          <svg width="140" height="140" viewBox="0 0 140 140">
-            <circle cx="70" cy="70" r="52" fill="none" stroke="#FF1E8F" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4" style="transition-delay:0.2s"/>
-            <path d="M 122,70 A 52,52 0 1 1 121,62" fill="none" stroke="#FF1E8F" stroke-width="2" stroke-linecap="round" style="transition-delay:0.4s"/>
-            <polygon points="121,62 115,66 123,68" fill="#FF1E8F" style="transition-delay:0.4s"/>
-            <!-- Steps -->
-            <circle cx="122" cy="70" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.37s"/>
-            <text x="122" y="71" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.44s">リサーチ</text>
-            <circle cx="96" cy="18" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.44s"/>
-            <text x="96" y="19" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.51s">アイデア</text>
-            <circle cx="44" cy="18" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.51s"/>
-            <text x="44" y="19" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.58s">制作</text>
-            <circle cx="18" cy="70" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.58s"/>
-            <text x="18" y="71" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.65s">発表</text>
-            <circle cx="44" cy="122" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.65s"/>
-            <text x="44" y="123" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.72s">改善</text>
-            <circle cx="96" cy="122" r="14" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.72s"/>
-            <text x="96" y="123" text-anchor="middle" dominant-baseline="middle" font-size="7" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.79s">提案</text>
-            <!-- Center -->
-            <text x="70" y="70" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">制作</text>
-            <text x="70" y="81" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">サイクル</text>
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="56" fill="none" stroke="#FF1E8F" stroke-width="1.5" stroke-dasharray="4 3" style="transition-delay:0.2s"/>
+            <path d="M 131,75 A 56,56 0 1 1 130,66" fill="none" stroke="#FF1E8F" stroke-width="2" stroke-linecap="round" style="transition-delay:0.4s"/>
+            <polygon points="130,66 123,71 132,73" fill="#FF1E8F" style="transition-delay:0.4s"/>
+            <!-- Steps at r=56 -->
+            <circle cx="131" cy="75" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.37s"/>
+            <text x="131" y="76" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.44s">リサーチ</text>
+            <circle cx="103" cy="19" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.44s"/>
+            <text x="103" y="20" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.51s">アイデア</text>
+            <circle cx="47"  cy="19" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.51s"/>
+            <text x="47"  y="20" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.58s">制作</text>
+            <circle cx="19"  cy="75" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.58s"/>
+            <text x="19"  y="76" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.65s">発表</text>
+            <circle cx="47"  cy="131" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.65s"/>
+            <text x="47"  y="132" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.72s">改善</text>
+            <circle cx="103" cy="131" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.72s"/>
+            <text x="103" y="132" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.79s">提案</text>
+            <text x="75" y="74" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700" fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">制作</text>
+            <text x="75" y="86" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700" fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">サイクル</text>
           </svg>
         </div>
       </div>
 
       <div class="fade-block" style="transition-delay:0.05s">
         <div class="facility-grid">
-          <div class="facility-tile">
+          <div>
             <div class="facility-img" style="background:#FFF3AD"></div>
             <div class="facility-name">工房</div>
             <div class="facility-desc">レーザーカッターや3Dプリンタを備えた制作空間</div>
           </div>
-          <div class="facility-tile">
-            <div class="facility-img" style="background:#FFB3D1; transform:rotate(-2deg)"></div>
+          <div>
+            <div class="facility-img" style="background:#FFB3D1;transform:rotate(-2deg)"></div>
             <div class="facility-name">アトリエ</div>
             <div class="facility-desc">大型スクリーンと可動家具で柔軟なワークスペース</div>
           </div>
-          <div class="facility-tile">
-            <div class="facility-img" style="background:#AEE4FF; transform:rotate(2deg)"></div>
+          <div>
+            <div class="facility-img" style="background:#AEE4FF;transform:rotate(2deg)"></div>
             <div class="facility-name">ミュージアム</div>
             <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
           </div>
@@ -1081,15 +790,12 @@
       </div>
 
       <div class="fade-block" style="transition-delay:0.1s">
-        <div class="tools-grid">
+        <div class="tools-row">
           <div class="tool-tile"><div class="tool-icon">✦</div><div class="tool-name">Figma</div></div>
           <div class="tool-tile"><div class="tool-icon">Ai</div><div class="tool-name">Illustrator</div></div>
           <div class="tool-tile"><div class="tool-icon">Ps</div><div class="tool-name">Photoshop</div></div>
-          <div class="tool-tile"><div class="tool-icon">Ae</div><div class="tool-name">After Effects</div></div>
           <div class="tool-tile"><div class="tool-icon">Pr</div><div class="tool-name">Processing</div></div>
           <div class="tool-tile"><div class="tool-icon">⌁</div><div class="tool-name">Arduino</div></div>
-          <div class="tool-tile"><div class="tool-icon">K</div><div class="tool-name">Keynote</div></div>
-          <div class="tool-tile"><div class="tool-icon">N</div><div class="tool-name">Notion</div></div>
         </div>
       </div>
 
@@ -1105,15 +811,14 @@
       </div>
       <div class="learning-body">
         <div class="side-nav" id="side-nav"></div>
-        <div class="card-track" id="card-track"></div>
+        <div class="cards-flow" id="cards-flow"></div>
       </div>
     </section>
 
     <!-- B4: Diagnosis -->
     <section id="section-diagnosis">
       <div class="fade-block">
-        <div class="section-label">SECTION 04</div>
-        <h2>ポスター制作タイプ別診断</h2>
+        <h2>ポスタータイプを診断しよう<br><span style="font-size:13px;font-weight:400;color:var(--sub)">3枚のブロックを配置して、あなたのデザインスタイルを知ろう</span></h2>
       </div>
       <div id="full-game"></div>
     </section>
@@ -1148,15 +853,11 @@
   </div>
 </div>
 
-<!-- Ghost chip (floating while dragging) -->
 <div id="ghost-chip"></div>
 
 <script>
 'use strict';
 
-/* ══════════════════════════════
-   CONSTANTS
-══════════════════════════════ */
 const CHIPS = {
   fun:     { label: 'デザインって楽しい', color: '#FFF3AD' },
   concept: { label: 'デザインとは何か',   color: '#FFB3D1' },
@@ -1172,56 +873,61 @@ const DIAGNOSES = {
   'oc-concept-fun':  { type: '求人広告', hook: '「行動を前面に出して問いで補強する」構成。', structure: 'OCポスターが背景を埋め、タイトルと概念が中央に、楽しさのバッジが締める。', detail: '「来てほしい」を最前面に出してから、デザインとは何かで理由を補足する。誠実さと勢いが両立した構成。' },
 };
 
+/* 課題01と02を入れ替え、ナンバリングを01〜04に変更 */
 const ASSIGNMENTS = [
-  { num: '01', title: 'フィールドリサーチ',       desc: '街に出て、人々の行動や場の様子を観察・記録する。カメラと手書きメモで現場を読み取り、課題を発見する。', color: '#FFF3AD' },
-  { num: '02', title: '仮想生物デザイン',          desc: '実在しない生物を設定から造形まで一貫してデザインする。生態・環境・機能を考え、説得力ある形にまとめる。',       color: '#FFB3D1' },
-  { num: '04', title: '情報設計・ポスター制作',    desc: '収集した情報を整理・階層化し、伝わるポスターに落とし込む。タイポグラフィと構図を意識したビジュアル表現。',       color: '#FFF3AD' },
-  { num: '05', title: 'アプリ・サービス提案',      desc: '社会課題や日常のニーズを起点に、デジタルサービスを企画・プロトタイプ。UXフローからUI設計まで担う。',           color: '#AEE4FF' },
+  { num: '01', title: '仮想生物デザイン',       desc: '実在しない生物を設定から造形まで一貫してデザインする。生態・環境・機能を考え、説得力ある形にまとめる。',       color: '#FFB3D1' },
+  { num: '02', title: 'フィールドリサーチ',      desc: '街に出て、人々の行動や場の様子を観察・記録する。カメラと手書きメモで現場を読み取り、課題を発見する。',     color: '#FFF3AD' },
+  { num: '03', title: '情報設計・ポスター制作',  desc: '収集した情報を整理・階層化し、伝わるポスターに落とし込む。タイポグラフィと構図を意識したビジュアル表現。', color: '#FFF3AD' },
+  { num: '04', title: 'アプリ・サービス提案',    desc: '社会課題や日常のニーズを起点に、デジタルサービスを企画・プロトタイプ。UXフローからUI設計まで担う。',     color: '#AEE4FF' },
 ];
 
 const GRID_L = ['#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B'];
 const GRID_R = ['#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F'];
 
 /* ══════════════════════════════
-   POSTER GAME FACTORY
+   POSTER GAME
 ══════════════════════════════ */
 function createPosterGame(container, mode, onComplete) {
   let placement = { large: null, center: null, small: null };
-  let allPlaced = false;
+  let allPlaced  = false;
   let showResult = false;
-  let dragging = null; // { chipId, startX, startY }
+  let dragging   = null;
 
   const ghost = document.getElementById('ghost-chip');
   const zoneEls = {};
   let diagnoseBtnEl = null;
-  let resultEl = null;
+  let resultEl      = null;
+  let gameEls       = null; // wrapper to hide on diagnosis
 
-  /* Build DOM */
   container.innerHTML = '';
 
-  // Title
+  /* Title */
   const title = document.createElement('p');
   title.className = 'game-title';
   title.textContent = 'ブロックを好きな位置に配置してみよう';
   container.appendChild(title);
 
-  // Poster wrap
+  /* Game elements wrapper (hidden during diagnosis animation) */
+  gameEls = document.createElement('div');
+  gameEls.className = 'game-elements';
+  container.appendChild(gameEls);
+
+  /* Poster wrap */
   const wrap = document.createElement('div');
   wrap.className = 'poster-frame-wrap';
-  container.appendChild(wrap);
+  gameEls.appendChild(wrap);
 
   const frame = document.createElement('div');
   frame.className = 'poster-frame';
   wrap.appendChild(frame);
 
-  // Large zone
+  /* Large zone */
   const zLarge = document.createElement('div');
   zLarge.className = 'zone-large';
-  zLarge.innerHTML = '<span class="zone-large-label">大（背景）</span>';
   frame.appendChild(zLarge);
   zoneEls.large = zLarge;
 
-  // Center card
+  /* Center card */
   const centerCard = document.createElement('div');
   centerCard.className = 'center-card';
   centerCard.innerHTML = `
@@ -1233,28 +939,29 @@ function createPosterGame(container, mode, onComplete) {
 
   const zCenter = document.createElement('div');
   zCenter.className = 'zone-center';
-  zCenter.innerHTML = '<span class="zone-center-label">中（メイン）</span>';
+  zCenter.innerHTML = '<div class="zone-center-placeholder"><span style="font-size:0"></span></div>';
   centerCard.appendChild(zCenter);
   zoneEls.center = zCenter;
 
-  // Small badge
+  /* Small badge */
   const zSmall = document.createElement('div');
   zSmall.className = 'zone-small';
-  zSmall.innerHTML = '<span class="zone-small-label">小</span>';
+  zSmall.innerHTML = '<div class="zone-small-placeholder"></div>';
   frame.appendChild(zSmall);
   zoneEls.small = zSmall;
 
-  // Drag hint
+  /* Drag hint (finger icon, 3 bounces) */
   const hint = document.createElement('div');
   hint.className = 'drag-hint';
   hint.textContent = '☞';
   wrap.appendChild(hint);
-  setTimeout(() => hint.remove(), 1800);
+  const HINT_DURATION = 1000 * 3 + 200;
+  setTimeout(() => { if (hint.parentNode) hint.remove(); }, HINT_DURATION);
 
-  // Chip tray
+  /* Chip tray */
   const tray = document.createElement('div');
   tray.className = 'chip-tray';
-  container.appendChild(tray);
+  gameEls.appendChild(tray);
 
   ['fun', 'concept', 'oc'].forEach(id => {
     const chip = document.createElement('div');
@@ -1265,20 +972,56 @@ function createPosterGame(container, mode, onComplete) {
     tray.appendChild(chip);
   });
 
-  // Diagnose button (full mode only)
+  /* Diagnose button (full mode) */
   if (mode === 'full') {
     diagnoseBtnEl = document.createElement('button');
     diagnoseBtnEl.className = 'diagnose-btn';
     diagnoseBtnEl.textContent = '診断する →';
     diagnoseBtnEl.addEventListener('click', showDiagnosis);
-    container.appendChild(diagnoseBtnEl);
+    gameEls.appendChild(diagnoseBtnEl);
 
     resultEl = document.createElement('div');
     resultEl.className = 'diagnosis-result';
     container.appendChild(resultEl);
   }
 
-  /* ── Helpers ── */
+  /* ── Zone display ── */
+  function updateZoneDisplay(zone, chipId) {
+    const el = zoneEls[zone];
+    if (zone === 'large') {
+      if (chipId) {
+        /* 枠内全域をチップ色で塗りつぶし・縁なし */
+        el.style.backgroundColor = CHIPS[chipId].color;
+        el.style.border = 'none';
+        el.innerHTML = '';
+      } else {
+        el.style.backgroundColor = '';
+        el.style.border = '';
+        el.innerHTML = '';
+      }
+    } else if (zone === 'center') {
+      if (chipId) {
+        /* 中ゾーン全体を色で塗りつぶし */
+        el.innerHTML = `<div class="zone-center-chip" style="background:${CHIPS[chipId].color}">${CHIPS[chipId].label}</div>`;
+        el.style.outline = 'none';
+      } else {
+        el.innerHTML = '<div class="zone-center-placeholder"><span style="font-size:0"></span></div>';
+      }
+    } else if (zone === 'small') {
+      if (chipId) {
+        el.classList.add('filled');
+        el.style.backgroundColor = CHIPS[chipId].color;
+        el.style.border = 'none'; /* 縁を消す */
+        el.innerHTML = `<span class="zone-small-chip">${CHIPS[chipId].label}</span>`;
+      } else {
+        el.classList.remove('filled');
+        el.style.backgroundColor = '';
+        el.style.border = '';
+        el.innerHTML = '<div class="zone-small-placeholder"></div>';
+      }
+    }
+  }
+
   function isPlaced(id) {
     return placement.large === id || placement.center === id || placement.small === id;
   }
@@ -1296,39 +1039,9 @@ function createPosterGame(container, mode, onComplete) {
     return null;
   }
 
-  function updateZoneDisplay(zone, chipId) {
-    const el = zoneEls[zone];
-    if (zone === 'large') {
-      if (chipId) {
-        el.style.backgroundColor = CHIPS[chipId].color + '80';
-        el.innerHTML = `<div class="zone-large-chip" style="background:${CHIPS[chipId].color}">${CHIPS[chipId].label}</div>`;
-      } else {
-        el.style.backgroundColor = '';
-        el.innerHTML = '<span class="zone-large-label">大（背景）</span>';
-      }
-    } else if (zone === 'center') {
-      if (chipId) {
-        el.innerHTML = `<div class="zone-center-chip" style="background:${CHIPS[chipId].color}">${CHIPS[chipId].label}</div>`;
-      } else {
-        el.innerHTML = '<span class="zone-center-label">中（メイン）</span>';
-      }
-    } else if (zone === 'small') {
-      if (chipId) {
-        el.classList.add('filled');
-        el.innerHTML = `<span class="zone-small-chip">${CHIPS[chipId].label}</span>`;
-        el.style.backgroundColor = CHIPS[chipId].color;
-      } else {
-        el.classList.remove('filled');
-        el.style.backgroundColor = '';
-        el.innerHTML = '<span class="zone-small-label">小</span>';
-      }
-    }
-  }
-
   function updateChipTray() {
     tray.querySelectorAll('.chip').forEach(el => {
-      const id = el.dataset.id;
-      el.classList.toggle('placed', isPlaced(id));
+      el.classList.toggle('placed', isPlaced(el.dataset.id));
     });
   }
 
@@ -1336,7 +1049,15 @@ function createPosterGame(container, mode, onComplete) {
     if (placement.large && placement.center && placement.small && !allPlaced) {
       allPlaced = true;
       if (mode === 'prologue' && onComplete) {
-        setTimeout(() => onComplete(placement), 500);
+        /* プロローグ遷移演出 */
+        frame.style.transition = 'transform 0.3s, box-shadow 0.3s';
+        frame.style.transform = 'scale(1.04)';
+        frame.style.boxShadow = '10px 10px 0 rgba(174,228,255,1)';
+        setTimeout(() => {
+          frame.style.transform = '';
+          frame.style.boxShadow = '';
+          setTimeout(() => onComplete(placement), 200);
+        }, 300);
       } else if (mode === 'full' && diagnoseBtnEl) {
         diagnoseBtnEl.classList.add('visible');
       }
@@ -1363,41 +1084,57 @@ function createPosterGame(container, mode, onComplete) {
     if (!dragging) return;
     e.preventDefault();
     moveGhost(e.clientX, e.clientY);
-    // Hover highlight
     const zone = getZone(e.clientX, e.clientY);
-    ['large', 'center', 'small'].forEach(z => zoneEls[z].classList.toggle('hover', z === zone));
+    ['large', 'center', 'small'].forEach(z => {
+      const el = zoneEls[z];
+      if (!el) return;
+      if (z === 'center') {
+        const ph = el.querySelector('.zone-center-placeholder');
+        if (ph) ph.classList.toggle('hover', z === zone);
+      } else {
+        el.classList.toggle('hover', z === zone);
+      }
+    });
   }, { passive: false });
 
   document.addEventListener('pointerup', e => {
     if (!dragging) return;
     const chipId = dragging.chipId;
-    const zone = getZone(e.clientX, e.clientY);
+    const zone   = getZone(e.clientX, e.clientY);
     if (zone) {
-      // Remove this chip from any zone it was already in
-      Object.keys(placement).forEach(z => { if (placement[z] === chipId) { placement[z] = null; updateZoneDisplay(z, null); } });
+      Object.keys(placement).forEach(z => {
+        if (placement[z] === chipId) { placement[z] = null; updateZoneDisplay(z, null); }
+      });
       placement[zone] = chipId;
       updateZoneDisplay(zone, chipId);
     }
     dragging = null;
     ghost.classList.remove('active');
-    ['large', 'center', 'small'].forEach(z => zoneEls[z].classList.remove('hover'));
+    ['large', 'center', 'small'].forEach(z => {
+      const el = zoneEls[z];
+      if (!el) return;
+      el.classList.remove('hover');
+      const ph = el.querySelector('.zone-center-placeholder');
+      if (ph) ph.classList.remove('hover');
+    });
     updateChipTray();
     checkAllPlaced();
   });
 
-  /* ── Diagnosis ── */
+  /* ── Diagnosis animation ── */
   function showDiagnosis() {
     if (!resultEl) return;
-    showResult = true;
-    diagnoseBtnEl.classList.remove('visible');
     const key = `${placement.large}-${placement.center}-${placement.small}`;
-    const d = DIAGNOSES[key];
+    const d   = DIAGNOSES[key];
     if (!d) return;
 
-    const largeBg = placement.large ? CHIPS[placement.large].color + '55' : '#F1EFE8';
-    const centerChip = placement.center ? `<div class="card-chip" style="background:${CHIPS[placement.center].color}">${CHIPS[placement.center].label}</div>` : '';
-    const badgeBg = placement.small ? CHIPS[placement.small].color : '#FFB3D1';
-    const badgeText = placement.small ? CHIPS[placement.small].label : '角';
+    /* ゲームエリアをフェードアウト */
+    gameEls.classList.add('hiding');
+
+    const largeBg    = placement.large   ? CHIPS[placement.large].color   + '55' : '#F1EFE8';
+    const centerChip = placement.center  ? `<div class="card-chip" style="background:${CHIPS[placement.center].color}">${CHIPS[placement.center].label}</div>` : '';
+    const badgeBg    = placement.small   ? CHIPS[placement.small].color   : '#FFB3D1';
+    const badgeText  = placement.small   ? CHIPS[placement.small].label   : '角';
 
     resultEl.innerHTML = `
       <div class="mini-poster">
@@ -1413,28 +1150,33 @@ function createPosterGame(container, mode, onComplete) {
       <p class="result-structure">${d.structure}</p>
       <p class="result-detail">${d.detail}</p>
       <div class="result-btns">
-        <button id="reset-btn">もう一度</button>
-        <button id="share-btn">シェア ↗</button>
+        <button id="reset-btn-${mode}">もう一度</button>
+        <button id="share-btn-${mode}">シェア ↗</button>
       </div>`;
-    resultEl.classList.add('visible');
 
-    resultEl.querySelector('#reset-btn').addEventListener('click', resetGame);
-    resultEl.querySelector('#share-btn').addEventListener('click', shareResult);
+    /* 少し遅れて結果エリアをフェードイン */
+    resultEl.classList.add('entering');
+    setTimeout(() => resultEl.classList.add('visible'), 50);
+
+    resultEl.querySelector(`#reset-btn-${mode}`).addEventListener('click', resetGame);
+    resultEl.querySelector(`#share-btn-${mode}`).addEventListener('click', shareResult);
+    showResult = true;
   }
 
   function resetGame() {
-    placement = { large: null, center: null, small: null };
-    allPlaced = false;
+    placement  = { large: null, center: null, small: null };
+    allPlaced  = false;
     showResult = false;
     ['large', 'center', 'small'].forEach(z => updateZoneDisplay(z, null));
     updateChipTray();
     if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
-    if (resultEl) resultEl.classList.remove('visible');
+    if (resultEl) { resultEl.classList.remove('visible', 'entering'); }
+    gameEls.classList.remove('hiding');
   }
 
   function shareResult() {
     const key = `${placement.large}-${placement.center}-${placement.small}`;
-    const d = DIAGNOSES[key];
+    const d   = DIAGNOSES[key];
     if (!d) return;
     const text = `私のポスタータイプは「${d.type}」！\n${d.hook}\n未来大 情報デザインコース 特設サイト`;
     if (navigator.share) {
@@ -1449,7 +1191,7 @@ function createPosterGame(container, mode, onComplete) {
    KEY VISUAL
 ══════════════════════════════ */
 function buildKeyVisual(placement) {
-  const kv = document.getElementById('section-kv');
+  const kv    = document.getElementById('section-kv');
   const large = placement ? placement.large : null;
   const small = placement ? placement.small : null;
 
@@ -1461,7 +1203,7 @@ function buildKeyVisual(placement) {
   } else {
     const makeBlocks = (colors, isLeft) => colors.concat(colors).map((c, i) => {
       const rot = isLeft ? (i % 2 === 0 ? 3 : -3) : (i % 2 === 0 ? -4 : 4);
-      const br = (!isLeft && i % 3 === 0) ? '50%' : '32px';
+      const br  = (!isLeft && i % 3 === 0) ? '50%' : '32px';
       return `<div class="kv-block" style="background:${c};transform:rotate(${rot}deg);border-radius:${br}"></div>`;
     }).join('');
     bgHTML = `
@@ -1472,9 +1214,9 @@ function buildKeyVisual(placement) {
       <div class="kv-overlay"></div>`;
   }
 
-  const badgeBg = small === 'fun' ? '#FFF3AD' : small === 'oc' ? 'white' : '#FF1E8F';
+  const badgeBg   = small === 'fun' ? '#FFF3AD' : small === 'oc' ? 'white' : '#FF1E8F';
   const badgeColor = small === 'oc' ? '#7A0026' : 'white';
-  const badgeText = small === 'fun' ? '楽しい！' : small === 'oc' ? '8.1 OC →' : '情報デザインコースってどんなとこ？';
+  const badgeText  = small === 'fun' ? '楽しい！' : small === 'oc' ? '8.1 OC →' : '情報デザインコースってどんなとこ？';
 
   kv.innerHTML = `
     ${bgHTML}
@@ -1491,69 +1233,65 @@ function buildKeyVisual(placement) {
 
 /* ══════════════════════════════
    LEARNING SECTION
+   ── 通常スクロールに変更 ──
 ══════════════════════════════ */
 function buildLearning() {
-  const nav  = document.getElementById('side-nav');
-  const track = document.getElementById('card-track');
-  const cardEls = [];
+  const nav   = document.getElementById('side-nav');
+  const flow  = document.getElementById('cards-flow');
+  const slots = [];
 
   ASSIGNMENTS.forEach((a, i) => {
-    const dot = document.createElement('button');
-    dot.className = 'side-dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => cardEls[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
-    nav.appendChild(dot);
+    /* Bar indicator */
+    const bar = document.createElement('button');
+    bar.className = 'side-bar' + (i === 0 ? ' active' : '');
+    bar.title     = a.title;
+    bar.addEventListener('click', () => slots[i].scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    nav.appendChild(bar);
 
+    /* Card */
     const slot = document.createElement('div');
     slot.className = 'assignment-slot';
     slot.innerHTML = `
-      <div class="assignment-card" style="transform:rotate(${i % 2 === 0 ? 1 : -1}deg)">
+      <div class="assignment-card">
         <div class="assignment-num">課題 ${a.num}</div>
         <div class="assignment-title">${a.title}</div>
         <div class="assignment-img" style="background:${a.color}"><span>制作物イメージ</span></div>
         <div class="assignment-desc">${a.desc}</div>
       </div>`;
-    track.appendChild(slot);
-    cardEls.push(slot);
+    flow.appendChild(slot);
+    slots.push(slot);
   });
 
-  // Intersection observer for side nav
-  const obs = new IntersectionObserver(entries => {
+  /* Main scroll observer — highlight active bar */
+  const bars = nav.querySelectorAll('.side-bar');
+  const obs  = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        const idx = cardEls.indexOf(e.target);
-        if (idx !== -1) {
-          nav.querySelectorAll('.side-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
-        }
+        const idx = slots.indexOf(e.target);
+        if (idx !== -1) bars.forEach((b, i) => b.classList.toggle('active', i === idx));
       }
     });
-  }, { threshold: 0.6, root: track });
-  cardEls.forEach(el => obs.observe(el));
+  }, { threshold: 0.4 });
+  slots.forEach(el => obs.observe(el));
 }
 
 /* ══════════════════════════════
    SCROLL FADE-IN
 ══════════════════════════════ */
 function initFadeIn() {
-  const observer = new IntersectionObserver(entries => {
+  const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        // Also trigger venn/cycle animations
-        const vennWrap = e.target.querySelector('.venn-wrap');
-        if (vennWrap) vennWrap.classList.add('visible');
-        const cycleWrap = e.target.querySelector('.cycle-svg-wrap');
-        if (cycleWrap) cycleWrap.classList.add('visible');
-      }
+      if (!e.isIntersecting) return;
+      e.target.classList.add('visible');
     });
   }, { threshold: 0.12 });
 
-  document.querySelectorAll('.fade-block').forEach(el => observer.observe(el));
+  document.querySelectorAll('.fade-block').forEach(el => obs.observe(el));
 
-  // Also observe venn-wrap and cycle-svg-wrap directly
-  const vennObs = new IntersectionObserver(entries => {
+  const obs2 = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.12 });
-  document.querySelectorAll('.venn-wrap, .cycle-svg-wrap').forEach(el => vennObs.observe(el));
+  document.querySelectorAll('.venn-wrap, .cycle-svg-wrap').forEach(el => obs2.observe(el));
 }
 
 /* ══════════════════════════════
@@ -1577,55 +1315,55 @@ function initNav() {
   });
 
   backdrop.addEventListener('click', closeMenu);
-
-  document.querySelectorAll('.nav-link').forEach(a => {
-    a.addEventListener('click', () => {
-      closeMenu();
-    });
-  });
+  document.querySelectorAll('.nav-link').forEach(a => a.addEventListener('click', closeMenu));
 }
 
 /* ══════════════════════════════
    SCREEN TRANSITION
+   ── 白フラッシュ演出 ──
 ══════════════════════════════ */
 function transitionToTop(placement) {
-  document.getElementById('screen-prologue').classList.remove('active');
-  const top = document.getElementById('screen-top');
-  top.classList.remove('screen');
-  top.classList.add('active');
-  window.scrollTo(0, 0);
-  buildKeyVisual(placement);
+  /* 白いフラッシュオーバーレイ */
+  const flash = document.createElement('div');
+  flash.style.cssText = 'position:fixed;inset:0;background:white;opacity:0;z-index:2000;pointer-events:none;transition:opacity 0.25s ease';
+  document.body.appendChild(flash);
+
+  requestAnimationFrame(() => {
+    flash.style.opacity = '1';
+    setTimeout(() => {
+      /* 画面切り替え */
+      document.getElementById('screen-prologue').classList.remove('active');
+      const top = document.getElementById('screen-top');
+      top.classList.remove('screen');
+      top.classList.add('active');
+      window.scrollTo(0, 0);
+      buildKeyVisual(placement);
+
+      /* フェードアウト */
+      flash.style.opacity = '0';
+      setTimeout(() => flash.remove(), 350);
+    }, 280);
+  });
 }
 
 /* ══════════════════════════════
    INIT
 ══════════════════════════════ */
 (function init() {
-  // Build prologue game
   createPosterGame(
     document.getElementById('prologue-game'),
     'prologue',
     placement => transitionToTop(placement)
   );
 
-  // Skip button
   document.getElementById('skip-btn').addEventListener('click', () => {
     transitionToTop({ large: null, center: null, small: null });
   });
 
-  // Build static sections
   buildLearning();
-
-  // Build full game (diagnosis section)
   createPosterGame(document.getElementById('full-game'), 'full', null);
-
-  // Navigation
   initNav();
-
-  // Scroll animations (run after top page becomes visible)
   initFadeIn();
-
-  // Default key visual (before prologue)
   buildKeyVisual(null);
 })();
 </script>
