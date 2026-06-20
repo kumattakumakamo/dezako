@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,9 +8,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif; }
-    body { background: #FFF2EF; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+    }
+
+    body {
+      background: #FFF2EF;
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     :root {
       --text: #7A0026;
@@ -25,20 +40,54 @@
 
     /* ── Animations ── */
     @keyframes scrollUp {
-      from { transform: translateY(0); }
-      to   { transform: translateY(-50%); }
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(-50%);
+      }
     }
+
     @keyframes scrollDown {
-      from { transform: translateY(-50%); }
-      to   { transform: translateY(0); }
+      from {
+        transform: translateY(-50%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
     }
+
     /* Transition flash */
-    @keyframes flashIn  { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes flashOut { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes flashIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes flashOut {
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+      }
+    }
 
     /* ── Screen management ── */
-    .screen { display: none; }
-    .screen.active { display: block; }
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
 
     /* ── Prologue ── */
     #screen-prologue {
@@ -47,7 +96,10 @@
       display: none;
       flex-direction: column;
     }
-    #screen-prologue.active { display: flex; }
+
+    #screen-prologue.active {
+      display: flex;
+    }
 
     .prologue-header {
       height: 44px;
@@ -58,13 +110,17 @@
       background: var(--bg);
       flex-shrink: 0;
     }
+
     .prologue-header span {
       font-weight: 700;
       font-size: 13px;
       color: var(--text);
     }
 
-    .prologue-main { flex: 1; padding: 32px 16px 96px; }
+    .prologue-main {
+      flex: 1;
+      padding: 32px 16px 96px;
+    }
 
     #skip-btn {
       position: fixed;
@@ -72,7 +128,7 @@
       right: 20px;
       padding: 8px 16px;
       border-radius: 9999px;
-      background: rgba(255,30,143,0.15);
+      background: rgba(255, 30, 143, 0.15);
       color: var(--text);
       font-size: 12px;
       font-weight: 500;
@@ -92,8 +148,15 @@
       margin-bottom: 20px;
     }
 
-    .game-elements { transition: opacity 0.35s, transform 0.35s; }
-    .game-elements.hiding { opacity: 0; transform: scale(0.9); pointer-events: none; }
+    .game-elements {
+      transition: opacity 0.35s, transform 0.35s;
+    }
+
+    .game-elements.hiding {
+      opacity: 0;
+      transform: scale(0.9);
+      pointer-events: none;
+    }
 
     .poster-frame-wrap {
       position: relative;
@@ -108,7 +171,7 @@
       background: white;
       border-radius: 12px;
       border: 3px solid var(--border);
-      box-shadow: 6px 6px 0 rgba(174,228,255,1);
+      box-shadow: 6px 6px 0 rgba(174, 228, 255, 1);
       overflow: hidden;
       transition: background-color 0.3s;
     }
@@ -130,13 +193,19 @@
       background: white;
       border: 2px solid var(--border);
       border-radius: 4px;
-      box-shadow: 2px 2px 0 rgba(174,228,255,0.7);
+      box-shadow: 2px 2px 0 rgba(174, 228, 255, 0.7);
     }
+
     .center-card-header {
       padding: 12px 12px 8px;
       border-bottom: 2px solid var(--border);
     }
-    .center-card-header .sub-label { font-size: 8px; color: var(--sub); }
+
+    .center-card-header .sub-label {
+      font-size: 8px;
+      color: var(--sub);
+    }
+
     .center-card-header .title {
       font-weight: 700;
       font-size: 13px;
@@ -152,7 +221,12 @@
       border-radius: 0 0 4px 4px;
       transition: background-color 0.3s, outline 0.15s;
     }
-    .zone-center.hover { background: rgba(255,30,143,0.04); outline: 2px dashed var(--border); }
+
+    .zone-center.hover {
+      background: rgba(255, 30, 143, 0.04);
+      outline: 2px dashed var(--border);
+    }
+
     .zone-center-chip {
       width: 100%;
       height: 100%;
@@ -165,16 +239,21 @@
       color: var(--text);
       border-radius: 0 0 4px 4px;
     }
+
     .zone-center-placeholder {
       width: 100%;
       min-height: 60px;
-      border: 2px dashed rgba(255,30,143,0.2);
+      border: 2px dashed rgba(255, 30, 143, 0.2);
       border-radius: 0 0 4px 4px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .zone-center-placeholder.hover { border-color: var(--border); background: rgba(255,30,143,0.04); }
+
+    .zone-center-placeholder.hover {
+      border-color: var(--border);
+      background: rgba(255, 30, 143, 0.04);
+    }
 
     .zone-small {
       position: absolute;
@@ -188,11 +267,25 @@
       align-items: center;
       justify-content: center;
       transition: background-color 0.3s, border 0.15s;
-      border: 2px dashed rgba(255,30,143,0.35);
+      border: 2px dashed rgba(255, 30, 143, 0.35);
     }
-    .zone-small.hover { border-color: var(--border); background: rgba(255,30,143,0.06); }
-    .zone-small.filled { border: none; }
-    .zone-small-placeholder { width: 32px; height: 2px; background: rgba(255,30,143,0.2); border-radius: 1px; }
+
+    .zone-small.hover {
+      border-color: var(--border);
+      background: rgba(255, 30, 143, 0.06);
+    }
+
+    .zone-small.filled {
+      border: none;
+    }
+
+    .zone-small-placeholder {
+      width: 32px;
+      height: 2px;
+      background: rgba(255, 30, 143, 0.2);
+      border-radius: 1px;
+    }
+
     .zone-small-chip {
       font-size: 10px;
       font-weight: 700;
@@ -216,7 +309,7 @@
       font-weight: 700;
       font-size: 13px;
       border: 3px solid var(--border);
-      box-shadow: 4px 4px 0 rgba(255,30,143,1);
+      box-shadow: 4px 4px 0 rgba(255, 30, 143, 1);
       touch-action: none;
       user-select: none;
       color: var(--text);
@@ -224,10 +317,26 @@
       transition: opacity 0.2s;
       -webkit-user-select: none;
     }
-    .chip.placed { opacity: 0.28; cursor: default; }
-    .chip[data-id="fun"]     { background: var(--yellow); transform: rotate(-2deg); }
-    .chip[data-id="concept"] { background: var(--pink);   transform: rotate(2deg); }
-    .chip[data-id="oc"]      { background: var(--blue);   transform: rotate(-1deg); }
+
+    .chip.placed {
+      opacity: 0.28;
+      cursor: default;
+    }
+
+    .chip[data-id="fun"] {
+      background: var(--yellow);
+      transform: rotate(-2deg);
+    }
+
+    .chip[data-id="concept"] {
+      background: var(--pink);
+      transform: rotate(2deg);
+    }
+
+    .chip[data-id="oc"] {
+      background: var(--blue);
+      transform: rotate(-1deg);
+    }
 
     /* ── Ghost chip ── */
     #ghost-chip {
@@ -239,12 +348,15 @@
       font-weight: 700;
       font-size: 13px;
       border: 3px solid var(--border);
-      box-shadow: 8px 8px 0 rgba(255,30,143,1);
+      box-shadow: 8px 8px 0 rgba(255, 30, 143, 1);
       color: var(--text);
       transform: scale(1.1) rotate(-3deg);
       display: none;
     }
-    #ghost-chip.active { display: block; }
+
+    #ghost-chip.active {
+      display: block;
+    }
 
 
     /* ── Diagnose button ── */
@@ -258,17 +370,22 @@
       background: var(--orange);
       color: white;
       border: 3px solid var(--border);
-      box-shadow: 4px 4px 0 rgba(255,30,143,1);
+      box-shadow: 4px 4px 0 rgba(255, 30, 143, 1);
       cursor: pointer;
       font-family: inherit;
       display: none;
     }
-    .diagnose-btn.visible { display: block; }
+
+    .diagnose-btn.visible {
+      display: block;
+    }
 
     /* ── Diagnosis result ── */
     .diagnosis-result {
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       background: #FFF0F7;
       border: 2px solid var(--border);
       border-radius: 12px;
@@ -278,19 +395,32 @@
       pointer-events: none;
       display: none;
     }
-    .diagnosis-result.entering { display: block; }
-    .diagnosis-result.visible  { opacity: 1; pointer-events: auto; }
+
+    .diagnosis-result.entering {
+      display: block;
+    }
+
+    .diagnosis-result.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
     .mini-poster {
-      width: 110px; height: 149px;
+      width: 110px;
+      height: 149px;
       border: 2px solid var(--border);
-      box-shadow: 3px 3px 0 rgba(174,228,255,0.7);
+      box-shadow: 3px 3px 0 rgba(174, 228, 255, 0.7);
       border-radius: 4px;
       overflow: hidden;
       margin: 0 auto 16px;
       position: relative;
     }
-    .mini-poster-bg  { position: absolute; inset: 0; }
+
+    .mini-poster-bg {
+      position: absolute;
+      inset: 0;
+    }
+
     .mini-poster-card {
       position: absolute;
       inset: 8px 8px 32px;
@@ -299,292 +429,611 @@
       border-radius: 2px;
       padding: 4px;
     }
-    .mini-poster-card .card-title { font-size: 6px; font-weight: 700; color: var(--text); line-height: 1.4; }
-    .mini-poster-card .card-chip  { font-size: 5px; border-radius: 2px; padding: 1px 3px; color: var(--text); margin-top: 2px; display: inline-block; }
+
+    .mini-poster-card .card-title {
+      font-size: 6px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .mini-poster-card .card-chip {
+      font-size: 5px;
+      border-radius: 2px;
+      padding: 1px 3px;
+      color: var(--text);
+      margin-top: 2px;
+      display: inline-block;
+    }
+
     .mini-poster-badge {
       position: absolute;
-      bottom: 6px; right: 6px;
+      bottom: 6px;
+      right: 6px;
       border-radius: 9999px;
       padding: 2px 4px;
-      font-size: 5px; font-weight: 700;
+      font-size: 5px;
+      font-weight: 700;
       color: var(--text);
       min-height: 12px;
-      display: flex; align-items: center;
+      display: flex;
+      align-items: center;
     }
 
     .result-type-badge {
       display: inline-block;
       border: 2px solid var(--border);
-      font-weight: 700; font-size: 11px;
-      padding: 2px 8px; border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
       color: var(--text);
       transform: rotate(-1.5deg);
       margin-bottom: 12px;
     }
-    .result-hook      { font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 8px; }
-    .result-structure { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
-    .result-detail    { font-size: 12px; color: var(--sub); opacity: 0.8; }
-    .result-btns      { display: flex; gap: 8px; margin-top: 16px; }
+
+    .result-hook {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .result-structure {
+      font-size: 12px;
+      color: var(--sub);
+      margin-bottom: 4px;
+    }
+
+    .result-detail {
+      font-size: 12px;
+      color: var(--sub);
+      opacity: 0.8;
+    }
+
+    .result-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
     .result-btns button {
-      flex: 1; padding: 8px;
+      flex: 1;
+      padding: 8px;
       border: 2px solid var(--border);
-      border-radius: 4px; font-size: 12px; font-weight: 500;
-      color: var(--text); background: transparent;
-      cursor: pointer; font-family: inherit;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      background: transparent;
+      cursor: pointer;
+      font-family: inherit;
     }
 
     /* ════════════════════════════
        TOP PAGE
     ════════════════════════════ */
-    #screen-top { background: var(--bg); max-width: 390px; margin: 0 auto; }
+    #screen-top {
+      background: var(--bg);
+      max-width: 390px;
+      margin: 0 auto;
+    }
 
     /* ── Top header ── */
     #top-header {
       position: fixed;
-      top: 0; left: 50%;
+      top: 0;
+      left: 50%;
       transform: translateX(-50%);
-      width: 100%; max-width: 390px;
+      width: 100%;
+      max-width: 390px;
       height: 44px;
       background: var(--bg);
       border-bottom: 2px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 0 16px;
       z-index: 50;
     }
-    #top-header .logo { font-weight: 700; font-size: 13px; color: var(--text); }
+
+    #top-header .logo {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+    }
 
     #menu-btn {
-      width: 32px; height: 32px;
-      background: none; border: none; cursor: pointer;
-      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
       padding: 4px;
     }
+
     #menu-btn span {
-      display: block; width: 20px; height: 2px;
-      background: var(--text); border-radius: 9999px;
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 9999px;
       transition: transform 0.2s, opacity 0.2s;
     }
-    #menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    #menu-btn.open span:nth-child(2) { opacity: 0; }
-    #menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    #menu-btn.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    #menu-btn.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    #menu-btn.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
 
     /* ── Drawer ── */
     #drawer-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(160, 90, 120, 0.30); /* 彩度を下げたピンク */
+      position: fixed;
+      inset: 0;
+      background: rgba(160, 90, 120, 0.30);
+      /* 彩度を下げたピンク */
       z-index: 40;
-      opacity: 0; pointer-events: none;
+      opacity: 0;
+      pointer-events: none;
       transition: opacity 0.25s;
     }
-    #drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    #drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
     #drawer-panel {
-      position: fixed; right: 0; top: 0; bottom: 0;
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
       width: 220px;
       background: var(--bg);
       border-left: 2px solid var(--border);
       z-index: 41;
       padding: 56px 24px 32px;
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
       transform: translateX(100%);
-      transition: transform 0.25s cubic-bezier(0.25,0.1,0.25,1);
+      transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
-    #drawer-panel.open { transform: translateX(0); }
-    #drawer-panel a {
-      display: block; padding: 16px 0;
-      font-weight: 700; font-size: 14px;
-      color: var(--text); text-decoration: none;
-      border-bottom: 1px solid rgba(255,30,143,0.15);
-    }
-    #drawer-panel a:last-child { border-bottom: none; }
 
-    #top-body { padding-top: 44px; }
+    #drawer-panel.open {
+      transform: translateX(0);
+    }
+
+    #drawer-panel a {
+      display: block;
+      padding: 16px 0;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 30, 143, 0.15);
+    }
+
+    #drawer-panel a:last-child {
+      border-bottom: none;
+    }
+
+    #top-body {
+      padding-top: 44px;
+    }
 
     /* ── Key Visual (B1) ── */
-    #section-kv { position: relative; height: 100svh; min-height: 600px; overflow: hidden; }
+    #section-kv {
+      position: relative;
+      height: 100svh;
+      min-height: 600px;
+      overflow: hidden;
+    }
 
-    .kv-grid { position: absolute; inset: 0; display: flex; gap: 8px; padding: 0 8px; }
-    .kv-col  { flex: 1; overflow: hidden; padding: 0 8px; }
-    .kv-col.left  .kv-col-inner { animation: scrollUp   18s linear infinite; }
-    .kv-col.right .kv-col-inner { animation: scrollDown 18s linear infinite; }
+    .kv-grid {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      gap: 8px;
+      padding: 0 8px;
+    }
+
+    .kv-col {
+      flex: 1;
+      overflow: hidden;
+      padding: 0 8px;
+    }
+
+    .kv-col.left .kv-col-inner {
+      animation: scrollUp 18s linear infinite;
+    }
+
+    .kv-col.right .kv-col-inner {
+      animation: scrollDown 18s linear infinite;
+    }
+
     .kv-block {
-      height: 96px; border-radius: 32px;
+      height: 96px;
+      border-radius: 32px;
       border: 3px solid var(--border);
-      box-shadow: 4px 4px 0 rgba(174,228,255,1);
+      box-shadow: 4px 4px 0 rgba(174, 228, 255, 1);
       margin-bottom: 16px;
     }
-    .kv-overlay { position: absolute; inset: 0; background: rgba(255,242,239,0.7); }
+
+    .kv-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 242, 239, 0.7);
+    }
 
     .kv-bg-concept {
-      position: absolute; inset: 0;
+      position: absolute;
+      inset: 0;
       background: #C5003B;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+
     .kv-bg-concept .ghost-text {
-      font-size: 72px; font-weight: 700;
-      color: rgba(255,255,255,0.06);
-      line-height: 1.1; text-align: center; user-select: none;
+      font-size: 72px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.06);
+      line-height: 1.1;
+      text-align: center;
+      user-select: none;
     }
+
     .kv-bg-oc {
-      position: absolute; inset: 0;
+      position: absolute;
+      inset: 0;
       background: var(--sub);
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+
     .kv-oc-poster {
-      width: 280px; height: 400px;
+      width: 280px;
+      height: 400px;
       background: var(--orange);
       border: 3px solid var(--border);
-      box-shadow: 6px 6px 0 rgba(174,228,255,1);
+      box-shadow: 6px 6px 0 rgba(174, 228, 255, 1);
       border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; font-weight: 700; color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
     }
 
     .kv-center {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       pointer-events: none;
     }
+
     .kv-card {
       background: white;
       border: 2px solid var(--border);
-      box-shadow: 6px 6px 0 rgba(174,228,255,0.9);
+      box-shadow: 6px 6px 0 rgba(174, 228, 255, 0.9);
       border-radius: 4px;
       width: 240px;
       padding: 16px 16px 20px;
       transform: rotate(-1deg);
     }
-    .kv-card .futu-label { font-size: 10px; color: #888; margin-bottom: 4px; }
-    .kv-card .kv-title   { font-weight: 700; font-size: 22px; color: var(--text); line-height: 1.3; }
+
+    .kv-card .futu-label {
+      font-size: 10px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .kv-card .kv-title {
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
     .kv-card .kv-badge {
       display: inline-block;
-      margin-top: 12px; padding: 4px 10px;
-      border-radius: 4px; /* バッジらしく見えないよう角丸を減らす */
-      font-weight: 700; font-size: 10px;
-      background: var(--orange); color: white;
+      margin-top: 12px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      /* バッジらしく見えないよう角丸を減らす */
+      font-weight: 700;
+      font-size: 10px;
+      background: var(--orange);
+      color: white;
       white-space: nowrap;
-      cursor: default; pointer-events: none; /* 押せそうに見えない */
+      cursor: default;
+      pointer-events: none;
+      /* 押せそうに見えない */
     }
 
     .kv-corner-badge {
-      position: absolute; bottom: 24px; right: 16px;
-      border-radius: 9999px; padding: 8px 16px;
-      font-weight: 700; font-size: 12px;
+      position: absolute;
+      bottom: 24px;
+      right: 16px;
+      border-radius: 9999px;
+      padding: 8px 16px;
+      font-weight: 700;
+      font-size: 12px;
       border: 2px solid var(--border);
-      box-shadow: 3px 3px 0 rgba(174,228,255,1);
-      cursor: default; pointer-events: none; /* 押せそうに見えない */
+      box-shadow: 3px 3px 0 rgba(174, 228, 255, 1);
+      cursor: default;
+      pointer-events: none;
+      /* 押せそうに見えない */
     }
 
     .kv-scroll-hint {
-      position: absolute; bottom: 24px; left: 50%;
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
       transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
     }
-    .kv-scroll-hint span { font-size: 10px; color: var(--sub); }
+
+    .kv-scroll-hint span {
+      font-size: 10px;
+      color: var(--sub);
+    }
 
     /* ── Welcome (B2) ── */
-    #section-welcome { padding: 48px 20px; background: var(--bg); }
+    #section-welcome {
+      padding: 48px 20px;
+      background: var(--bg);
+    }
+
     #section-welcome h2 {
-      font-weight: 700; font-size: 20px;
-      color: var(--text); line-height: 1.5;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--text);
+      line-height: 1.5;
       margin-bottom: 32px;
     }
 
     .fade-block {
-      opacity: 0; transform: translateY(20px);
+      opacity: 0;
+      transform: translateY(20px);
       transition: opacity 0.6s, transform 0.6s;
     }
-    .fade-block.visible { opacity: 1; transform: translateY(0); }
+
+    .fade-block.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     /* Venn & Cycle – stack vertically on small screens */
-    .venn-row, .cycle-row {
-      display: flex; gap: 16px; align-items: center; margin-bottom: 40px;
+    .venn-row,
+    .cycle-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 40px;
     }
+
     @media (max-width: 400px) {
-      .venn-row, .cycle-row {
-        flex-direction: column; align-items: flex-start; gap: 12px;
+
+      .venn-row,
+      .cycle-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
       }
     }
 
-    .venn-wrap { position: relative; width: 150px; height: 110px; flex-shrink: 0; }
+    .venn-wrap {
+      position: relative;
+      width: 150px;
+      height: 110px;
+      flex-shrink: 0;
+    }
+
     .venn-circle {
       position: absolute;
-      width: 86px; height: 86px;
+      width: 86px;
+      height: 86px;
       border-radius: 50%;
       border: 2px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 14px; color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
       top: 10px;
       opacity: 0;
-      transition: left 0.8s cubic-bezier(0.25,0.1,0.25,1), opacity 0.8s;
+      transition: left 0.8s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.8s;
     }
-    .venn-circle.left-c  { background: rgba(174,228,255,0.8); left: 22px; }
-    .venn-circle.right-c { background: rgba(255,243,173,0.8); left: 44px; transition-delay: 0.1s; }
-    .venn-wrap.visible .venn-circle.left-c  { left: 0; opacity: 1; }
-    .venn-wrap.visible .venn-circle.right-c { left: 64px; opacity: 1; }
-    .venn-overlap {
-      position: absolute; left: 42px; top: 36px; width: 66px;
-      font-size: 9px; font-weight: 700; color: var(--text); text-align: center;
-      opacity: 0; transition: opacity 0.4s 0.6s;
-    }
-    .venn-wrap.visible .venn-overlap { opacity: 1; }
-    .venn-text { flex: 1; font-size: 13px; color: var(--text); line-height: 1.7; }
 
-    .cycle-text { flex: 1; font-size: 13px; color: var(--text); line-height: 1.7; }
-    .cycle-svg-wrap { flex-shrink: 0; }
+    .venn-circle.left-c {
+      background: rgba(174, 228, 255, 0.8);
+      left: 22px;
+    }
+
+    .venn-circle.right-c {
+      background: rgba(255, 243, 173, 0.8);
+      left: 44px;
+      transition-delay: 0.1s;
+    }
+
+    .venn-wrap.visible .venn-circle.left-c {
+      left: 0;
+      opacity: 1;
+    }
+
+    .venn-wrap.visible .venn-circle.right-c {
+      left: 64px;
+      opacity: 1;
+    }
+
+    .venn-overlap {
+      position: absolute;
+      left: 42px;
+      top: 36px;
+      width: 66px;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.4s 0.6s;
+    }
+
+    .venn-wrap.visible .venn-overlap {
+      opacity: 1;
+    }
+
+    .venn-text {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .cycle-text {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .cycle-svg-wrap {
+      flex-shrink: 0;
+    }
+
     .cycle-svg-wrap svg circle,
     .cycle-svg-wrap svg text,
     .cycle-svg-wrap svg path,
-    .cycle-svg-wrap svg polygon { opacity: 0; transition: opacity 0.5s; }
+    .cycle-svg-wrap svg polygon {
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
     .cycle-svg-wrap.visible svg circle,
     .cycle-svg-wrap.visible svg text,
     .cycle-svg-wrap.visible svg path,
-    .cycle-svg-wrap.visible svg polygon { opacity: 1; }
+    .cycle-svg-wrap.visible svg polygon {
+      opacity: 1;
+    }
 
     .facility-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 8px; margin-bottom: 32px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 32px;
     }
+
     .facility-img {
-      height: 80px; border-radius: 16px;
+      height: 80px;
+      border-radius: 16px;
       border: 3px solid var(--border);
-      box-shadow: 3px 3px 0 rgba(174,228,255,1);
+      box-shadow: 3px 3px 0 rgba(174, 228, 255, 1);
       margin-bottom: 6px;
     }
-    .facility-name { font-weight: 700; font-size: 11px; color: var(--text); }
-    .facility-desc { font-size: 9px; color: var(--sub); line-height: 1.4; }
+
+    .facility-name {
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    .facility-desc {
+      font-size: 9px;
+      color: var(--sub);
+      line-height: 1.4;
+    }
 
     /* Tools — 5 items, single row */
     .tools-row {
-      display: flex; gap: 6px; margin-bottom: 32px;
+      display: flex;
+      gap: 6px;
+      margin-bottom: 32px;
       overflow-x: auto;
     }
+
     .tool-tile {
-      flex: 1; min-width: 58px;
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      flex: 1;
+      min-width: 58px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
       padding: 10px 4px;
       background: var(--page-bg);
       border: 2px solid var(--border);
-      box-shadow: 2px 2px 0 rgba(174,228,255,1);
+      box-shadow: 2px 2px 0 rgba(174, 228, 255, 1);
       border-radius: 12px;
     }
-    .tool-icon {
-      width: 30px; height: 30px;
-      background: white; border: 1px solid var(--border); border-radius: 4px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 11px; color: var(--text);
-    }
-    .tool-name { font-size: 9px; color: var(--sub); text-align: center; }
 
-    .oc-note { font-size: 12px; color: var(--sub); line-height: 1.6; }
+    .tool-icon {
+      width: 30px;
+      height: 30px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    .tool-name {
+      font-size: 9px;
+      color: var(--sub);
+      text-align: center;
+    }
+
+    .oc-note {
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.6;
+    }
 
     /* ── Learning (B3) ── */
-    #section-learning { background: var(--page-bg); }
-    .learning-head { padding: 40px 20px 16px; }
-    .learning-head h2 { font-weight: 700; font-size: 18px; color: var(--text); line-height: 1.5; }
+    #section-learning {
+      background: var(--page-bg);
+    }
+
+    .learning-head {
+      padding: 40px 20px 16px;
+    }
+
+    .learning-head h2 {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+      line-height: 1.5;
+    }
 
     /* Side nav: bar/line style, sticky */
-    .learning-body { display: flex; gap: 0; }
+    .learning-body {
+      display: flex;
+      gap: 0;
+    }
+
     .side-nav {
       position: sticky;
       top: 60px;
@@ -596,13 +1045,18 @@
       gap: 14px;
       flex-shrink: 0;
     }
+
     .side-bar {
-      width: 3px; height: 20px;
-      background: rgba(255,30,143,0.2);
+      width: 3px;
+      height: 20px;
+      background: rgba(255, 30, 143, 0.2);
       border-radius: 2px;
-      border: none; cursor: pointer; padding: 0;
+      border: none;
+      cursor: pointer;
+      padding: 0;
       transition: height 0.2s, background 0.2s;
     }
+
     .side-bar.active {
       height: 28px;
       background: var(--text);
@@ -613,554 +1067,683 @@
       flex: 1;
       padding: 8px 16px 16px 4px;
       /* ↓ scroll-snap を使う場合はここに追加 (例: overflow-y: scroll; scroll-snap-type: y mandatory;) */
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
     }
+
     .assignment-slot {
       margin-bottom: 24px;
       /* ↓ scroll-snap を使う場合はここに追加 (例: scroll-snap-align: start;) */
+      scroll-snap-align: start;
     }
 
     .assignment-card {
-      width: 100%; background: white;
+      width: 100%;
+      background: white;
       border: 3px solid var(--border);
-      box-shadow: 6px 6px 0 rgba(174,228,255,1);
-      border-radius: 16px; overflow: hidden;
+      box-shadow: 6px 6px 0 rgba(174, 228, 255, 1);
+      border-radius: 16px;
+      overflow: hidden;
     }
-    .assignment-card:nth-child(odd)  { transform: rotate(1deg); }
-    .assignment-card:nth-child(even) { transform: rotate(-1deg); }
 
-    .assignment-num   { padding: 20px 16px 4px; font-size: 10px; font-weight: 700; color: var(--sub); }
-    .assignment-title { padding: 0 16px 12px; font-weight: 700; font-size: 22px; color: var(--text); line-height: 1.3; }
-    .assignment-img {
-      margin: 0 16px 16px; height: 160px; border-radius: 4px;
-      border: 1px solid rgba(255,30,143,0.2);
-      display: flex; align-items: center; justify-content: center;
+    .assignment-card:nth-child(odd) {
+      transform: rotate(1deg);
     }
-    .assignment-img span { font-size: 11px; color: var(--text); opacity: 0.5; }
-    .assignment-desc { padding: 0 16px 20px; font-size: 13px; color: var(--text); line-height: 1.75; }
+
+    .assignment-card:nth-child(even) {
+      transform: rotate(-1deg);
+    }
+
+    .assignment-num {
+      padding: 20px 16px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--sub);
+    }
+
+    .assignment-title {
+      padding: 0 16px 12px;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .assignment-img {
+      margin: 0 16px 16px;
+      height: 160px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 30, 143, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .assignment-img span {
+      font-size: 11px;
+      color: var(--text);
+      opacity: 0.5;
+    }
+
+    .assignment-desc {
+      padding: 0 16px 20px;
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.75;
+    }
 
     /* ── Diagnosis section (B4) ── */
-    #section-diagnosis { padding: 40px 20px; background: var(--bg); }
+    #section-diagnosis {
+      padding: 40px 20px;
+      background: var(--bg);
+    }
+
     #section-diagnosis h2 {
-      font-weight: 700; font-size: 18px; color: var(--text);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
       margin-bottom: 24px;
       padding-top: 24px;
       border-top: 2px solid var(--border);
     }
 
     /* ── CTA (B5) ── */
-    #section-cta { padding: 48px 20px; background: var(--page-bg); }
-    .cta-eyebrow { font-size: 10px; color: var(--sub); margin-bottom: 6px; }
-    #section-cta h2 { font-weight: 700; font-size: 28px; color: var(--text); line-height: 1.2; margin-bottom: 12px; }
-    .cta-info { font-size: 13px; color: var(--sub); line-height: 1.8; margin-bottom: 24px; }
+    #section-cta {
+      padding: 48px 20px;
+      background: var(--page-bg);
+    }
+
+    .cta-eyebrow {
+      font-size: 10px;
+      color: var(--sub);
+      margin-bottom: 6px;
+    }
+
+    #section-cta h2 {
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .cta-info {
+      font-size: 13px;
+      color: var(--sub);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
     .oc-poster-placeholder {
-      width: 220px; height: 310px;
+      width: 220px;
+      height: 310px;
       background: var(--sub);
       border: 3px solid var(--border);
-      box-shadow: 6px 6px 0 rgba(174,228,255,1);
+      box-shadow: 6px 6px 0 rgba(174, 228, 255, 1);
       border-radius: 16px;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 12px; font-size: 16px; font-weight: 700; color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
       transform: rotate(2deg);
       margin: 0 auto 24px;
     }
-    .oc-poster-placeholder .emoji { font-size: 32px; }
-    .oc-poster-placeholder .small { font-size: 11px; opacity: 0.8; }
-    .cta-btn {
-      display: block; width: 100%; padding: 16px;
-      text-align: center; font-weight: 700; font-size: 16px;
-      border-radius: 9999px; background: var(--orange); color: white;
-      border: 3px solid var(--border);
-      box-shadow: 4px 4px 0 rgba(255,30,143,1);
-      text-decoration: none; transition: transform 0.1s;
+
+    .oc-poster-placeholder .emoji {
+      font-size: 32px;
     }
-    .cta-btn:active { transform: scale(0.97); }
+
+    .oc-poster-placeholder .small {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .cta-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 16px;
+      border-radius: 9999px;
+      background: var(--orange);
+      color: white;
+      border: 3px solid var(--border);
+      box-shadow: 4px 4px 0 rgba(255, 30, 143, 1);
+      text-decoration: none;
+      transition: transform 0.1s;
+    }
+
+    .cta-btn:active {
+      transform: scale(0.97);
+    }
+
     .site-footer {
-      margin-top: 40px; padding-top: 24px;
-      border-top: 1px solid rgba(255,30,143,0.2);
-      font-size: 10px; color: var(--sub); line-height: 1.7;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 30, 143, 0.2);
+      font-size: 10px;
+      color: var(--sub);
+      line-height: 1.7;
     }
   </style>
 </head>
+
 <body>
 
-<!-- ════════════════════════════
+  <!-- ════════════════════════════
      PROLOGUE
 ════════════════════════════ -->
-<div id="screen-prologue" class="active">
-  <div class="prologue-header">
-    <span>イントロダクション：ポスターを作ってみよう！</span>
+  <div id="screen-prologue" class="active">
+    <div class="prologue-header">
+      <span>イントロダクション：ポスターを作ってみよう！</span>
+    </div>
+    <div class="prologue-main">
+      <div id="prologue-game"></div>
+    </div>
+    <button id="skip-btn">スキップ</button>
   </div>
-  <div class="prologue-main">
-    <div id="prologue-game"></div>
-  </div>
-  <button id="skip-btn">スキップ</button>
-</div>
 
-<!-- ════════════════════════════
+  <!-- ════════════════════════════
      TOP PAGE
 ════════════════════════════ -->
-<div id="screen-top" class="screen">
-  <header id="top-header">
-    <span class="logo">未来大 情報デザインコース</span>
-    <button id="menu-btn" aria-label="メニュー">
-      <span></span><span></span><span></span>
-    </button>
-  </header>
+  <div id="screen-top" class="screen">
+    <header id="top-header">
+      <span class="logo">未来大 情報デザインコース</span>
+      <button id="menu-btn" aria-label="メニュー">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
 
-  <div id="drawer-backdrop"></div>
-  <nav id="drawer-panel">
-    <a href="#section-welcome" class="nav-link">コースについて</a>
-    <a href="#section-learning" class="nav-link">1年間の学び</a>
-    <a href="#section-diagnosis" class="nav-link">タイプ診断</a>
-    <a href="#section-cta" class="nav-link">オープンキャンパス</a>
-  </nav>
+    <div id="drawer-backdrop"></div>
+    <nav id="drawer-panel">
+      <a href="#section-welcome" class="nav-link">コースについて</a>
+      <a href="#section-learning" class="nav-link">1年間の学び</a>
+      <a href="#section-diagnosis" class="nav-link">タイプ診断</a>
+      <a href="#section-cta" class="nav-link">オープンキャンパス</a>
+    </nav>
 
-  <div id="top-body">
-    <!-- B1: Key Visual -->
-    <section id="section-kv"></section>
+    <div id="top-body">
+      <!-- B1: Key Visual -->
+      <section id="section-kv"></section>
 
-    <!-- B2: Welcome -->
-    <section id="section-welcome">
-      <h2 class="fade-block">未来大の情報デザインコースって<br>どんなとこ？</h2>
+      <!-- B2: Welcome -->
+      <section id="section-welcome">
+        <h2 class="fade-block">未来大の情報デザインコースって<br>どんなとこ？</h2>
 
-      <div class="fade-block venn-row" style="transition-delay:0.1s">
-        <div class="venn-wrap">
-          <div class="venn-circle left-c">情報</div>
-          <div class="venn-circle right-c">デザイン</div>
-          <div class="venn-overlap">情報<br>デザイン</div>
-        </div>
-        <p class="venn-text">「情報」と「デザイン」が重なる場所を探求するコース。人・社会・テクノロジーをつなぐ視点で、伝わる表現を学びます。</p>
-      </div>
-
-      <div class="fade-block cycle-row" style="transition-delay:0.1s">
-        <p class="cycle-text">リサーチ・アイデア・制作・発表を繰り返す制作サイクルで、実践的なデザイン思考を身につけます。</p>
-        <div class="cycle-svg-wrap">
-          <svg width="150" height="150" viewBox="0 0 150 150">
-            <circle cx="75" cy="75" r="56" fill="none" stroke="#FF1E8F" stroke-width="1.5" stroke-dasharray="4 3" style="transition-delay:0.2s"/>
-            <path d="M 131,75 A 56,56 0 1 1 130,66" fill="none" stroke="#FF1E8F" stroke-width="2" stroke-linecap="round" style="transition-delay:0.4s"/>
-            <polygon points="130,66 123,71 132,73" fill="#FF1E8F" style="transition-delay:0.4s"/>
-            <!-- Steps at r=56 -->
-            <circle cx="131" cy="75" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.37s"/>
-            <text x="131" y="76" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.44s">リサーチ</text>
-            <circle cx="103" cy="19" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.44s"/>
-            <text x="103" y="20" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.51s">アイデア</text>
-            <circle cx="47"  cy="19" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.51s"/>
-            <text x="47"  y="20" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.58s">制作</text>
-            <circle cx="19"  cy="75" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.58s"/>
-            <text x="19"  y="76" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.65s">発表</text>
-            <circle cx="47"  cy="131" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.65s"/>
-            <text x="47"  y="132" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.72s">改善</text>
-            <circle cx="103" cy="131" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5" style="transition-delay:0.72s"/>
-            <text x="103" y="132" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700" fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.79s">提案</text>
-            <text x="75" y="74" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700" fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">制作</text>
-            <text x="75" y="86" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700" fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">サイクル</text>
-          </svg>
-        </div>
-      </div>
-
-      <div class="fade-block" style="transition-delay:0.05s">
-        <div class="facility-grid">
-          <div>
-            <div class="facility-img" style="background:#FFF3AD"></div>
-            <div class="facility-name">工房</div>
-            <div class="facility-desc">レーザーカッターや3Dプリンタを備えた制作空間</div>
+        <div class="fade-block venn-row" style="transition-delay:0.1s">
+          <div class="venn-wrap">
+            <div class="venn-circle left-c">情報</div>
+            <div class="venn-circle right-c">デザイン</div>
+            <div class="venn-overlap">情報<br>デザイン</div>
           </div>
-          <div>
-            <div class="facility-img" style="background:#FFB3D1;transform:rotate(-2deg)"></div>
-            <div class="facility-name">アトリエ</div>
-            <div class="facility-desc">大型スクリーンと可動家具で柔軟なワークスペース</div>
-          </div>
-          <div>
-            <div class="facility-img" style="background:#AEE4FF;transform:rotate(2deg)"></div>
-            <div class="facility-name">ミュージアム</div>
-            <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
+          <p class="venn-text">「情報」と「デザイン」が重なる場所を探求するコース。人・社会・テクノロジーをつなぐ視点で、伝わる表現を学びます。</p>
+        </div>
+
+        <div class="fade-block cycle-row" style="transition-delay:0.1s">
+          <p class="cycle-text">リサーチ・アイデア・制作・発表を繰り返す制作サイクルで、実践的なデザイン思考を身につけます。</p>
+          <div class="cycle-svg-wrap">
+            <svg width="150" height="150" viewBox="0 0 150 150">
+              <circle cx="75" cy="75" r="56" fill="none" stroke="#FF1E8F" stroke-width="1.5" stroke-dasharray="4 3"
+                style="transition-delay:0.2s" />
+              <path d="M 131,75 A 56,56 0 1 1 130,66" fill="none" stroke="#FF1E8F" stroke-width="2"
+                stroke-linecap="round" style="transition-delay:0.4s" />
+              <polygon points="130,66 123,71 132,73" fill="#FF1E8F" style="transition-delay:0.4s" />
+              <!-- Steps at r=56 -->
+              <circle cx="131" cy="75" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
+                style="transition-delay:0.37s" />
+              <text x="131" y="76" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
+                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.44s">リサーチ</text>
+              <circle cx="103" cy="19" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
+                style="transition-delay:0.44s" />
+              <text x="103" y="20" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
+                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.51s">アイデア</text>
+              <circle cx="47" cy="19" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
+                style="transition-delay:0.51s" />
+              <text x="47" y="20" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
+                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.58s">制作</text>
+              <circle cx="19" cy="75" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
+                style="transition-delay:0.58s" />
+              <text x="19" y="76" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
+                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.65s">発表</text>
+              <circle cx="47" cy="131" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
+                style="transition-delay:0.65s" />
+              <text x="47" y="132" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
+                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.72s">改善</text>
+              <circle cx="103" cy="131" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
+                style="transition-delay:0.72s" />
+              <text x="103" y="132" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
+                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.79s">提案</text>
+              <text x="75" y="74" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700"
+                fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">制作</text>
+              <text x="75" y="86" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700"
+                fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">サイクル</text>
+            </svg>
           </div>
         </div>
-      </div>
 
-      <div class="fade-block" style="transition-delay:0.1s">
-        <div class="tools-row">
-          <div class="tool-tile"><div class="tool-icon">✦</div><div class="tool-name">Figma</div></div>
-          <div class="tool-tile"><div class="tool-icon">Ai</div><div class="tool-name">Illustrator</div></div>
-          <div class="tool-tile"><div class="tool-icon">Ps</div><div class="tool-name">Photoshop</div></div>
-          <div class="tool-tile"><div class="tool-icon">Pr</div><div class="tool-name">Processing</div></div>
-          <div class="tool-tile"><div class="tool-icon">⌁</div><div class="tool-name">Arduino</div></div>
+        <div class="fade-block" style="transition-delay:0.05s">
+          <div class="facility-grid">
+            <div>
+              <div class="facility-img" style="background:#FFF3AD"></div>
+              <div class="facility-name">工房</div>
+              <div class="facility-desc">レーザーカッターや3Dプリンタを備えた制作空間</div>
+            </div>
+            <div>
+              <div class="facility-img" style="background:#FFB3D1;transform:rotate(-2deg)"></div>
+              <div class="facility-name">アトリエ</div>
+              <div class="facility-desc">大型スクリーンと可動家具で柔軟なワークスペース</div>
+            </div>
+            <div>
+              <div class="facility-img" style="background:#AEE4FF;transform:rotate(2deg)"></div>
+              <div class="facility-name">ミュージアム</div>
+              <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="fade-block" style="transition-delay:0.05s">
-        <p class="oc-note">8/3オープンキャンパスでも、情報デザインコースブースにて詳しくお話します</p>
-      </div>
-    </section>
+        <div class="fade-block" style="transition-delay:0.1s">
+          <div class="tools-row">
+            <div class="tool-tile">
+              <div class="tool-icon">✦</div>
+              <div class="tool-name">Figma</div>
+            </div>
+            <div class="tool-tile">
+              <div class="tool-icon">Ai</div>
+              <div class="tool-name">Illustrator</div>
+            </div>
+            <div class="tool-tile">
+              <div class="tool-icon">Ps</div>
+              <div class="tool-name">Photoshop</div>
+            </div>
+            <div class="tool-tile">
+              <div class="tool-icon">Pr</div>
+              <div class="tool-name">Processing</div>
+            </div>
+            <div class="tool-tile">
+              <div class="tool-icon">⌁</div>
+              <div class="tool-name">Arduino</div>
+            </div>
+          </div>
+        </div>
 
-    <!-- B3: Learning -->
-    <section id="section-learning">
-      <div class="learning-head">
-        <h2 class="fade-block">情報デザインコース<br>２年生の１年間の学び</h2>
-      </div>
-      <div class="learning-body">
-        <div class="side-nav" id="side-nav"></div>
-        <div class="cards-flow" id="cards-flow"></div>
-      </div>
-    </section>
+        <div class="fade-block" style="transition-delay:0.05s">
+          <p class="oc-note">8/3オープンキャンパスでも、情報デザインコースブースにて詳しくお話します</p>
+        </div>
+      </section>
 
-    <!-- B4: Diagnosis -->
-    <section id="section-diagnosis">
-      <div class="fade-block">
-        <h2>ポスタータイプを診断しよう<br><span style="font-size:13px;font-weight:400;color:var(--sub)">3枚のブロックを配置して、あなたのデザインスタイルを知ろう</span></h2>
-      </div>
-      <div id="full-game"></div>
-    </section>
+      <!-- B3: Learning -->
+      <section id="section-learning">
+        <div class="learning-head">
+          <h2 class="fade-block">情報デザインコース<br>２年生の１年間の学び</h2>
+        </div>
+        <div class="learning-body">
+          <div class="side-nav" id="side-nav"></div>
+          <div class="cards-flow" id="cards-flow"></div>
+        </div>
+      </section>
 
-    <!-- B5: CTA -->
-    <section id="section-cta">
-      <div class="fade-block">
-        <div class="cta-eyebrow">OPEN CAMPUS</div>
-        <h2>8/3<br>オープンキャンパス</h2>
-        <div class="cta-info">
+      <!-- B4: Diagnosis -->
+      <section id="section-diagnosis">
+        <div class="fade-block">
+          <h2>ポスタータイプを診断しよう<br><span
+              style="font-size:13px;font-weight:400;color:var(--sub)">3枚のブロックを配置して、あなたのデザインスタイルを知ろう</span></h2>
+        </div>
+        <div id="full-game"></div>
+      </section>
+
+      <!-- B5: CTA -->
+      <section id="section-cta">
+        <div class="fade-block">
+          <div class="cta-eyebrow">OPEN CAMPUS</div>
+          <h2>8/3<br>オープンキャンパス</h2>
+          <div class="cta-info">
+            公立はこだて未来大学<br>
+            土曜日 10:00–16:00<br>
+            情報デザインコース ブース
+          </div>
+        </div>
+        <div class="fade-block" style="transition-delay:0.1s">
+          <div class="oc-poster-placeholder">
+            <span class="emoji">🎨</span>
+            <span>OC POSTER</span>
+            <span class="small">oc-poster.jpg</span>
+          </div>
+        </div>
+        <div class="fade-block" style="transition-delay:0.15s">
+          <a href="#" class="cta-btn">申し込みはこちら →</a>
+        </div>
+        <div class="site-footer">
           公立はこだて未来大学<br>
-          土曜日 10:00–16:00<br>
-          情報デザインコース ブース
+          情報デザインコース特設サイト<br>
+          © 2024 Future University Hakodate
         </div>
-      </div>
-      <div class="fade-block" style="transition-delay:0.1s">
-        <div class="oc-poster-placeholder">
-          <span class="emoji">🎨</span>
-          <span>OC POSTER</span>
-          <span class="small">oc-poster.jpg</span>
-        </div>
-      </div>
-      <div class="fade-block" style="transition-delay:0.15s">
-        <a href="#" class="cta-btn">申し込みはこちら →</a>
-      </div>
-      <div class="site-footer">
-        公立はこだて未来大学<br>
-        情報デザインコース特設サイト<br>
-        © 2024 Future University Hakodate
-      </div>
-    </section>
+      </section>
+    </div>
   </div>
-</div>
 
-<div id="ghost-chip"></div>
+  <div id="ghost-chip"></div>
 
-<script>
-'use strict';
+  <script>
+    'use strict';
 
-const CHIPS = {
-  fun:     { label: 'デザインって楽しい', color: '#FFF3AD' },
-  concept: { label: 'デザインとは何か',   color: '#FFB3D1' },
-  oc:      { label: 'オープンキャンパスへ', color: '#AEE4FF' },
-};
+    const CHIPS = {
+      fun: { label: 'デザインって楽しい', color: '#FFF3AD' },
+      concept: { label: 'デザインとは何か', color: '#FFB3D1' },
+      oc: { label: 'オープンキャンパスへ', color: '#AEE4FF' },
+    };
 
-const DIAGNOSES = {
-  'fun-concept-oc': { type: '部活勧誘ポスター', hook: '「雰囲気で引き込んでから問いかける」構成。', structure: '楽しさが背景を埋め、タイトルと概念が中央に、OCへの誘いがバッジに。', detail: '押しつけがましくなく、来てくれる人を待つスタンスが伝わります。まず雰囲気で心をつかみ、「どんなとこ？」という興味へとつながる流れ。' },
-  'fun-oc-concept': { type: 'ライブのフライヤー', hook: '「楽しさを見せてすぐ行動に誘う」構成。', structure: '楽しさが背景を埋め、タイトルとOC日程が中央に、概念の問いがバッジに。', detail: '細かい説明より雰囲気と日程だけあれば十分、というフライヤーらしい割り切りが出ています。勢いで動かすデザイン。' },
-  'concept-fun-oc': { type: '博物館の解説パネル', hook: '「問いを立ててから楽しさを添える」構成。', structure: '概念が背景を埋め、タイトルと楽しさが中央に、OCへの誘いがバッジに。', detail: '「デザインとは何か」を先に見せることで、興味を持った人を確実に引き込みます。楽しさはその後押し。' },
-  'concept-oc-fun': { type: 'セミナーの告知チラシ', hook: '「問いかけてから行動へ誘う」構成。', structure: '概念が背景を埋め、タイトルとOC日程が中央に、楽しさのバッジが和らげる。', detail: '「デザインとは何か」を先に提示してからOCに誘う丁寧な導線。参加者に内容を吟味してほしいセミナー告知に近い構成。' },
-  'oc-fun-concept':  { type: 'タイムセールのポスター', hook: '「まず来てもらって、楽しさで後押しする」構成。', structure: 'OCポスターが背景を埋め、タイトルと楽しさが中央に、概念の問いがバッジに。', detail: '「来て！」が最前面に出て、楽しさで背中を押す。とにかく足を運んでもらうことが最優先の、勢いのある構成。' },
-  'oc-concept-fun':  { type: '求人広告', hook: '「行動を前面に出して問いで補強する」構成。', structure: 'OCポスターが背景を埋め、タイトルと概念が中央に、楽しさのバッジが締める。', detail: '「来てほしい」を最前面に出してから、デザインとは何かで理由を補足する。誠実さと勢いが両立した構成。' },
-};
+    const DIAGNOSES = {
+      'fun-concept-oc': { type: '部活勧誘ポスター', hook: '「雰囲気で引き込んでから問いかける」構成。', structure: '楽しさが背景を埋め、タイトルと概念が中央に、OCへの誘いがバッジに。', detail: '押しつけがましくなく、来てくれる人を待つスタンスが伝わります。まず雰囲気で心をつかみ、「どんなとこ？」という興味へとつながる流れ。' },
+      'fun-oc-concept': { type: 'ライブのフライヤー', hook: '「楽しさを見せてすぐ行動に誘う」構成。', structure: '楽しさが背景を埋め、タイトルとOC日程が中央に、概念の問いがバッジに。', detail: '細かい説明より雰囲気と日程だけあれば十分、というフライヤーらしい割り切りが出ています。勢いで動かすデザイン。' },
+      'concept-fun-oc': { type: '博物館の解説パネル', hook: '「問いを立ててから楽しさを添える」構成。', structure: '概念が背景を埋め、タイトルと楽しさが中央に、OCへの誘いがバッジに。', detail: '「デザインとは何か」を先に見せることで、興味を持った人を確実に引き込みます。楽しさはその後押し。' },
+      'concept-oc-fun': { type: 'セミナーの告知チラシ', hook: '「問いかけてから行動へ誘う」構成。', structure: '概念が背景を埋め、タイトルとOC日程が中央に、楽しさのバッジが和らげる。', detail: '「デザインとは何か」を先に提示してからOCに誘う丁寧な導線。参加者に内容を吟味してほしいセミナー告知に近い構成。' },
+      'oc-fun-concept': { type: 'タイムセールのポスター', hook: '「まず来てもらって、楽しさで後押しする」構成。', structure: 'OCポスターが背景を埋め、タイトルと楽しさが中央に、概念の問いがバッジに。', detail: '「来て！」が最前面に出て、楽しさで背中を押す。とにかく足を運んでもらうことが最優先の、勢いのある構成。' },
+      'oc-concept-fun': { type: '求人広告', hook: '「行動を前面に出して問いで補強する」構成。', structure: 'OCポスターが背景を埋め、タイトルと概念が中央に、楽しさのバッジが締める。', detail: '「来てほしい」を最前面に出してから、デザインとは何かで理由を補足する。誠実さと勢いが両立した構成。' },
+    };
 
-/* 課題01と02を入れ替え、ナンバリングを01〜04に変更 */
-const ASSIGNMENTS = [
-  { num: '01', title: '仮想生物デザイン',       desc: '実在しない生物を設定から造形まで一貫してデザインする。生態・環境・機能を考え、説得力ある形にまとめる。',       color: '#FFB3D1' },
-  { num: '02', title: 'フィールドリサーチ',      desc: '街に出て、人々の行動や場の様子を観察・記録する。カメラと手書きメモで現場を読み取り、課題を発見する。',     color: '#FFF3AD' },
-  { num: '03', title: '情報設計・ポスター制作',  desc: '収集した情報を整理・階層化し、伝わるポスターに落とし込む。タイポグラフィと構図を意識したビジュアル表現。', color: '#FFF3AD' },
-  { num: '04', title: 'アプリ・サービス提案',    desc: '社会課題や日常のニーズを起点に、デジタルサービスを企画・プロトタイプ。UXフローからUI設計まで担う。',     color: '#AEE4FF' },
-];
+    /* 課題01と02を入れ替え、ナンバリングを01〜04に変更 */
+    const ASSIGNMENTS = [
+      { num: '01', title: '仮想生物デザイン', desc: '実在しない生物を設定から造形まで一貫してデザインする。生態・環境・機能を考え、説得力ある形にまとめる。', color: '#FFB3D1' },
+      { num: '02', title: 'フィールドリサーチ', desc: '街に出て、人々の行動や場の様子を観察・記録する。カメラと手書きメモで現場を読み取り、課題を発見する。', color: '#FFF3AD' },
+      { num: '03', title: '情報設計・ポスター制作', desc: '収集した情報を整理・階層化し、伝わるポスターに落とし込む。タイポグラフィと構図を意識したビジュアル表現。', color: '#FFF3AD' },
+      { num: '04', title: 'アプリ・サービス提案', desc: '社会課題や日常のニーズを起点に、デジタルサービスを企画・プロトタイプ。UXフローからUI設計まで担う。', color: '#AEE4FF' },
+    ];
 
-const GRID_L = ['#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B'];
-const GRID_R = ['#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F','#FFD5CC','#FF4B2B','#FF1E8F'];
+    const GRID_L = ['#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B'];
+    const GRID_R = ['#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F'];
 
-/* ══════════════════════════════
-   POSTER GAME
-══════════════════════════════ */
-function createPosterGame(container, mode, onComplete) {
-  let placement = { large: null, center: null, small: null };
-  let allPlaced  = false;
-  let showResult = false;
-  let dragging   = null;
+    /* ══════════════════════════════
+       POSTER GAME
+    ══════════════════════════════ */
+    function createPosterGame(container, mode, onComplete) {
+      let placement = { large: null, center: null, small: null };
+      let allPlaced = false;
+      let showResult = false;
+      let dragging = null;
 
-  const ghost = document.getElementById('ghost-chip');
-  const zoneEls = {};
-  let diagnoseBtnEl = null;
-  let resultEl      = null;
-  let gameEls       = null; // wrapper to hide on diagnosis
+      const ghost = document.getElementById('ghost-chip');
+      const zoneEls = {};
+      let diagnoseBtnEl = null;
+      let resultEl = null;
+      let gameEls = null; // wrapper to hide on diagnosis
 
-  container.innerHTML = '';
+      container.innerHTML = '';
 
-  /* Title */
-  const title = document.createElement('p');
-  title.className = 'game-title';
-  title.textContent = 'ブロックを好きな位置に配置してみよう';
-  container.appendChild(title);
+      /* Title */
+      const title = document.createElement('p');
+      title.className = 'game-title';
+      title.textContent = 'ブロックを好きな位置に配置してみよう';
+      container.appendChild(title);
 
-  /* Game elements wrapper (hidden during diagnosis animation) */
-  gameEls = document.createElement('div');
-  gameEls.className = 'game-elements';
-  container.appendChild(gameEls);
+      /* Game elements wrapper (hidden during diagnosis animation) */
+      gameEls = document.createElement('div');
+      gameEls.className = 'game-elements';
+      container.appendChild(gameEls);
 
-  /* Poster wrap */
-  const wrap = document.createElement('div');
-  wrap.className = 'poster-frame-wrap';
-  gameEls.appendChild(wrap);
+      /* Poster wrap */
+      const wrap = document.createElement('div');
+      wrap.className = 'poster-frame-wrap';
+      gameEls.appendChild(wrap);
 
-  const frame = document.createElement('div');
-  frame.className = 'poster-frame';
-  wrap.appendChild(frame);
+      const frame = document.createElement('div');
+      frame.className = 'poster-frame';
+      wrap.appendChild(frame);
 
-  /* Large zone */
-  const zLarge = document.createElement('div');
-  zLarge.className = 'zone-large';
-  frame.appendChild(zLarge);
-  zoneEls.large = zLarge;
+      /* Large zone */
+      const zLarge = document.createElement('div');
+      zLarge.className = 'zone-large';
+      frame.appendChild(zLarge);
+      zoneEls.large = zLarge;
 
-  /* Center card */
-  const centerCard = document.createElement('div');
-  centerCard.className = 'center-card';
-  centerCard.innerHTML = `
+      /* Center card */
+      const centerCard = document.createElement('div');
+      centerCard.className = 'center-card';
+      centerCard.innerHTML = `
     <div class="center-card-header">
       <div class="sub-label">FUTURE UNIVERSITY HAKODATE</div>
       <div class="title">未来大<br>情報デザインコース<br>特設サイト</div>
     </div>`;
-  frame.appendChild(centerCard);
+      frame.appendChild(centerCard);
 
-  const zCenter = document.createElement('div');
-  zCenter.className = 'zone-center';
-  zCenter.innerHTML = '<div class="zone-center-placeholder"><span style="font-size:0"></span></div>';
-  centerCard.appendChild(zCenter);
-  zoneEls.center = zCenter;
+      const zCenter = document.createElement('div');
+      zCenter.className = 'zone-center';
+      zCenter.innerHTML = '<div class="zone-center-placeholder"><span style="font-size:0"></span></div>';
+      centerCard.appendChild(zCenter);
+      zoneEls.center = zCenter;
 
-  /* Small badge */
-  const zSmall = document.createElement('div');
-  zSmall.className = 'zone-small';
-  zSmall.innerHTML = '<div class="zone-small-placeholder"></div>';
-  frame.appendChild(zSmall);
-  zoneEls.small = zSmall;
+      /* Small badge */
+      const zSmall = document.createElement('div');
+      zSmall.className = 'zone-small';
+      zSmall.innerHTML = '<div class="zone-small-placeholder"></div>';
+      frame.appendChild(zSmall);
+      zoneEls.small = zSmall;
 
-  /* Drag hint: チップ「デザインって楽しい」から大ゾーンへ一方向スライド×3 */
-  const hint = document.createElement('div');
-  hint.textContent = '☞';
-  hint.style.cssText = 'position:fixed;pointer-events:none;font-size:22px;z-index:999;opacity:0';
-  document.body.appendChild(hint);
-  requestAnimationFrame(() => {
-    const chipEl = tray.querySelector('[data-id="fun"]');
-    if (!chipEl || !hint.parentNode) return;
-    const chipR = chipEl.getBoundingClientRect();
-    const zoneR = zLarge.getBoundingClientRect();
-    const sx = chipR.left + chipR.width  / 2 - 11;
-    const sy = chipR.top  + chipR.height / 2 - 11;
-    const dx = (zoneR.left + zoneR.width  / 2 - 11) - sx;
-    const dy = (zoneR.top  + zoneR.height * 0.3 - 11) - sy;
-    hint.style.left = sx + 'px';
-    hint.style.top  = sy + 'px';
-    let i = 0;
-    function step() {
-      if (i >= 3 || !hint.parentNode) { hint.remove(); return; }
-      i++;
-      hint.style.transition = 'none';
-      hint.style.transform  = 'translate(0,0)';
-      hint.style.opacity    = '0';
-      void hint.offsetWidth; // reflow
-      hint.style.transition = 'opacity 0.15s';
-      hint.style.opacity    = '1';
-      setTimeout(() => {
-        hint.style.transition = `transform 0.65s ease-in, opacity 0.25s 0.5s`;
-        hint.style.transform  = `translate(${dx}px,${dy}px)`;
-        hint.style.opacity    = '0';
-        setTimeout(step, 1100);
-      }, 280);
-    }
-    step();
-  });
-
-  /* Chip tray */
-  const tray = document.createElement('div');
-  tray.className = 'chip-tray';
-  gameEls.appendChild(tray);
-
-  ['fun', 'concept', 'oc'].forEach(id => {
-    const chip = document.createElement('div');
-    chip.className = 'chip';
-    chip.dataset.id = id;
-    chip.textContent = CHIPS[id].label;
-    chip.addEventListener('pointerdown', e => onChipDown(e, id));
-    tray.appendChild(chip);
-  });
-
-  /* Diagnose button (full mode) */
-  if (mode === 'full') {
-    diagnoseBtnEl = document.createElement('button');
-    diagnoseBtnEl.className = 'diagnose-btn';
-    diagnoseBtnEl.textContent = '診断する →';
-    diagnoseBtnEl.addEventListener('click', showDiagnosis);
-    gameEls.appendChild(diagnoseBtnEl);
-
-    /* gameEls と resultEl を同一ラッパーに入れて重ねる */
-    const overlayWrap = document.createElement('div');
-    overlayWrap.style.cssText = 'position:relative';
-    container.insertBefore(overlayWrap, gameEls);
-    overlayWrap.appendChild(gameEls);
-
-    resultEl = document.createElement('div');
-    resultEl.className = 'diagnosis-result';
-    overlayWrap.appendChild(resultEl);
-  }
-
-  /* ── Zone display ── */
-  function updateZoneDisplay(zone, chipId) {
-    const el = zoneEls[zone];
-    if (zone === 'large') {
-      if (chipId) {
-        /* 枠内全域をチップ色で塗りつぶし・縁なし */
-        el.style.backgroundColor = CHIPS[chipId].color;
-        el.style.border = 'none';
-        el.innerHTML = '';
-      } else {
-        el.style.backgroundColor = '';
-        el.style.border = '';
-        el.innerHTML = '';
-      }
-    } else if (zone === 'center') {
-      if (chipId) {
-        /* 中ゾーン全体を色で塗りつぶし */
-        el.innerHTML = `<div class="zone-center-chip" style="background:${CHIPS[chipId].color}">${CHIPS[chipId].label}</div>`;
-        el.style.outline = 'none';
-      } else {
-        el.innerHTML = '<div class="zone-center-placeholder"><span style="font-size:0"></span></div>';
-      }
-    } else if (zone === 'small') {
-      if (chipId) {
-        el.classList.add('filled');
-        el.style.backgroundColor = CHIPS[chipId].color;
-        el.style.border = 'none'; /* 縁を消す */
-        el.innerHTML = `<span class="zone-small-chip">${CHIPS[chipId].label}</span>`;
-      } else {
-        el.classList.remove('filled');
-        el.style.backgroundColor = '';
-        el.style.border = '';
-        el.innerHTML = '<div class="zone-small-placeholder"></div>';
-      }
-    }
-  }
-
-  function isPlaced(id) {
-    return placement.large === id || placement.center === id || placement.small === id;
-  }
-
-  function getZone(x, y) {
-    const priority = ['small', 'center', 'large'];
-    for (const id of priority) {
-      const el = zoneEls[id];
-      if (!el) continue;
-      let { left, right, top, bottom } = el.getBoundingClientRect();
-      if (id === 'small')  { left -= 40; top -= 40; right += 20; bottom += 20; }
-      if (id === 'center') { top -= 20; bottom += 20; }
-      if (x >= left && x <= right && y >= top && y <= bottom) return id;
-    }
-    return null;
-  }
-
-  function updateChipTray() {
-    tray.querySelectorAll('.chip').forEach(el => {
-      el.classList.toggle('placed', isPlaced(el.dataset.id));
-    });
-  }
-
-  function checkAllPlaced() {
-    if (placement.large && placement.center && placement.small && !allPlaced) {
-      allPlaced = true;
-      if (mode === 'prologue' && onComplete) {
-        /* プロローグ遷移演出 */
-        frame.style.transition = 'transform 0.3s, box-shadow 0.3s';
-        frame.style.transform = 'scale(1.04)';
-        frame.style.boxShadow = '10px 10px 0 rgba(174,228,255,1)';
-        setTimeout(() => {
-          frame.style.transform = '';
-          frame.style.boxShadow = '';
-          setTimeout(() => onComplete(placement), 200);
-        }, 300);
-      } else if (mode === 'full' && diagnoseBtnEl) {
-        diagnoseBtnEl.classList.add('visible');
-      }
-    }
-  }
-
-  /* ── Drag ── */
-  function onChipDown(e, chipId) {
-    if (isPlaced(chipId)) return;
-    e.preventDefault();
-    dragging = { chipId };
-    ghost.textContent = CHIPS[chipId].label;
-    ghost.style.background = CHIPS[chipId].color;
-    ghost.classList.add('active');
-    moveGhost(e.clientX, e.clientY);
-  }
-
-  function moveGhost(x, y) {
-    ghost.style.left = (x - 44) + 'px';
-    ghost.style.top  = (y - 18) + 'px';
-  }
-
-  document.addEventListener('pointermove', e => {
-    if (!dragging) return;
-    e.preventDefault();
-    moveGhost(e.clientX, e.clientY);
-    const zone = getZone(e.clientX, e.clientY);
-    ['large', 'center', 'small'].forEach(z => {
-      const el = zoneEls[z];
-      if (!el) return;
-      if (z === 'center') {
-        const ph = el.querySelector('.zone-center-placeholder');
-        if (ph) ph.classList.toggle('hover', z === zone);
-      } else {
-        el.classList.toggle('hover', z === zone);
-      }
-    });
-  }, { passive: false });
-
-  document.addEventListener('pointerup', e => {
-    if (!dragging) return;
-    const chipId = dragging.chipId;
-    const zone   = getZone(e.clientX, e.clientY);
-    if (zone) {
-      Object.keys(placement).forEach(z => {
-        if (placement[z] === chipId) { placement[z] = null; updateZoneDisplay(z, null); }
+      /* Drag hint: チップ「デザインって楽しい」から大ゾーンへ一方向スライド×3 */
+      const hint = document.createElement('div');
+      hint.textContent = '☞';
+      hint.style.cssText = 'position:fixed;pointer-events:none;font-size:22px;z-index:999;opacity:0';
+      document.body.appendChild(hint);
+      requestAnimationFrame(() => {
+        const chipEl = tray.querySelector('[data-id="fun"]');
+        if (!chipEl || !hint.parentNode) return;
+        const chipR = chipEl.getBoundingClientRect();
+        const zoneR = zLarge.getBoundingClientRect();
+        const sx = chipR.left + chipR.width / 2 - 11;
+        const sy = chipR.top + chipR.height / 2 - 11;
+        const dx = (zoneR.left + zoneR.width / 2 - 11) - sx;
+        const dy = (zoneR.top + zoneR.height * 0.3 - 11) - sy;
+        hint.style.left = sx + 'px';
+        hint.style.top = sy + 'px';
+        let i = 0;
+        function step() {
+          if (i >= 3 || !hint.parentNode) { hint.remove(); return; }
+          i++;
+          hint.style.transition = 'none';
+          hint.style.transform = 'translate(0,0)';
+          hint.style.opacity = '0';
+          void hint.offsetWidth; // reflow
+          hint.style.transition = 'opacity 0.15s';
+          hint.style.opacity = '1';
+          setTimeout(() => {
+            hint.style.transition = `transform 0.65s ease-in, opacity 0.25s 0.5s`;
+            hint.style.transform = `translate(${dx}px,${dy}px)`;
+            hint.style.opacity = '0';
+            setTimeout(step, 1100);
+          }, 280);
+        }
+        step();
       });
-      placement[zone] = chipId;
-      updateZoneDisplay(zone, chipId);
-    }
-    dragging = null;
-    ghost.classList.remove('active');
-    ['large', 'center', 'small'].forEach(z => {
-      const el = zoneEls[z];
-      if (!el) return;
-      el.classList.remove('hover');
-      const ph = el.querySelector('.zone-center-placeholder');
-      if (ph) ph.classList.remove('hover');
-    });
-    updateChipTray();
-    checkAllPlaced();
-  });
 
-  /* ── Diagnosis animation ── */
-  function showDiagnosis() {
-    if (!resultEl) return;
-    const key = `${placement.large}-${placement.center}-${placement.small}`;
-    const d   = DIAGNOSES[key];
-    if (!d) return;
+      /* Chip tray */
+      const tray = document.createElement('div');
+      tray.className = 'chip-tray';
+      gameEls.appendChild(tray);
 
-    /* ゲームエリアをフェードアウト */
-    gameEls.classList.add('hiding');
+      ['fun', 'concept', 'oc'].forEach(id => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.dataset.id = id;
+        chip.textContent = CHIPS[id].label;
+        chip.addEventListener('pointerdown', e => onChipDown(e, id));
+        tray.appendChild(chip);
+      });
 
-    const largeBg    = placement.large   ? CHIPS[placement.large].color   + '55' : '#F1EFE8';
-    const centerChip = placement.center  ? `<div class="card-chip" style="background:${CHIPS[placement.center].color}">${CHIPS[placement.center].label}</div>` : '';
-    const badgeBg    = placement.small   ? CHIPS[placement.small].color   : '#FFB3D1';
-    const badgeText  = placement.small   ? CHIPS[placement.small].label   : '角';
+      /* Diagnose button (full mode) */
+      if (mode === 'full') {
+        diagnoseBtnEl = document.createElement('button');
+        diagnoseBtnEl.className = 'diagnose-btn';
+        diagnoseBtnEl.textContent = '診断する →';
+        diagnoseBtnEl.addEventListener('click', showDiagnosis);
+        gameEls.appendChild(diagnoseBtnEl);
 
-    resultEl.innerHTML = `
+        /* gameEls と resultEl を同一ラッパーに入れて重ねる */
+        const overlayWrap = document.createElement('div');
+        overlayWrap.style.cssText = 'position:relative';
+        container.insertBefore(overlayWrap, gameEls);
+        overlayWrap.appendChild(gameEls);
+
+        resultEl = document.createElement('div');
+        resultEl.className = 'diagnosis-result';
+        overlayWrap.appendChild(resultEl);
+      }
+
+      /* ── Zone display ── */
+      function updateZoneDisplay(zone, chipId) {
+        const el = zoneEls[zone];
+        if (zone === 'large') {
+          if (chipId) {
+            /* 枠内全域をチップ色で塗りつぶし・縁なし */
+            el.style.backgroundColor = CHIPS[chipId].color;
+            el.style.border = 'none';
+            el.innerHTML = '';
+          } else {
+            el.style.backgroundColor = '';
+            el.style.border = '';
+            el.innerHTML = '';
+          }
+        } else if (zone === 'center') {
+          if (chipId) {
+            /* 中ゾーン全体を色で塗りつぶし */
+            el.innerHTML = `<div class="zone-center-chip" style="background:${CHIPS[chipId].color}">${CHIPS[chipId].label}</div>`;
+            el.style.outline = 'none';
+          } else {
+            el.innerHTML = '<div class="zone-center-placeholder"><span style="font-size:0"></span></div>';
+          }
+        } else if (zone === 'small') {
+          if (chipId) {
+            el.classList.add('filled');
+            el.style.backgroundColor = CHIPS[chipId].color;
+            el.style.border = 'none'; /* 縁を消す */
+            el.innerHTML = `<span class="zone-small-chip">${CHIPS[chipId].label}</span>`;
+          } else {
+            el.classList.remove('filled');
+            el.style.backgroundColor = '';
+            el.style.border = '';
+            el.innerHTML = '<div class="zone-small-placeholder"></div>';
+          }
+        }
+      }
+
+      function isPlaced(id) {
+        return placement.large === id || placement.center === id || placement.small === id;
+      }
+
+      function getZone(x, y) {
+        const priority = ['small', 'center', 'large'];
+        for (const id of priority) {
+          const el = zoneEls[id];
+          if (!el) continue;
+          let { left, right, top, bottom } = el.getBoundingClientRect();
+          if (id === 'small') { left -= 40; top -= 40; right += 20; bottom += 20; }
+          if (id === 'center') { top -= 20; bottom += 20; }
+          if (x >= left && x <= right && y >= top && y <= bottom) return id;
+        }
+        return null;
+      }
+
+      function updateChipTray() {
+        tray.querySelectorAll('.chip').forEach(el => {
+          el.classList.toggle('placed', isPlaced(el.dataset.id));
+        });
+      }
+
+      function checkAllPlaced() {
+        if (placement.large && placement.center && placement.small && !allPlaced) {
+          allPlaced = true;
+          if (mode === 'prologue' && onComplete) {
+            /* プロローグ遷移演出 */
+            frame.style.transition = 'transform 0.3s, box-shadow 0.3s';
+            frame.style.transform = 'scale(1.04)';
+            frame.style.boxShadow = '10px 10px 0 rgba(174,228,255,1)';
+            setTimeout(() => {
+              frame.style.transform = '';
+              frame.style.boxShadow = '';
+              setTimeout(() => onComplete(placement), 200);
+            }, 300);
+          } else if (mode === 'full' && diagnoseBtnEl) {
+            diagnoseBtnEl.classList.add('visible');
+          }
+        }
+      }
+
+      /* ── Drag ── */
+      function onChipDown(e, chipId) {
+        if (isPlaced(chipId)) return;
+        e.preventDefault();
+        dragging = { chipId };
+        ghost.textContent = CHIPS[chipId].label;
+        ghost.style.background = CHIPS[chipId].color;
+        ghost.classList.add('active');
+        moveGhost(e.clientX, e.clientY);
+      }
+
+      function moveGhost(x, y) {
+        ghost.style.left = (x - 44) + 'px';
+        ghost.style.top = (y - 18) + 'px';
+      }
+
+      document.addEventListener('pointermove', e => {
+        if (!dragging) return;
+        e.preventDefault();
+        moveGhost(e.clientX, e.clientY);
+        const zone = getZone(e.clientX, e.clientY);
+        ['large', 'center', 'small'].forEach(z => {
+          const el = zoneEls[z];
+          if (!el) return;
+          if (z === 'center') {
+            const ph = el.querySelector('.zone-center-placeholder');
+            if (ph) ph.classList.toggle('hover', z === zone);
+          } else {
+            el.classList.toggle('hover', z === zone);
+          }
+        });
+      }, { passive: false });
+
+      document.addEventListener('pointerup', e => {
+        if (!dragging) return;
+        const chipId = dragging.chipId;
+        const zone = getZone(e.clientX, e.clientY);
+        if (zone) {
+          Object.keys(placement).forEach(z => {
+            if (placement[z] === chipId) { placement[z] = null; updateZoneDisplay(z, null); }
+          });
+          placement[zone] = chipId;
+          updateZoneDisplay(zone, chipId);
+        }
+        dragging = null;
+        ghost.classList.remove('active');
+        ['large', 'center', 'small'].forEach(z => {
+          const el = zoneEls[z];
+          if (!el) return;
+          el.classList.remove('hover');
+          const ph = el.querySelector('.zone-center-placeholder');
+          if (ph) ph.classList.remove('hover');
+        });
+        updateChipTray();
+        checkAllPlaced();
+      });
+
+      /* ── Diagnosis animation ── */
+      function showDiagnosis() {
+        if (!resultEl) return;
+        const key = `${placement.large}-${placement.center}-${placement.small}`;
+        const d = DIAGNOSES[key];
+        if (!d) return;
+
+        /* ゲームエリアをフェードアウト */
+        gameEls.classList.add('hiding');
+
+        const largeBg = placement.large ? CHIPS[placement.large].color + '55' : '#F1EFE8';
+        const centerChip = placement.center ? `<div class="card-chip" style="background:${CHIPS[placement.center].color}">${CHIPS[placement.center].label}</div>` : '';
+        const badgeBg = placement.small ? CHIPS[placement.small].color : '#FFB3D1';
+        const badgeText = placement.small ? CHIPS[placement.small].label : '角';
+
+        resultEl.innerHTML = `
       <div class="mini-poster">
         <div class="mini-poster-bg" style="background:${largeBg}"></div>
         <div class="mini-poster-card">
@@ -1178,71 +1761,71 @@ function createPosterGame(container, mode, onComplete) {
         <button id="share-btn-${mode}">シェア ↗</button>
       </div>`;
 
-    /* 少し遅れて結果エリアをフェードイン */
-    resultEl.classList.add('entering');
-    setTimeout(() => resultEl.classList.add('visible'), 50);
+        /* 少し遅れて結果エリアをフェードイン */
+        resultEl.classList.add('entering');
+        setTimeout(() => resultEl.classList.add('visible'), 50);
 
-    resultEl.querySelector(`#reset-btn-${mode}`).addEventListener('click', resetGame);
-    resultEl.querySelector(`#share-btn-${mode}`).addEventListener('click', shareResult);
-    showResult = true;
-  }
+        resultEl.querySelector(`#reset-btn-${mode}`).addEventListener('click', resetGame);
+        resultEl.querySelector(`#share-btn-${mode}`).addEventListener('click', shareResult);
+        showResult = true;
+      }
 
-  function resetGame() {
-    placement  = { large: null, center: null, small: null };
-    allPlaced  = false;
-    showResult = false;
-    ['large', 'center', 'small'].forEach(z => updateZoneDisplay(z, null));
-    updateChipTray();
-    if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
-    if (resultEl) { resultEl.classList.remove('visible', 'entering'); }
-    gameEls.classList.remove('hiding');
-  }
+      function resetGame() {
+        placement = { large: null, center: null, small: null };
+        allPlaced = false;
+        showResult = false;
+        ['large', 'center', 'small'].forEach(z => updateZoneDisplay(z, null));
+        updateChipTray();
+        if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
+        if (resultEl) { resultEl.classList.remove('visible', 'entering'); }
+        gameEls.classList.remove('hiding');
+      }
 
-  function shareResult() {
-    const key = `${placement.large}-${placement.center}-${placement.small}`;
-    const d   = DIAGNOSES[key];
-    if (!d) return;
-    const text = `私のポスタータイプは「${d.type}」！\n${d.hook}\n未来大 情報デザインコース 特設サイト`;
-    if (navigator.share) {
-      navigator.share({ text });
-    } else {
-      navigator.clipboard.writeText(text).then(() => alert('クリップボードにコピーしました'));
+      function shareResult() {
+        const key = `${placement.large}-${placement.center}-${placement.small}`;
+        const d = DIAGNOSES[key];
+        if (!d) return;
+        const text = `私のポスタータイプは「${d.type}」！\n${d.hook}\n未来大 情報デザインコース 特設サイト`;
+        if (navigator.share) {
+          navigator.share({ text });
+        } else {
+          navigator.clipboard.writeText(text).then(() => alert('クリップボードにコピーしました'));
+        }
+      }
     }
-  }
-}
 
-/* ══════════════════════════════
-   KEY VISUAL
-══════════════════════════════ */
-function buildKeyVisual(placement) {
-  const kv    = document.getElementById('section-kv');
-  const large = placement ? placement.large : null;
-  const small = placement ? placement.small : null;
+    /* ══════════════════════════════
+       KEY VISUAL
+    ══════════════════════════════ */
+    function buildKeyVisual(placement) {
+      const kv = document.getElementById('section-kv');
+      const large = placement ? placement.large : null;
+      const small = placement ? placement.small : null;
 
-  let bgHTML = '';
-  if (large === 'concept') {
-    bgHTML = `<div class="kv-bg-concept"><div class="ghost-text">デザインとは<br>何か</div></div>`;
-  } else if (large === 'oc') {
-    bgHTML = `<div class="kv-bg-oc"><div class="kv-oc-poster">OC POSTER</div></div>`;
-  } else {
-    const makeBlocks = (colors, isLeft) => colors.concat(colors).map((c, i) => {
-      const rot = isLeft ? (i % 2 === 0 ? 3 : -3) : (i % 2 === 0 ? -4 : 4);
-      const br  = (!isLeft && i % 3 === 0) ? '50%' : '32px';
-      return `<div class="kv-block" style="background:${c};transform:rotate(${rot}deg);border-radius:${br}"></div>`;
-    }).join('');
-    bgHTML = `
+      let bgHTML = '';
+      if (large === 'concept') {
+        bgHTML = `<div class="kv-bg-concept"><div class="ghost-text">デザインとは<br>何か</div></div>`;
+      } else if (large === 'oc') {
+        bgHTML = `<div class="kv-bg-oc"><div class="kv-oc-poster">OC POSTER</div></div>`;
+      } else {
+        const makeBlocks = (colors, isLeft) => colors.concat(colors).map((c, i) => {
+          const rot = isLeft ? (i % 2 === 0 ? 3 : -3) : (i % 2 === 0 ? -4 : 4);
+          const br = (!isLeft && i % 3 === 0) ? '50%' : '32px';
+          return `<div class="kv-block" style="background:${c};transform:rotate(${rot}deg);border-radius:${br}"></div>`;
+        }).join('');
+        bgHTML = `
       <div class="kv-grid">
         <div class="kv-col left"><div class="kv-col-inner">${makeBlocks(GRID_L, true)}</div></div>
         <div class="kv-col right"><div class="kv-col-inner">${makeBlocks(GRID_R, false)}</div></div>
       </div>
       <div class="kv-overlay"></div>`;
-  }
+      }
 
-  const badgeBg   = small === 'fun' ? '#FFF3AD' : small === 'oc' ? 'white' : '#FF1E8F';
-  const badgeColor = small === 'oc' ? '#7A0026' : 'white';
-  const badgeText  = small === 'fun' ? '楽しい！' : small === 'oc' ? '8.1 OC →' : '情報デザインコースってどんなとこ？';
+      const badgeBg = small === 'fun' ? '#FFF3AD' : small === 'oc' ? 'white' : '#FF1E8F';
+      const badgeColor = small === 'oc' ? '#7A0026' : 'white';
+      const badgeText = small === 'fun' ? '楽しい！' : small === 'oc' ? '8.1 OC →' : '情報デザインコースってどんなとこ？';
 
-  kv.innerHTML = `
+      kv.innerHTML = `
     ${bgHTML}
     <div class="kv-center">
       <div class="kv-card">
@@ -1253,143 +1836,144 @@ function buildKeyVisual(placement) {
     </div>
     <div class="kv-corner-badge" style="background:${badgeBg};color:${badgeColor}">${badgeText}</div>
     <div class="kv-scroll-hint"><span>スクロール</span><span>↓</span></div>`;
-}
+    }
 
-/* ══════════════════════════════
-   LEARNING SECTION
-   ── 通常スクロールに変更 ──
-══════════════════════════════ */
-function buildLearning() {
-  const nav   = document.getElementById('side-nav');
-  const flow  = document.getElementById('cards-flow');
-  const slots = [];
+    /* ══════════════════════════════
+       LEARNING SECTION
+       ── 通常スクロールに変更 ──
+    ══════════════════════════════ */
+    function buildLearning() {
+      const nav = document.getElementById('side-nav');
+      const flow = document.getElementById('cards-flow');
+      const slots = [];
 
-  ASSIGNMENTS.forEach((a, i) => {
-    /* Bar indicator */
-    const bar = document.createElement('button');
-    bar.className = 'side-bar' + (i === 0 ? ' active' : '');
-    bar.title     = a.title;
-    bar.addEventListener('click', () => slots[i].scrollIntoView({ behavior: 'smooth', block: 'start' }));
-    nav.appendChild(bar);
+      ASSIGNMENTS.forEach((a, i) => {
+        /* Bar indicator */
+        const bar = document.createElement('button');
+        bar.className = 'side-bar' + (i === 0 ? ' active' : '');
+        bar.title = a.title;
+        bar.addEventListener('click', () => slots[i].scrollIntoView({ behavior: 'smooth', block: 'start' }));
+        nav.appendChild(bar);
 
-    /* Card */
-    const slot = document.createElement('div');
-    slot.className = 'assignment-slot';
-    slot.innerHTML = `
+        /* Card */
+        const slot = document.createElement('div');
+        slot.className = 'assignment-slot';
+        slot.innerHTML = `
       <div class="assignment-card">
         <div class="assignment-num">課題 ${a.num}</div>
         <div class="assignment-title">${a.title}</div>
         <div class="assignment-img" style="background:${a.color}"><span>制作物イメージ</span></div>
         <div class="assignment-desc">${a.desc}</div>
       </div>`;
-    flow.appendChild(slot);
-    slots.push(slot);
-  });
+        flow.appendChild(slot);
+        slots.push(slot);
+      });
 
-  /* Main scroll observer — highlight active bar */
-  const bars = nav.querySelectorAll('.side-bar');
-  const obs  = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        const idx = slots.indexOf(e.target);
-        if (idx !== -1) bars.forEach((b, i) => b.classList.toggle('active', i === idx));
+      /* Main scroll observer — highlight active bar */
+      const bars = nav.querySelectorAll('.side-bar');
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const idx = slots.indexOf(e.target);
+            if (idx !== -1) bars.forEach((b, i) => b.classList.toggle('active', i === idx));
+          }
+        });
+      }, { threshold: 0.4 });
+      slots.forEach(el => obs.observe(el));
+    }
+
+    /* ══════════════════════════════
+       SCROLL FADE-IN
+    ══════════════════════════════ */
+    function initFadeIn() {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          e.target.classList.add('visible');
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll('.fade-block').forEach(el => obs.observe(el));
+
+      const obs2 = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.venn-wrap, .cycle-svg-wrap').forEach(el => obs2.observe(el));
+    }
+
+    /* ══════════════════════════════
+       NAVIGATION
+    ══════════════════════════════ */
+    function initNav() {
+      const btn = document.getElementById('menu-btn');
+      const backdrop = document.getElementById('drawer-backdrop');
+      const panel = document.getElementById('drawer-panel');
+
+      function closeMenu() {
+        btn.classList.remove('open');
+        backdrop.classList.remove('open');
+        panel.classList.remove('open');
       }
-    });
-  }, { threshold: 0.4 });
-  slots.forEach(el => obs.observe(el));
-}
 
-/* ══════════════════════════════
-   SCROLL FADE-IN
-══════════════════════════════ */
-function initFadeIn() {
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      e.target.classList.add('visible');
-    });
-  }, { threshold: 0.12 });
+      btn.addEventListener('click', () => {
+        const isOpen = btn.classList.toggle('open');
+        backdrop.classList.toggle('open', isOpen);
+        panel.classList.toggle('open', isOpen);
+      });
 
-  document.querySelectorAll('.fade-block').forEach(el => obs.observe(el));
+      backdrop.addEventListener('click', closeMenu);
+      document.querySelectorAll('.nav-link').forEach(a => a.addEventListener('click', closeMenu));
+    }
 
-  const obs2 = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.venn-wrap, .cycle-svg-wrap').forEach(el => obs2.observe(el));
-}
+    /* ══════════════════════════════
+       SCREEN TRANSITION
+       ── 白フラッシュ演出 ──
+    ══════════════════════════════ */
+    function transitionToTop(placement) {
+      /* 白いフラッシュオーバーレイ */
+      const flash = document.createElement('div');
+      flash.style.cssText = 'position:fixed;inset:0;background:white;opacity:0;z-index:2000;pointer-events:none;transition:opacity 0.25s ease';
+      document.body.appendChild(flash);
 
-/* ══════════════════════════════
-   NAVIGATION
-══════════════════════════════ */
-function initNav() {
-  const btn      = document.getElementById('menu-btn');
-  const backdrop = document.getElementById('drawer-backdrop');
-  const panel    = document.getElementById('drawer-panel');
+      requestAnimationFrame(() => {
+        flash.style.opacity = '1';
+        setTimeout(() => {
+          /* 画面切り替え */
+          document.getElementById('screen-prologue').classList.remove('active');
+          const top = document.getElementById('screen-top');
+          top.classList.remove('screen');
+          top.classList.add('active');
+          window.scrollTo(0, 0);
+          buildKeyVisual(placement);
 
-  function closeMenu() {
-    btn.classList.remove('open');
-    backdrop.classList.remove('open');
-    panel.classList.remove('open');
-  }
+          /* フェードアウト */
+          flash.style.opacity = '0';
+          setTimeout(() => flash.remove(), 350);
+        }, 280);
+      });
+    }
 
-  btn.addEventListener('click', () => {
-    const isOpen = btn.classList.toggle('open');
-    backdrop.classList.toggle('open', isOpen);
-    panel.classList.toggle('open', isOpen);
-  });
+    /* ══════════════════════════════
+       INIT
+    ══════════════════════════════ */
+    (function init() {
+      createPosterGame(
+        document.getElementById('prologue-game'),
+        'prologue',
+        placement => transitionToTop(placement)
+      );
 
-  backdrop.addEventListener('click', closeMenu);
-  document.querySelectorAll('.nav-link').forEach(a => a.addEventListener('click', closeMenu));
-}
+      document.getElementById('skip-btn').addEventListener('click', () => {
+        transitionToTop({ large: null, center: null, small: null });
+      });
 
-/* ══════════════════════════════
-   SCREEN TRANSITION
-   ── 白フラッシュ演出 ──
-══════════════════════════════ */
-function transitionToTop(placement) {
-  /* 白いフラッシュオーバーレイ */
-  const flash = document.createElement('div');
-  flash.style.cssText = 'position:fixed;inset:0;background:white;opacity:0;z-index:2000;pointer-events:none;transition:opacity 0.25s ease';
-  document.body.appendChild(flash);
-
-  requestAnimationFrame(() => {
-    flash.style.opacity = '1';
-    setTimeout(() => {
-      /* 画面切り替え */
-      document.getElementById('screen-prologue').classList.remove('active');
-      const top = document.getElementById('screen-top');
-      top.classList.remove('screen');
-      top.classList.add('active');
-      window.scrollTo(0, 0);
-      buildKeyVisual(placement);
-
-      /* フェードアウト */
-      flash.style.opacity = '0';
-      setTimeout(() => flash.remove(), 350);
-    }, 280);
-  });
-}
-
-/* ══════════════════════════════
-   INIT
-══════════════════════════════ */
-(function init() {
-  createPosterGame(
-    document.getElementById('prologue-game'),
-    'prologue',
-    placement => transitionToTop(placement)
-  );
-
-  document.getElementById('skip-btn').addEventListener('click', () => {
-    transitionToTop({ large: null, center: null, small: null });
-  });
-
-  buildLearning();
-  createPosterGame(document.getElementById('full-game'), 'full', null);
-  initNav();
-  initFadeIn();
-  buildKeyVisual(null);
-})();
-</script>
+      buildLearning();
+      createPosterGame(document.getElementById('full-game'), 'full', null);
+      initNav();
+      initFadeIn();
+      buildKeyVisual(null);
+    })();
+  </script>
 </body>
+
 </html>
