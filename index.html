@@ -32,15 +32,6 @@
       from { transform: translateY(-50%); }
       to   { transform: translateY(0); }
     }
-    /* Hint: finger slides right-up then back, 3 times */
-    @keyframes hintPing {
-      0%   { transform: translate(0,0); opacity: 0; }
-      10%  { opacity: 1; }
-      45%  { transform: translate(55px,-25px); opacity: 1; }
-      55%  { transform: translate(55px,-25px); opacity: 1; }
-      90%  { transform: translate(0,0); opacity: 1; }
-      100% { transform: translate(0,0); opacity: 0; }
-    }
     /* Transition flash */
     @keyframes flashIn  { from { opacity: 0; } to { opacity: 1; } }
     @keyframes flashOut { from { opacity: 1; } to { opacity: 0; } }
@@ -255,15 +246,6 @@
     }
     #ghost-chip.active { display: block; }
 
-    /* ── Drag hint ── */
-    .drag-hint {
-      position: absolute;
-      pointer-events: none;
-      font-size: 22px;
-      animation: hintPing 1.0s ease-in-out 3 both;
-      bottom: 108px;
-      left: calc(50% - 16px);
-    }
 
     /* ── Diagnose button ── */
     .diagnose-btn {
@@ -285,18 +267,19 @@
 
     /* ── Diagnosis result ── */
     .diagnosis-result {
+      position: absolute;
+      top: 0; left: 0; right: 0;
       background: #FFF0F7;
       border: 2px solid var(--border);
       border-radius: 12px;
       padding: 20px 16px;
       opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.45s, transform 0.45s;
+      transition: opacity 0.45s;
       pointer-events: none;
       display: none;
     }
     .diagnosis-result.entering { display: block; }
-    .diagnosis-result.visible  { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .diagnosis-result.visible  { opacity: 1; pointer-events: auto; }
 
     .mini-poster {
       width: 110px; height: 149px;
@@ -626,8 +609,15 @@
     }
 
     /* Cards — normal page flow (no nested scroll) */
-    .cards-flow { flex: 1; padding: 8px 16px 16px 4px; }
-    .assignment-slot { margin-bottom: 24px; }
+    .cards-flow {
+      flex: 1;
+      padding: 8px 16px 16px 4px;
+      /* ↓ scroll-snap を使う場合はここに追加 (例: overflow-y: scroll; scroll-snap-type: y mandatory;) */
+    }
+    .assignment-slot {
+      margin-bottom: 24px;
+      /* ↓ scroll-snap を使う場合はここに追加 (例: scroll-snap-align: start;) */
+    }
 
     .assignment-card {
       width: 100%; background: white;
@@ -950,13 +940,41 @@ function createPosterGame(container, mode, onComplete) {
   frame.appendChild(zSmall);
   zoneEls.small = zSmall;
 
-  /* Drag hint (finger icon, 3 bounces) */
+  /* Drag hint: チップ「デザインって楽しい」から大ゾーンへ一方向スライド×3 */
   const hint = document.createElement('div');
-  hint.className = 'drag-hint';
   hint.textContent = '☞';
-  wrap.appendChild(hint);
-  const HINT_DURATION = 1000 * 3 + 200;
-  setTimeout(() => { if (hint.parentNode) hint.remove(); }, HINT_DURATION);
+  hint.style.cssText = 'position:fixed;pointer-events:none;font-size:22px;z-index:999;opacity:0';
+  document.body.appendChild(hint);
+  requestAnimationFrame(() => {
+    const chipEl = tray.querySelector('[data-id="fun"]');
+    if (!chipEl || !hint.parentNode) return;
+    const chipR = chipEl.getBoundingClientRect();
+    const zoneR = zLarge.getBoundingClientRect();
+    const sx = chipR.left + chipR.width  / 2 - 11;
+    const sy = chipR.top  + chipR.height / 2 - 11;
+    const dx = (zoneR.left + zoneR.width  / 2 - 11) - sx;
+    const dy = (zoneR.top  + zoneR.height * 0.3 - 11) - sy;
+    hint.style.left = sx + 'px';
+    hint.style.top  = sy + 'px';
+    let i = 0;
+    function step() {
+      if (i >= 3 || !hint.parentNode) { hint.remove(); return; }
+      i++;
+      hint.style.transition = 'none';
+      hint.style.transform  = 'translate(0,0)';
+      hint.style.opacity    = '0';
+      void hint.offsetWidth; // reflow
+      hint.style.transition = 'opacity 0.15s';
+      hint.style.opacity    = '1';
+      setTimeout(() => {
+        hint.style.transition = `transform 0.65s ease-in, opacity 0.25s 0.5s`;
+        hint.style.transform  = `translate(${dx}px,${dy}px)`;
+        hint.style.opacity    = '0';
+        setTimeout(step, 1100);
+      }, 280);
+    }
+    step();
+  });
 
   /* Chip tray */
   const tray = document.createElement('div');
@@ -980,9 +998,15 @@ function createPosterGame(container, mode, onComplete) {
     diagnoseBtnEl.addEventListener('click', showDiagnosis);
     gameEls.appendChild(diagnoseBtnEl);
 
+    /* gameEls と resultEl を同一ラッパーに入れて重ねる */
+    const overlayWrap = document.createElement('div');
+    overlayWrap.style.cssText = 'position:relative';
+    container.insertBefore(overlayWrap, gameEls);
+    overlayWrap.appendChild(gameEls);
+
     resultEl = document.createElement('div');
     resultEl.className = 'diagnosis-result';
-    container.appendChild(resultEl);
+    overlayWrap.appendChild(resultEl);
   }
 
   /* ── Zone display ── */
