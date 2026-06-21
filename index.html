@@ -1874,20 +1874,22 @@
         slots.push(slot);
       });
 
-      /* Main scroll observer — highlight active bar */
+      /* ビューポート中央に最も近いカードをアクティブにする */
       const bars = nav.querySelectorAll('.side-bar');
-      const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            const idx = slots.indexOf(e.target);
-            if (idx !== -1) {
-              bars.forEach((b, i) => b.classList.toggle('active', i === idx));
-              slots.forEach((s, i) => s.classList.toggle('active', i === idx));
-            }
-          }
+      function updateActive() {
+        const viewCenter = window.innerHeight / 2;
+        let closestIdx = 0;
+        let minDist = Infinity;
+        slots.forEach((s, i) => {
+          const r = s.getBoundingClientRect();
+          const dist = Math.abs((r.top + r.height / 2) - viewCenter);
+          if (dist < minDist) { minDist = dist; closestIdx = i; }
         });
-      }, { threshold: 0.4 });
-      slots.forEach(el => obs.observe(el));
+        bars.forEach((b, i) => b.classList.toggle('active', i === closestIdx));
+        slots.forEach((s, i) => s.classList.toggle('active', i === closestIdx));
+      }
+      window.addEventListener('scroll', updateActive, { passive: true });
+      updateActive();
     }
 
     /* ══════════════════════════════
