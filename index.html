@@ -1547,18 +1547,25 @@
         function step() {
           if (i >= 3 || !hint.parentNode) { hint.remove(); return; }
           i++;
+          // 起点にリセット
           hint.style.transition = 'none';
-          hint.style.transform = 'translate(0,0)';
-          hint.style.opacity = '0';
-          void hint.offsetWidth; // reflow
-          hint.style.transition = 'opacity 0.15s';
-          hint.style.opacity = '1';
+          hint.style.transform  = 'translate(0,0)';
+          hint.style.opacity    = '0';
+          void hint.offsetWidth;
+          // フェードイン → 起点で静止
+          hint.style.transition = 'opacity 0.2s';
+          hint.style.opacity    = '1';
           setTimeout(() => {
-            hint.style.transition = `transform 0.65s ease-in, opacity 0.25s 0.5s`;
-            hint.style.transform = `translate(${dx}px,${dy}px)`;
-            hint.style.opacity = '0';
-            setTimeout(step, 1100);
-          }, 280);
+            // スライド
+            hint.style.transition = 'transform 0.55s ease-in-out';
+            hint.style.transform  = `translate(${dx}px,${dy}px)`;
+            // 終点で静止 → フェードアウト
+            setTimeout(() => {
+              hint.style.transition = 'opacity 0.2s';
+              hint.style.opacity    = '0';
+              setTimeout(step, 300);
+            }, 800); // スライド(550ms) + 終点静止(250ms)
+          }, 500); // フェードイン(200ms) + 起点静止(300ms)
         }
         step();
       });
