@@ -1072,6 +1072,12 @@
     .assignment-slot {
       margin-bottom: 24px;
       scroll-snap-align: center;
+      opacity: 0.25;
+      transition: opacity 0.4s;
+    }
+
+    .assignment-slot.active {
+      opacity: 1;
     }
 
     .assignment-card {
@@ -1872,7 +1878,10 @@
         entries.forEach(e => {
           if (e.isIntersecting) {
             const idx = slots.indexOf(e.target);
-            if (idx !== -1) bars.forEach((b, i) => b.classList.toggle('active', i === idx));
+            if (idx !== -1) {
+              bars.forEach((b, i) => b.classList.toggle('active', i === idx));
+              slots.forEach((s, i) => s.classList.toggle('active', i === idx));
+            }
           }
         });
       }, { threshold: 0.4 });
