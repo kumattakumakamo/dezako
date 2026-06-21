@@ -1073,11 +1073,13 @@
       margin-bottom: 24px;
       scroll-snap-align: center;
       opacity: 0.25;
-      transition: opacity 0.4s;
+      transform: scale(0.96);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
     .assignment-slot.active {
       opacity: 1;
+      transform: scale(1);
     }
 
     .assignment-card {
