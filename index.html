@@ -1600,20 +1600,59 @@
       frame.appendChild(zSmall);
       zoneEls.small = zSmall;
 
-      /* Drag hint: チップ「デザインって楽しい」から大ゾーンへ一方向スライド×3 */
+      /* Drag hint: prologue のみ。チップ「デザインって楽しい」から大ゾーンへ一方向スライド×3 */
+      if (mode === 'prologue') {
       const hint = document.createElement('div');
-      hint.textContent = '☞';
-      hint.style.cssText = 'position:fixed;pointer-events:none;font-size:22px;z-index:999;opacity:0';
+      hint.style.cssText = 'position:fixed;pointer-events:none;z-index:999;opacity:0;line-height:0;filter:drop-shadow(0 4px 10px rgba(255,30,143,0.5))';
+      (() => {
+        const ns = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(ns, 'svg');
+        svg.setAttribute('width', '36'); svg.setAttribute('height', '52');
+        svg.setAttribute('viewBox', '0 0 36 52');
+        // パーム（楕円・中央）
+        const palm = document.createElementNS(ns, 'ellipse');
+        palm.setAttribute('cx','18'); palm.setAttribute('cy','40');
+        palm.setAttribute('rx','16'); palm.setAttribute('ry','12');
+        palm.setAttribute('fill','#FF1E8F');
+        svg.appendChild(palm);
+        // 人差し指（短め・左寄り）
+        const finger = document.createElementNS(ns, 'rect');
+        finger.setAttribute('x','6'); finger.setAttribute('y','0');
+        finger.setAttribute('width','10'); finger.setAttribute('height','28');
+        finger.setAttribute('rx','5'); finger.setAttribute('fill','#FF1E8F');
+        svg.appendChild(finger);
+        // 爪（白）
+        const nail = document.createElementNS(ns, 'ellipse');
+        nail.setAttribute('cx','11'); nail.setAttribute('cy','6');
+        nail.setAttribute('rx','3'); nail.setAttribute('ry','3.5');
+        nail.setAttribute('fill','#FFFFFF');
+        svg.appendChild(nail);
+        // ナックルライン×2（白半透明）
+        const k1 = document.createElementNS(ns, 'rect');
+        k1.setAttribute('x','7'); k1.setAttribute('y','17');
+        k1.setAttribute('width','8'); k1.setAttribute('height','1.5');
+        k1.setAttribute('rx','0.75'); k1.setAttribute('fill','rgba(255,255,255,0.4)');
+        svg.appendChild(k1);
+        const k2 = document.createElementNS(ns, 'rect');
+        k2.setAttribute('x','7'); k2.setAttribute('y','22');
+        k2.setAttribute('width','8'); k2.setAttribute('height','1.5');
+        k2.setAttribute('rx','0.75'); k2.setAttribute('fill','rgba(255,255,255,0.4)');
+        svg.appendChild(k2);
+        hint.appendChild(svg);
+      })();
       document.body.appendChild(hint);
       requestAnimationFrame(() => {
         const chipEl = tray.querySelector('[data-id="fun"]');
         if (!chipEl || !hint.parentNode) return;
         const chipR = chipEl.getBoundingClientRect();
         const zoneR = zLarge.getBoundingClientRect();
-        const sx = chipR.left + chipR.width / 2 - 11;
-        const sy = chipR.top + chipR.height / 2 - 11;
-        const dx = (zoneR.left + zoneR.width / 2 - 11) - sx;
-        const dy = (zoneR.top + zoneR.height * 0.3 - 11) - sy;
+        const iconW = 36, iconH = 52;
+        const sx = chipR.left + chipR.width / 2 - iconW / 2;
+        const sy = chipR.top + chipR.height / 2 - iconH / 2;
+        const dx = (zoneR.left + zoneR.width / 2 - iconW / 2) - sx;
+        const dy = (zoneR.top + zoneR.height * 0.3 - iconH / 2) - sy;
+        // 指先を10時方向（300°）に固定
+        const angle = 300;
         hint.style.left = sx + 'px';
         hint.style.top = sy + 'px';
         let i = 0;
@@ -1622,26 +1661,27 @@
           i++;
           // 起点にリセット
           hint.style.transition = 'none';
-          hint.style.transform  = 'translate(0,0)';
+          hint.style.transform  = `translate(0px,0px) rotate(${angle}deg)`;
           hint.style.opacity    = '0';
           void hint.offsetWidth;
           // フェードイン → 起点で静止
-          hint.style.transition = 'opacity 0.2s';
+          hint.style.transition = 'opacity 0.3s ease';
           hint.style.opacity    = '1';
           setTimeout(() => {
-            // スライド
-            hint.style.transition = 'transform 0.55s ease-in-out';
-            hint.style.transform  = `translate(${dx}px,${dy}px)`;
+            // スライド（ゆっくり・イーズアウト）
+            hint.style.transition = 'transform 1.0s cubic-bezier(0.25,0.46,0.45,0.94)';
+            hint.style.transform  = `translate(${dx}px,${dy}px) rotate(${angle}deg)`;
             // 終点で静止 → フェードアウト
             setTimeout(() => {
-              hint.style.transition = 'opacity 0.2s';
+              hint.style.transition = 'opacity 0.3s ease';
               hint.style.opacity    = '0';
-              setTimeout(step, 300);
-            }, 800); // スライド(550ms) + 終点静止(250ms)
-          }, 500); // フェードイン(200ms) + 起点静止(300ms)
+              setTimeout(step, 400);
+            }, 1500); // スライド(1000ms) + 終点静止(500ms)
+          }, 650); // フェードイン(300ms) + 起点静止(350ms)
         }
         step();
       });
+      } // end if (mode === 'prologue')
 
       /* Chip tray */
       const tray = document.createElement('div');
