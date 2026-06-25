@@ -1549,6 +1549,7 @@
       let diagnoseBtnEl = null;
       let resultEl = null;
       let gameEls = null; // wrapper to hide on diagnosis
+      let hintEl = null;
 
       container.innerHTML = '';
 
@@ -1640,6 +1641,7 @@
         svg.appendChild(k2);
         hint.appendChild(svg);
       })();
+      hintEl = hint;
       document.body.appendChild(hint);
       requestAnimationFrame(() => {
         const chipEl = tray.querySelector('[data-id="fun"]');
@@ -1798,6 +1800,7 @@
       /* ── Drag ── */
       function onChipDown(e, chipId) {
         if (isPlaced(chipId)) return;
+        if (hintEl) { hintEl.remove(); hintEl = null; }
         e.preventDefault();
         dragging = { chipId };
         ghost.textContent = CHIPS[chipId].label;
