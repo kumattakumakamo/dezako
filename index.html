@@ -1024,15 +1024,12 @@
 
     .tool-tile {
       flex: 1;
-      min-width: 58px;
+      min-width: 48px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      padding: 10px 4px;
-      background: white;
-      border: 1.5px solid rgba(255, 30, 143, 0.2);
-      border-radius: 10px;
+      gap: 3px;
+      padding: 4px 4px;
     }
 
     .tool-icon {
@@ -1305,6 +1302,151 @@
       color: var(--sub);
       line-height: 1.7;
     }
+
+    /* ══════════════════════════════
+       GUIDED MODE — 1セクション1画面
+    ══════════════════════════════ */
+    body.guided-mode {
+      overflow: hidden;
+    }
+    body.guided-mode #section-kv {
+      height: calc(100svh - 44px);
+    }
+    body.guided-mode #section-welcome,
+    body.guided-mode #section-learning,
+    body.guided-mode #section-diagnosis,
+    body.guided-mode #section-cta {
+      height: calc(100svh - 44px);
+      overflow: hidden;
+    }
+    body.guided-mode #section-welcome {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    body.guided-mode #section-learning {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    body.guided-mode .learning-head { flex-shrink: 0; }
+    body.guided-mode .learning-body { flex: 1; overflow: hidden; min-height: 0; }
+    body.guided-mode .cards-flow {
+      height: 100%;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scrollbar-width: none;
+      padding: 0;
+    }
+    body.guided-mode .cards-flow::-webkit-scrollbar { display: none; }
+    body.guided-mode .assignment-slot {
+      height: 100%;
+      flex-shrink: 0;
+      scroll-snap-align: center;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── セクション間ナビゲーションボタン ── */
+    #guided-nav-btn {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 9999px;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Noto Sans JP', sans-serif;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 rgba(255,30,143,0.45);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+    }
+    body.guided-mode #guided-nav-btn { display: flex; }
+    #guided-nav-btn:disabled { opacity: 0.28; cursor: default; pointer-events: none; }
+
+    /* ── B3 → B4 遷移パネル（ボトムシート） ── */
+    .b3-question-panel {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--text);
+      border-radius: 20px 20px 0 0;
+      padding: 28px 24px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      z-index: 20;
+      transform: translateY(100%);
+      transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+    .b3-question-panel.visible { transform: translateY(0); }
+    .b3-question-panel p {
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.8;
+    }
+    .b3-choices { display: flex; gap: 16px; }
+    .b3-choice {
+      padding: 12px 28px;
+      border-radius: 9999px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Noto Sans JP', sans-serif;
+      cursor: pointer;
+      border: 3px solid #fff;
+      transition: transform 0.15s;
+    }
+    .b3-choice:active { transform: scale(0.95); }
+    .b3-choice.primary { background: #fff; color: var(--text); }
+    .b3-choice.secondary { background: transparent; color: #fff; }
+
+    /* ── B2 ガイドモード：余白縮小 ── */
+    body.guided-mode #section-welcome {
+      padding: 16px 20px 8px;
+      overflow-y: auto;
+    }
+    body.guided-mode #section-welcome h2 {
+      font-size: 17px;
+      margin-bottom: 12px;
+    }
+    body.guided-mode .venn-row,
+    body.guided-mode .cycle-row {
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+    body.guided-mode .venn-wrap { width: 120px; height: 90px; }
+    body.guided-mode .venn-circle { width: 70px; height: 70px; font-size: 12px; top: 8px; }
+    body.guided-mode .venn-circle.left-c { left: 18px; }
+    body.guided-mode .venn-circle.right-c { left: 36px; }
+    body.guided-mode .venn-wrap.visible .venn-circle.right-c { left: 50px; }
+    body.guided-mode .cycle-svg-wrap svg { width: 120px; height: 120px; }
+    body.guided-mode .facility-grid { margin-bottom: 12px; gap: 6px; }
+    body.guided-mode .facility-img { height: 56px; margin-bottom: 4px; }
+    body.guided-mode .tools-row { margin-bottom: 8px; }
+    body.guided-mode .oc-note { font-size: 11px; }
+
+    /* ── B4 ガイドモード：余白縮小 ── */
+    body.guided-mode #section-diagnosis {
+      padding: 16px 20px 80px;
+    }
+    body.guided-mode #section-diagnosis h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
   </style>
 </head>
 
@@ -1406,12 +1548,12 @@
             <div>
               <div class="facility-img" style="background:#FFF3AD"></div>
               <div class="facility-name">工房</div>
-              <div class="facility-desc">レーザーカッターや3Dプリンタを備えた制作空間</div>
+              <div class="facility-desc">レーザーカッター・3Dプリンタを備える</div>
             </div>
             <div>
               <div class="facility-img" style="background:#FFB3D1;transform:rotate(-2deg)"></div>
               <div class="facility-name">アトリエ</div>
-              <div class="facility-desc">大型スクリーンと可動家具で柔軟なワークスペース</div>
+              <div class="facility-desc">大型スクリーンと可動家具のラボ</div>
             </div>
             <div>
               <div class="facility-img" style="background:#AEE4FF;transform:rotate(2deg)"></div>
@@ -1447,7 +1589,7 @@
         </div>
 
         <div class="fade-block" style="transition-delay:0.05s">
-          <p class="oc-note">8/3オープンキャンパスでも、情報デザインコースブースにて詳しくお話します</p>
+          <p class="oc-note">8/3オープンキャンパスでも、デザコ ブースにて詳しくお話します</p>
         </div>
       </section>
 
@@ -1553,11 +1695,13 @@
 
       container.innerHTML = '';
 
-      /* Title */
-      const title = document.createElement('p');
-      title.className = 'game-title';
-      title.textContent = 'ブロックを好きな位置に配置してみよう';
-      container.appendChild(title);
+      /* Title (prologue only) */
+      if (mode !== 'full') {
+        const title = document.createElement('p');
+        title.className = 'game-title';
+        title.textContent = 'ブロックを好きな位置に配置してみよう';
+        container.appendChild(title);
+      }
 
       /* Game elements wrapper (hidden during diagnosis animation) */
       gameEls = document.createElement('div');
@@ -2010,8 +2154,12 @@
         });
         bars.forEach((b, i) => b.classList.toggle('active', i === closestIdx));
         slots.forEach((s, i) => s.classList.toggle('active', i === closestIdx));
+        if (window.__onCard04Seen) {
+          window.__onCard04Seen(closestIdx === slots.length - 1);
+        }
       }
       window.addEventListener('scroll', updateActive, { passive: true });
+      flow.addEventListener('scroll', updateActive, { passive: true });
       updateActive();
     }
 
@@ -2059,6 +2207,84 @@
     }
 
     /* ══════════════════════════════
+       GUIDED NAVIGATION
+       ── 1セクション1画面 ──
+    ══════════════════════════════ */
+    function initGuidedNav() {
+      const SECTION_IDS = ['section-kv', 'section-welcome', 'section-learning', 'section-diagnosis', 'section-cta'];
+      const LABELS = ['次へ ↓', '次へ ↓', '次へ ↓', '次へ ↓', '自由に見る ↓'];
+      let currentIdx = 0;
+
+      /* スクロールロック */
+      document.body.classList.add('guided-mode');
+
+      /* ナビボタン */
+      const navBtn = document.getElementById('guided-nav-btn');
+      navBtn.textContent = LABELS[0];
+
+      /* B3 ボトムシートパネル */
+      const b3 = document.getElementById('section-learning');
+      const panel = document.createElement('div');
+      panel.className = 'b3-question-panel';
+      panel.innerHTML =
+        '<p>座学はここまでです！<br>演習の準備はできましたか？</p>' +
+        '<div class="b3-choices">' +
+          '<button class="b3-choice primary">はい</button>' +
+          '<button class="b3-choice secondary">YES</button>' +
+        '</div>';
+      b3.appendChild(panel);
+      panel.querySelectorAll('.b3-choice').forEach(btn =>
+        btn.addEventListener('click', () => goToSection(3))
+      );
+
+      /* カード04検知コールバック（カード変化で表示/非表示） */
+      window.__onCard04Seen = (isCard04) => {
+        if (isCard04) {
+          setTimeout(() => panel.classList.add('visible'), 400);
+        } else {
+          panel.classList.remove('visible');
+        }
+      };
+
+      function triggerFadeBlocks(sectionEl) {
+        sectionEl.querySelectorAll('.fade-block, .venn-wrap, .cycle-svg-wrap').forEach(el =>
+          el.classList.add('visible')
+        );
+      }
+
+      function goToSection(idx) {
+        if (idx >= SECTION_IDS.length) { unlockScroll(); return; }
+        currentIdx = idx;
+        const el = document.getElementById(SECTION_IDS[idx]);
+        el.scrollIntoView({ behavior: 'smooth' });
+        navBtn.textContent = LABELS[idx];
+
+        if (idx === 2) {
+          /* B3: 次へボタンは非表示 */
+          panel.classList.remove('visible');
+          navBtn.style.display = 'none';
+        } else {
+          navBtn.style.display = '';
+          navBtn.disabled = false;
+        }
+
+        /* フェードブロックを即時表示 */
+        setTimeout(() => triggerFadeBlocks(el), 350);
+      }
+
+      navBtn.addEventListener('click', () => {
+        if (currentIdx >= SECTION_IDS.length - 1) { unlockScroll(); }
+        else { goToSection(currentIdx + 1); }
+      });
+
+      function unlockScroll() {
+        document.body.classList.remove('guided-mode');
+        navBtn.style.display = 'none';
+        window.__onCard04Seen = null;
+      }
+    }
+
+    /* ══════════════════════════════
        SCREEN TRANSITION
        ── 白フラッシュ演出 ──
     ══════════════════════════════ */
@@ -2078,6 +2304,7 @@
           top.classList.add('active');
           window.scrollTo(0, 0);
           buildKeyVisual(placement);
+          initGuidedNav();
 
           /* フェードアウト */
           flash.style.opacity = '0';
@@ -2107,6 +2334,7 @@
       buildKeyVisual(null);
     })();
   </script>
+  <button id="guided-nav-btn">次へ ↓</button>
 </body>
 
 </html>
