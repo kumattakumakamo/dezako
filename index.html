@@ -1748,43 +1748,8 @@
       /* Drag hint: prologue のみ。チップ「デザインって楽しい」から大ゾーンへ一方向スライド×3 */
       if (mode === 'prologue') {
       const hint = document.createElement('div');
-      hint.style.cssText = 'position:fixed;pointer-events:none;z-index:999;opacity:0;line-height:0;filter:drop-shadow(0 4px 10px rgba(255,30,143,0.5))';
-      (() => {
-        const ns = 'http://www.w3.org/2000/svg';
-        const svg = document.createElementNS(ns, 'svg');
-        svg.setAttribute('width', '36'); svg.setAttribute('height', '52');
-        svg.setAttribute('viewBox', '0 0 36 52');
-        // パーム（楕円・中央）
-        const palm = document.createElementNS(ns, 'ellipse');
-        palm.setAttribute('cx','18'); palm.setAttribute('cy','40');
-        palm.setAttribute('rx','16'); palm.setAttribute('ry','12');
-        palm.setAttribute('fill','#FF1E8F');
-        svg.appendChild(palm);
-        // 人差し指（短め・左寄り）
-        const finger = document.createElementNS(ns, 'rect');
-        finger.setAttribute('x','6'); finger.setAttribute('y','0');
-        finger.setAttribute('width','10'); finger.setAttribute('height','28');
-        finger.setAttribute('rx','5'); finger.setAttribute('fill','#FF1E8F');
-        svg.appendChild(finger);
-        // 爪（白）
-        const nail = document.createElementNS(ns, 'ellipse');
-        nail.setAttribute('cx','11'); nail.setAttribute('cy','6');
-        nail.setAttribute('rx','3'); nail.setAttribute('ry','3.5');
-        nail.setAttribute('fill','#FFFFFF');
-        svg.appendChild(nail);
-        // ナックルライン×2（白半透明）
-        const k1 = document.createElementNS(ns, 'rect');
-        k1.setAttribute('x','7'); k1.setAttribute('y','17');
-        k1.setAttribute('width','8'); k1.setAttribute('height','1.5');
-        k1.setAttribute('rx','0.75'); k1.setAttribute('fill','rgba(255,255,255,0.4)');
-        svg.appendChild(k1);
-        const k2 = document.createElementNS(ns, 'rect');
-        k2.setAttribute('x','7'); k2.setAttribute('y','22');
-        k2.setAttribute('width','8'); k2.setAttribute('height','1.5');
-        k2.setAttribute('rx','0.75'); k2.setAttribute('fill','rgba(255,255,255,0.4)');
-        svg.appendChild(k2);
-        hint.appendChild(svg);
-      })();
+      hint.style.cssText = 'position:fixed;pointer-events:none;z-index:999;opacity:0;line-height:0;';
+      hint.innerHTML = '<img src="hand-cursor.png" style="height:72px;width:auto;display:block;mix-blend-mode:multiply;">';
       hintEl = hint;
       document.body.appendChild(hint);
       requestAnimationFrame(() => {
@@ -1792,7 +1757,7 @@
         if (!chipEl || !hint.parentNode) return;
         const chipR = chipEl.getBoundingClientRect();
         const zoneR = zLarge.getBoundingClientRect();
-        const iconW = 36, iconH = 52;
+        const iconW = 132, iconH = 72;
         const sx = chipR.left + chipR.width / 2 - iconW / 2;
         const sy = chipR.top + chipR.height / 2 - iconH / 2;
         const dx = (zoneR.left + zoneR.width / 2 - iconW / 2) - sx;
