@@ -1756,12 +1756,12 @@
         const chipEl = tray.querySelector('[data-id="fun"]');
         if (!chipEl || !hint.parentNode) return;
         const chipR = chipEl.getBoundingClientRect();
-        const zoneR = zLarge.getBoundingClientRect();
+        const zoneR = zCenter.getBoundingClientRect();
         const iconW = 132, iconH = 72;
         const sx = chipR.left + chipR.width / 2 - iconW / 2;
         const sy = chipR.top + chipR.height / 2 - iconH / 2;
         const dx = (zoneR.left + zoneR.width / 2 - iconW / 2) - sx;
-        const dy = (zoneR.top + zoneR.height * 0.3 - iconH / 2) - sy;
+        const dy = (zoneR.top + zoneR.height / 2 - iconH / 2) - sy;
         // 指先を10時方向（300°）に固定
         const angle = 300;
         hint.style.left = sx + 'px';
