@@ -28,6 +28,8 @@
     }
 
     :root {
+      /* 茶色（--text系）＝文字専用、または"暗転ヒーロー"背景（--hero-bg-*、意図的な反転演出のみ）
+         ピンク（--sub/--border系）＝ボーダー・シャドウ・装飾専用。文字には --text-muted を使う */
       --text: #7A0026;
       --sub: #FF1E8F;
       --yellow: #FFF3AD;
@@ -37,6 +39,9 @@
       --border: #FF1E8F;
       --bg: #FFFFFF;
       --page-bg: #FFF2EF;
+      --text-muted: rgba(122, 0, 38, 0.55);
+      --hero-bg-dark: var(--text);
+      --hero-bg-accent: var(--sub);
     }
 
     /* ── Animations ── */
@@ -204,7 +209,7 @@
 
     .center-card-header .sub-label {
       font-size: 8px;
-      color: var(--sub);
+      color: var(--text-muted);
     }
 
     .center-card-header .title {
@@ -473,7 +478,7 @@
       font-size: 13px;
       padding: 4px 12px;
       border-radius: 6px;
-      transform: rotate(-1.5deg);
+      transform: rotate(-2deg);
       margin-bottom: 14px;
       letter-spacing: 0.02em;
     }
@@ -488,7 +493,7 @@
 
     .result-structure {
       font-size: 12px;
-      color: var(--sub);
+      color: var(--text-muted);
       margin-bottom: 4px;
       line-height: 1.6;
     }
@@ -730,7 +735,7 @@
     .kv-bg-concept {
       position: absolute;
       inset: 0;
-      background: #C5003B;
+      background: var(--hero-bg-dark);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -748,7 +753,7 @@
     .kv-bg-oc {
       position: absolute;
       inset: 0;
-      background: var(--sub);
+      background: var(--hero-bg-accent);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -845,7 +850,7 @@
 
     .kv-scroll-hint span {
       font-size: 10px;
-      color: var(--sub);
+      color: var(--text-muted);
     }
 
     /* ── Welcome (B2) ── */
@@ -1010,7 +1015,7 @@
 
     .facility-desc {
       font-size: 9px;
-      color: var(--sub);
+      color: var(--text-muted);
       line-height: 1.4;
     }
 
@@ -1048,13 +1053,13 @@
 
     .tool-name {
       font-size: 9px;
-      color: var(--sub);
+      color: var(--text-muted);
       text-align: center;
     }
 
     .oc-note {
       font-size: 12px;
-      color: var(--sub);
+      color: var(--text-muted);
       line-height: 1.6;
     }
 
@@ -1137,7 +1142,7 @@
     }
 
     .assignment-card:nth-child(odd) {
-      transform: rotate(0.5deg);
+      transform: rotate(1deg);
     }
 
     .assignment-card:nth-child(even) {
@@ -1148,7 +1153,7 @@
       padding: 20px 16px 4px;
       font-size: 10px;
       font-weight: 700;
-      color: var(--sub);
+      color: var(--text-muted);
     }
 
     .assignment-title {
@@ -1185,7 +1190,7 @@
     /* ── Diagnosis section (B4) ── */
     #section-diagnosis {
       padding: 56px 20px 72px;
-      background: var(--text);
+      background: var(--hero-bg-dark);
     }
 
     #section-diagnosis h2 {
@@ -1225,9 +1230,9 @@
     }
 
     .cta-eyebrow {
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      color: var(--sub);
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
       margin-bottom: 6px;
     }
 
@@ -1241,7 +1246,7 @@
 
     .cta-info {
       font-size: 13px;
-      color: var(--sub);
+      color: var(--text-muted);
       line-height: 1.8;
       margin-bottom: 24px;
     }
@@ -1249,7 +1254,7 @@
     .oc-poster-placeholder {
       width: 220px;
       height: 310px;
-      background: var(--sub);
+      background: var(--hero-bg-accent);
       border: 3px solid var(--border);
       box-shadow: 6px 6px 0 rgba(174, 228, 255, 1);
       border-radius: 16px;
@@ -1299,7 +1304,7 @@
       padding-top: 24px;
       border-top: 1px solid rgba(255, 30, 143, 0.2);
       font-size: 10px;
-      color: var(--sub);
+      color: var(--text-muted);
       line-height: 1.7;
     }
 
@@ -1308,6 +1313,10 @@
     ══════════════════════════════ */
     body.guided-mode {
       overflow: hidden;
+    }
+    /* ガイドモード中はフリースクロール不可のため、機能しない「スクロール」指示は隠す */
+    body.guided-mode .kv-scroll-hint {
+      display: none;
     }
     body.guided-mode #section-kv,
     body.guided-mode #section-welcome,
@@ -1362,16 +1371,16 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 200;
-      background: var(--text);
+      background: var(--hero-bg-dark);
       color: #fff;
-      border: none;
+      border: 3px solid var(--border);
       border-radius: 9999px;
-      padding: 12px 24px;
+      padding: 10px 22px;
       font-size: 15px;
       font-weight: 700;
       font-family: 'Noto Sans JP', sans-serif;
       cursor: pointer;
-      box-shadow: 4px 4px 0 rgba(255,30,143,0.45);
+      box-shadow: 4px 4px 0 rgba(255,30,143,1);
       display: none;
       align-items: center;
       gap: 8px;
@@ -1387,7 +1396,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: var(--text);
+      background: var(--hero-bg-dark);
       border-radius: 20px 20px 0 0;
       padding: 28px 24px 36px;
       display: flex;
@@ -1604,6 +1613,7 @@
       <section id="section-learning">
         <div class="learning-head">
           <h2 class="fade-block">情報デザインコース<br>２年生の１年間の学び</h2>
+          <p class="fade-block" style="font-size:13px;color:var(--text-muted);margin-top:8px;line-height:1.6">情報とデザインを重ねながら、実際につくった4つの課題を紹介します。</p>
         </div>
         <div class="learning-body">
           <div class="side-nav" id="side-nav"></div>
@@ -1615,7 +1625,7 @@
       <section id="section-diagnosis">
         <div class="fade-block">
           <h2>ポスタータイプを診断しよう<br><span
-              style="font-size:13px;font-weight:400;color:var(--sub)">3枚のブロックを配置して、あなたのデザインスタイルを知ろう</span></h2>
+              style="font-size:13px;font-weight:400;color:var(--text-muted)">3枚のブロックを配置して、あなたのデザインスタイルを知ろう</span></h2>
         </div>
         <div id="full-game"></div>
       </section>
@@ -1626,7 +1636,7 @@
           <p class="cta-bridge-text">診断したタイプを、実際に体験しに来ませんか</p>
         </div>
         <div class="fade-block" style="transition-delay:0.05s">
-          <div class="cta-eyebrow">OPEN CAMPUS</div>
+          <div class="cta-eyebrow">この続きは、現地で。</div>
           <h2>8/3<br>オープンキャンパス</h2>
           <div class="cta-info">
             公立はこだて未来大学<br>
@@ -2209,12 +2219,19 @@
         btn.addEventListener('click', () => goToSection(3))
       );
 
-      /* カード04検知コールバック（カード変化で表示/非表示） */
+      /* カード04検知コールバック（カード変化で表示/非表示）
+         B3滞在中（currentIdx===2）以外で発火したスクロールイベントは無視する
+         （B4以降へ進んだ後の残存スクロールイベントでナビボタンが再び隠れるのを防ぐ） */
       window.__onCard04Seen = (isCard04) => {
+        if (currentIdx !== 2) return;
         if (isCard04) {
-          setTimeout(() => panel.classList.add('visible'), 400);
+          navBtn.style.display = 'none';
+          setTimeout(() => { if (currentIdx === 2) panel.classList.add('visible'); }, 400);
         } else {
           panel.classList.remove('visible');
+          navBtn.style.display = '';
+          navBtn.disabled = true;
+          navBtn.textContent = 'カードを見てね ↓';
         }
       };
 
@@ -2229,19 +2246,21 @@
         currentIdx = idx;
         const el = document.getElementById(SECTION_IDS[idx]);
         el.scrollIntoView({ behavior: 'smooth' });
-        navBtn.textContent = LABELS[idx];
 
         if (idx === 2) {
-          /* B3: 次へボタンは非表示 */
+          /* B3: カード4に到達するまでは進行ボタンを無効化して待機ラベルに（消しはしない） */
           panel.classList.remove('visible');
-          navBtn.style.display = 'none';
+          navBtn.style.display = '';
+          navBtn.disabled = true;
+          navBtn.textContent = 'カードを見てね ↓';
         } else {
           navBtn.style.display = '';
           navBtn.disabled = false;
+          navBtn.textContent = LABELS[idx];
         }
 
-        /* フェードブロックを即時表示 */
-        setTimeout(() => triggerFadeBlocks(el), 350);
+        /* フェードブロックを表示（scrollIntoViewの完了を待ってから） */
+        setTimeout(() => triggerFadeBlocks(el), 480);
       }
 
       navBtn.addEventListener('click', () => {
@@ -2258,30 +2277,56 @@
 
     /* ══════════════════════════════
        SCREEN TRANSITION
-       ── 白フラッシュ演出 ──
+       ── ポスターの色を引き継ぐフラッシュ演出 ──
     ══════════════════════════════ */
+    const FLASH_FADE_IN = 220;        // 選んだ色へフェードイン
+    const FLASH_COLOR_HOLD = 150;     // 色を保持（キャプション表示開始）
+    const FLASH_COLOR_TO_WHITE = 260; // 色→白へ切り替え（この間に画面を差し替える）
+    const FLASH_CAPTION_FADE = 200;   // キャプションのフェード時間
+    const FLASH_FADE_OUT = 300;       // 白からフェードアウト
+    const FLASH_REMOVE_DELAY = 350;   // 要素の削除までの余白
+
     function transitionToTop(placement) {
-      /* 白いフラッシュオーバーレイ */
+      /* プロローグで選んだ「大」チップの色を引き継いだフラッシュ（未選択なら白） */
+      const flashColor = (placement && placement.large && CHIPS[placement.large])
+        ? CHIPS[placement.large].color
+        : '#FFFFFF';
+
       const flash = document.createElement('div');
-      flash.style.cssText = 'position:fixed;inset:0;background:white;opacity:0;z-index:2000;pointer-events:none;transition:opacity 0.25s ease';
+      flash.style.cssText = `position:fixed;inset:0;background:${flashColor};opacity:0;z-index:2000;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity ${FLASH_FADE_IN}ms ease`;
+
+      const caption = document.createElement('span');
+      caption.textContent = 'じゃあ、実際に見てみよう';
+      caption.style.cssText = `font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:15px;color:#7A0026;opacity:0;transition:opacity ${FLASH_CAPTION_FADE}ms ease`;
+      flash.appendChild(caption);
       document.body.appendChild(flash);
 
       requestAnimationFrame(() => {
         flash.style.opacity = '1';
         setTimeout(() => {
-          /* 画面切り替え */
-          document.getElementById('screen-prologue').classList.remove('active');
-          const top = document.getElementById('screen-top');
-          top.classList.remove('screen');
-          top.classList.add('active');
-          window.scrollTo(0, 0);
-          buildKeyVisual(placement);
-          initGuidedNav();
+          caption.style.opacity = '1';
+          setTimeout(() => {
+            /* 色→白へ。この間にキャプションはフェードアウト */
+            flash.style.transition = `background-color ${FLASH_COLOR_TO_WHITE}ms ease`;
+            flash.style.backgroundColor = '#FFFFFF';
+            caption.style.opacity = '0';
+            setTimeout(() => {
+              /* 画面切り替え（この時点で白一色） */
+              document.getElementById('screen-prologue').classList.remove('active');
+              const top = document.getElementById('screen-top');
+              top.classList.remove('screen');
+              top.classList.add('active');
+              window.scrollTo(0, 0);
+              buildKeyVisual(placement);
+              initGuidedNav();
 
-          /* フェードアウト */
-          flash.style.opacity = '0';
-          setTimeout(() => flash.remove(), 350);
-        }, 280);
+              /* フェードアウト */
+              flash.style.transition = `opacity ${FLASH_FADE_OUT}ms ease`;
+              flash.style.opacity = '0';
+              setTimeout(() => flash.remove(), FLASH_REMOVE_DELAY);
+            }, FLASH_COLOR_TO_WHITE);
+          }, FLASH_COLOR_HOLD);
+        }, FLASH_FADE_IN);
       });
     }
 
