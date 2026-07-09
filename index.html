@@ -987,18 +987,81 @@
       flex-shrink: 0;
     }
 
-    .cycle-svg-wrap svg circle,
-    .cycle-svg-wrap svg text,
-    .cycle-svg-wrap svg path,
-    .cycle-svg-wrap svg polygon {
-      opacity: 0;
-      transition: opacity 0.5s;
+    /* ── PDCA circle（制作サイクル） ── */
+    .pdca-wrap {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
-    .cycle-svg-wrap.visible svg circle,
-    .cycle-svg-wrap.visible svg text,
-    .cycle-svg-wrap.visible svg path,
-    .cycle-svg-wrap.visible svg polygon {
+    .pdca-scale {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 520px;
+      height: 520px;
+      transform-origin: top left;
+      transform: scale(0.2885);
+    }
+
+    .pdca-arc {
+      position: absolute;
+      inset: 0;
+      transform-origin: 260px 260px;
+      transform: rotate(-10deg);
+      opacity: 0;
+      transition: transform 0.7s cubic-bezier(0.42, 0, 0.2, 1),
+                  opacity 0.7s cubic-bezier(0.42, 0, 0.2, 1);
+    }
+
+    .pdca-arc img {
+      position: absolute;
+      display: block;
+      width: auto;
+    }
+
+    .pdca-arc-1 { transition-delay: 0s; }
+    .pdca-arc-1 img { left: 260px; bottom: 265px; height: 258px; }
+
+    .pdca-arc-2 { transition-delay: 0.3s; }
+    .pdca-arc-2 img { left: 250px; top: 225px; height: 258px; }
+
+    .pdca-arc-3 { transition-delay: 0.6s; }
+    .pdca-arc-3 img { right: 241px; top: 220px; height: 264px; }
+
+    .pdca-arc-4 { transition-delay: 0.9s; }
+    .pdca-arc-4 img { right: 233px; bottom: 277px; height: 245px; }
+
+    .cycle-svg-wrap.visible .pdca-arc {
+      transform: rotate(0deg);
+      opacity: 1;
+    }
+
+    .pdca-label {
+      position: absolute;
+      color: #ffffff;
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      text-shadow:
+        -3px -3px 0 #FF1E8F, 3px -3px 0 #FF1E8F,
+        -3px  3px 0 #FF1E8F, 3px  3px 0 #FF1E8F,
+           0 -3px 0 #FF1E8F,    0  3px 0 #FF1E8F,
+        -3px    0 0 #FF1E8F, 3px    0 0 #FF1E8F;
+      opacity: 0;
+      transition: opacity 0.7s cubic-bezier(0.42, 0, 0.2, 1);
+    }
+
+    .pdca-label-1 { right: 58px; top: 75px; transition-delay: 0s; }
+    .pdca-label-2 { right: 62px; bottom: 120px; transition-delay: 0.3s; }
+    .pdca-label-3 { left: 75px; bottom: 120px; transition-delay: 0.6s; }
+    .pdca-label-4 { left: 75px; top: 75px; transition-delay: 0.9s; }
+
+    .cycle-svg-wrap.visible .pdca-label {
       opacity: 1;
     }
 
@@ -1605,7 +1668,8 @@
     body.guided-mode .venn-circle.left-c { left: 18px; }
     body.guided-mode .venn-circle.right-c { left: 36px; }
     body.guided-mode .venn-wrap.visible .venn-circle.right-c { left: 50px; }
-    body.guided-mode .cycle-svg-wrap svg { width: 120px; height: 120px; }
+    body.guided-mode .pdca-wrap { width: 120px; height: 120px; }
+    body.guided-mode .pdca-scale { transform: scale(0.2308); }
     body.guided-mode .facility-grid { margin-bottom: 12px; gap: 6px; }
     body.guided-mode .facility-img { height: 56px; margin-bottom: 4px; }
     body.guided-mode .tools-row { margin-bottom: 8px; }
@@ -1684,44 +1748,20 @@
         </div>
 
         <div class="fade-block cycle-row" style="transition-delay:0.1s">
-          <p class="cycle-text">リサーチ・アイデア・制作・発表を繰り返す制作サイクルで、実践的なデザイン思考を身につけます。</p>
+          <p class="cycle-text">計画・制作・評価・改善を繰り返す制作サイクルで、実践的なデザイン思考を身につけます。</p>
           <div class="cycle-svg-wrap">
-            <svg width="150" height="150" viewBox="0 0 150 150">
-              <circle cx="75" cy="75" r="56" fill="none" stroke="#FF1E8F" stroke-width="1.5" stroke-dasharray="4 3"
-                style="transition-delay:0.2s" />
-              <path d="M 131,75 A 56,56 0 1 1 130,66" fill="none" stroke="#FF1E8F" stroke-width="2"
-                stroke-linecap="round" style="transition-delay:0.4s" />
-              <polygon points="130,66 123,71 132,73" fill="#FF1E8F" style="transition-delay:0.4s" />
-              <!-- Steps at r=56 -->
-              <circle cx="131" cy="75" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
-                style="transition-delay:0.37s" />
-              <text x="131" y="76" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
-                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.44s">リサーチ</text>
-              <circle cx="103" cy="19" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
-                style="transition-delay:0.44s" />
-              <text x="103" y="20" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
-                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.51s">アイデア</text>
-              <circle cx="47" cy="19" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
-                style="transition-delay:0.51s" />
-              <text x="47" y="20" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
-                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.58s">制作</text>
-              <circle cx="19" cy="75" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
-                style="transition-delay:0.58s" />
-              <text x="19" y="76" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
-                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.65s">発表</text>
-              <circle cx="47" cy="131" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
-                style="transition-delay:0.65s" />
-              <text x="47" y="132" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
-                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.72s">改善</text>
-              <circle cx="103" cy="131" r="16" fill="white" stroke="#FF1E8F" stroke-width="1.5"
-                style="transition-delay:0.72s" />
-              <text x="103" y="132" text-anchor="middle" dominant-baseline="middle" font-size="8" font-weight="700"
-                fill="#7A0026" font-family="'Noto Sans JP',sans-serif" style="transition-delay:0.79s">提案</text>
-              <text x="75" y="74" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700"
-                fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">制作</text>
-              <text x="75" y="86" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700"
-                fill="#FF1E8F" font-family="'Noto Sans JP',sans-serif">サイクル</text>
-            </svg>
+            <div class="pdca-wrap">
+              <div class="pdca-scale">
+                <div class="pdca-arc pdca-arc-1"><img src="cycle-plan.png" alt=""></div>
+                <div class="pdca-arc pdca-arc-2"><img src="cycle-make.png" alt=""></div>
+                <div class="pdca-arc pdca-arc-3"><img src="cycle-check.png" alt=""></div>
+                <div class="pdca-arc pdca-arc-4"><img src="cycle-improve.png" alt=""></div>
+                <span class="pdca-label pdca-label-1">計画</span>
+                <span class="pdca-label pdca-label-2">制作</span>
+                <span class="pdca-label pdca-label-3">評価</span>
+                <span class="pdca-label pdca-label-4">改善</span>
+              </div>
+            </div>
           </div>
         </div>
 
