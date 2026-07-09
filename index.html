@@ -732,6 +732,15 @@
       background: rgba(255, 242, 239, 0.7);
     }
 
+    /* プロローグ未選択（スキップ）時のニュートラル表現：彩度を落とし白を強める */
+    .kv-grid--neutral .kv-block {
+      filter: grayscale(0.55) opacity(0.75);
+    }
+
+    .kv-overlay--neutral {
+      background: rgba(255, 242, 239, 0.92);
+    }
+
     .kv-bg-concept {
       position: absolute;
       inset: 0;
@@ -1613,7 +1622,7 @@
       <section id="section-learning">
         <div class="learning-head">
           <h2 class="fade-block">情報デザインコース<br>２年生の１年間の学び</h2>
-          <p class="fade-block" style="font-size:13px;color:var(--text-muted);margin-top:8px;line-height:1.6">情報とデザインを重ねながら、実際につくった4つの課題を紹介します。</p>
+          <p class="fade-block" style="font-size:13px;color:var(--text-muted);margin-top:8px;line-height:1.6">「コース概要」から一歩進んで、ここでは実際に取り組む4つの課題を紹介します。</p>
         </div>
         <div class="learning-body">
           <div class="side-nav" id="side-nav"></div>
@@ -2062,22 +2071,26 @@
       } else if (large === 'oc') {
         bgHTML = `<div class="kv-bg-oc"><div class="kv-oc-poster">OC POSTER</div></div>`;
       } else {
+        /* large === 'fun'（選択済み）と null（未選択）を見た目で区別する。
+           未選択時は同じブロック構成を彩度落とし＋白強めのオーバーレイでニュートラルに見せる */
+        const isNeutral = large !== 'fun';
         const makeBlocks = (colors, isLeft) => colors.concat(colors).map((c, i) => {
           const rot = isLeft ? (i % 2 === 0 ? 3 : -3) : (i % 2 === 0 ? -4 : 4);
           const br = (!isLeft && i % 3 === 0) ? '50%' : '32px';
           return `<div class="kv-block" style="background:${c};transform:rotate(${rot}deg);border-radius:${br}"></div>`;
         }).join('');
         bgHTML = `
-      <div class="kv-grid">
+      <div class="kv-grid${isNeutral ? ' kv-grid--neutral' : ''}">
         <div class="kv-col left"><div class="kv-col-inner">${makeBlocks(GRID_L, true)}</div></div>
         <div class="kv-col right"><div class="kv-col-inner">${makeBlocks(GRID_R, false)}</div></div>
       </div>
-      <div class="kv-overlay"></div>`;
+      <div class="kv-overlay${isNeutral ? ' kv-overlay--neutral' : ''}"></div>`;
       }
 
-      const badgeBg = small === 'fun' ? '#FFF3AD' : small === 'oc' ? 'white' : '#FF1E8F';
-      const badgeColor = small === 'oc' ? '#7A0026' : 'white';
-      const badgeText = small === 'fun' ? '楽しい！' : small === 'oc' ? '8.1 OC →' : '情報デザインコースってどんなとこ？';
+      /* small === 'concept' と null（未選択）を見分けられるよう、未選択専用のニュートラル文言を用意 */
+      const badgeBg = small === 'fun' ? '#FFF3AD' : small === 'oc' ? 'white' : small === 'concept' ? '#FF1E8F' : '#FFFFFF';
+      const badgeColor = small === 'oc' ? '#7A0026' : small === null ? 'var(--text-muted)' : 'white';
+      const badgeText = small === 'fun' ? '楽しい！' : small === 'oc' ? '8.1 OC →' : small === 'concept' ? '情報デザインコースってどんなとこ？' : '未来大 情報デザインコース';
 
       kv.innerHTML = `
     ${bgHTML}
@@ -2288,15 +2301,15 @@
 
     function transitionToTop(placement) {
       /* プロローグで選んだ「大」チップの色を引き継いだフラッシュ（未選択なら白） */
-      const flashColor = (placement && placement.large && CHIPS[placement.large])
-        ? CHIPS[placement.large].color
-        : '#FFFFFF';
+      const hasBuilt = !!(placement && placement.large && CHIPS[placement.large]);
+      const flashColor = hasBuilt ? CHIPS[placement.large].color : '#FFFFFF';
 
       const flash = document.createElement('div');
       flash.style.cssText = `position:fixed;inset:0;background:${flashColor};opacity:0;z-index:2000;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity ${FLASH_FADE_IN}ms ease`;
 
+      /* 選択の結果であることを明言する（スキップ時は中立な文言） */
       const caption = document.createElement('span');
-      caption.textContent = 'じゃあ、実際に見てみよう';
+      caption.textContent = hasBuilt ? 'あなたが選んだ色で、ページができていく。' : 'それじゃあ、サイトを見てみよう。';
       caption.style.cssText = `font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:15px;color:#7A0026;opacity:0;transition:opacity ${FLASH_CAPTION_FADE}ms ease`;
       flash.appendChild(caption);
       document.body.appendChild(flash);
