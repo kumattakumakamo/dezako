@@ -470,6 +470,25 @@
       align-items: center;
     }
 
+    .result-compare {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .result-compare-item {
+      text-align: center;
+    }
+
+    .result-compare-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
     .result-type-badge {
       display: inline-block;
       background: var(--orange);
@@ -1065,6 +1084,28 @@
       opacity: 1;
     }
 
+    .process-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .assign-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .assign-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
     .facility-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1133,75 +1174,6 @@
       font-size: 12px;
       color: var(--text-muted);
       line-height: 1.6;
-    }
-
-    /* ── Learning (B3) ── */
-    #section-learning {
-      background: var(--page-bg);
-    }
-
-    .learning-head {
-      padding: 40px 20px 16px;
-    }
-
-    .learning-head h2 {
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    /* Side nav: bar/line style, sticky */
-    .learning-body {
-      display: flex;
-      gap: 0;
-    }
-
-    .side-nav {
-      position: sticky;
-      top: 60px;
-      align-self: flex-start;
-      width: 32px;
-      padding: 8px 0 8px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      flex-shrink: 0;
-    }
-
-    .side-bar {
-      width: 3px;
-      height: 20px;
-      background: rgba(255, 30, 143, 0.2);
-      border-radius: 2px;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      transition: height 0.2s, background 0.2s;
-    }
-
-    .side-bar.active {
-      height: 28px;
-      background: var(--text);
-    }
-
-    /* Cards — normal page flow (no nested scroll) */
-    .cards-flow {
-      flex: 1;
-      padding: 8px 16px 16px 4px;
-    }
-
-    .assignment-slot {
-      margin-bottom: 24px;
-      scroll-snap-align: center;
-      opacity: 0.25;
-      transform: scale(0.96);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-
-    .assignment-slot.active {
-      opacity: 1;
-      transform: scale(1);
     }
 
     .assignment-card {
@@ -1539,7 +1511,6 @@
     }
     body.guided-mode #section-kv,
     body.guided-mode #section-welcome,
-    body.guided-mode #section-learning,
     body.guided-mode #section-diagnosis,
     body.guided-mode #section-cta {
       scroll-margin-top: 44px;
@@ -1548,7 +1519,6 @@
       height: calc(100svh - 44px);
     }
     body.guided-mode #section-welcome,
-    body.guided-mode #section-learning,
     body.guided-mode #section-diagnosis,
     body.guided-mode #section-cta {
       height: calc(100svh - 44px);
@@ -1557,30 +1527,6 @@
     body.guided-mode #section-welcome {
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-    }
-    body.guided-mode #section-learning {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-    body.guided-mode .learning-head { flex-shrink: 0; }
-    body.guided-mode .learning-body { flex: 1; overflow: hidden; min-height: 0; }
-    body.guided-mode .cards-flow {
-      height: 100%;
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
-      scrollbar-width: none;
-      padding: 0;
-    }
-    body.guided-mode .cards-flow::-webkit-scrollbar { display: none; }
-    body.guided-mode .assignment-slot {
-      height: 100%;
-      flex-shrink: 0;
-      scroll-snap-align: center;
-      margin-bottom: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     /* ── セクション間ナビゲーションボタン ── */
@@ -1609,46 +1555,6 @@
     body.guided-mode #guided-nav-btn { display: flex; }
     #guided-nav-btn:disabled { opacity: 0.28; cursor: default; pointer-events: none; }
 
-    /* ── B3 → B4 遷移パネル（ボトムシート） ── */
-    .b3-question-panel {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--hero-bg-dark);
-      border-radius: 20px 20px 0 0;
-      padding: 28px 24px 36px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      z-index: 20;
-      transform: translateY(100%);
-      transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
-    }
-    .b3-question-panel.visible { transform: translateY(0); }
-    .b3-question-panel p {
-      color: #fff;
-      font-size: 17px;
-      font-weight: 700;
-      text-align: center;
-      line-height: 1.8;
-    }
-    .b3-choices { display: flex; gap: 16px; }
-    .b3-choice {
-      padding: 12px 28px;
-      border-radius: 9999px;
-      font-size: 15px;
-      font-weight: 700;
-      font-family: 'Noto Sans JP', sans-serif;
-      cursor: pointer;
-      border: 3px solid #fff;
-      transition: transform 0.15s;
-    }
-    .b3-choice:active { transform: scale(0.95); }
-    .b3-choice.primary { background: #fff; color: var(--text); }
-    .b3-choice.secondary { background: transparent; color: #fff; }
-
     /* ── B2 ガイドモード：余白縮小 ── */
     body.guided-mode #section-welcome {
       padding: 16px 20px 8px;
@@ -1663,6 +1569,7 @@
       margin-bottom: 12px;
       gap: 12px;
     }
+    body.guided-mode .process-block { margin-bottom: 8px; }
     body.guided-mode .venn-wrap { width: 120px; height: 90px; }
     body.guided-mode .venn-circle { width: 70px; height: 70px; font-size: 12px; top: 8px; }
     body.guided-mode .venn-circle.left-c { left: 18px; }
@@ -1725,8 +1632,7 @@
     <div id="drawer-backdrop"></div>
     <nav id="drawer-panel">
       <a href="#section-welcome" class="nav-link">コースについて</a>
-      <a href="#section-learning" class="nav-link">1年間の学び</a>
-      <a href="#section-diagnosis" class="nav-link">タイプ診断</a>
+      <a href="#section-diagnosis" class="nav-link">ポスターをつくる</a>
       <a href="#section-cta" class="nav-link">オープンキャンパス</a>
     </nav>
 
@@ -1763,6 +1669,11 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="fade-block process-block" style="transition-delay:0.08s">
+          <p class="process-text">課題を通して、集めた情報を整理し、"伝わる形"に組み立てていく。それが、このコースで身につける力です。</p>
+          <div class="assign-tag-row" id="assign-tag-row"></div>
         </div>
 
         <div class="fade-block" style="transition-delay:0.05s">
@@ -1815,23 +1726,11 @@
         </div>
       </section>
 
-      <!-- B3: Learning -->
-      <section id="section-learning">
-        <div class="learning-head">
-          <h2 class="fade-block">情報デザインコース<br>２年生の１年間の学び</h2>
-          <p class="fade-block" style="font-size:13px;color:var(--text-muted);margin-top:8px;line-height:1.6">「コース概要」から一歩進んで、ここでは実際に取り組む4つの課題を紹介します。</p>
-        </div>
-        <div class="learning-body">
-          <div class="side-nav" id="side-nav"></div>
-          <div class="cards-flow" id="cards-flow"></div>
-        </div>
-      </section>
-
       <!-- B4: Diagnosis -->
       <section id="section-diagnosis">
         <div class="fade-block">
-          <h2>ポスタータイプを診断しよう<br><span
-              style="font-size:13px;font-weight:400;color:var(--text-muted)">3枚のブロックを配置して、あなたのデザインスタイルを知ろう</span></h2>
+          <h2>もう一度、ポスターをつくってみよう<br><span
+              style="font-size:13px;font-weight:400;color:var(--text-muted)">同じ3つのブロックを、今度は意識して配置してみよう。</span></h2>
         </div>
         <div id="full-game"></div>
       </section>
@@ -1839,8 +1738,8 @@
       <!-- B5: CTA -->
       <section id="section-cta">
         <div class="fade-block cta-bridge">
-          <div class="cta-bridge-badge">✦ あなたのタイプが見つかった！ ✦</div>
-          <p class="cta-bridge-text">オープンキャンパスに行って、<br>あなたのタイプに合う作品を探そう！</p>
+          <div class="cta-bridge-badge">✦ あなたの作品ができた！ ✦</div>
+          <p class="cta-bridge-text">オープンキャンパスに行って、<br>先輩たちの作品を見に行こう！</p>
           <svg width="22" height="30" viewBox="0 0 22 30" fill="none" aria-hidden="true">
             <line x1="11" y1="0" x2="11" y2="20" stroke="#FF1E8F" stroke-width="2.5" stroke-linecap="round" />
             <polyline points="5,14 11,21 17,14" fill="none" stroke="#FF1E8F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -1849,7 +1748,28 @@
 
         <div class="fade-block" style="transition-delay:0.08s">
           <h2 class="cta-heading">オープン<br><span class="accent">キャンパス</span><span class="year">2026</span></h2>
-          <p class="cta-lead">実際に、情報デザインコース生の作品を見に行ってみよう！<br>先輩の生の声を聴けたり質問できたりするチャンス！</p>
+          <p class="cta-lead">友達を誘って、二人で先輩の作品を見に行こう。生の声を聴いたり、気になることを質問したり——一人より、二人の方がきっと楽しい。</p>
+        </div>
+
+        <div class="fade-block" style="transition-delay:0.11s">
+          <p class="cta-lead">工房やアトリエでは、先輩たちがこんな課題に取り組んでいます。</p>
+          <div class="facility-grid">
+            <div>
+              <div class="facility-img" style="background:#FFB3D1"></div>
+              <div class="facility-name">工房</div>
+              <div class="facility-desc">レーザーカッター・3Dプリンタで"仮想生物デザイン"の模型を制作する先輩も</div>
+            </div>
+            <div>
+              <div class="facility-img" style="background:#FFF3AD;transform:rotate(-2deg)"></div>
+              <div class="facility-name">アトリエ</div>
+              <div class="facility-desc">大型スクリーンを囲んで"フィールドリサーチ"の発見を共有する先輩も</div>
+            </div>
+            <div>
+              <div class="facility-img" style="background:#AEE4FF;transform:rotate(2deg)"></div>
+              <div class="facility-name">ミュージアム</div>
+              <div class="facility-desc">学内ギャラリーで"アプリ・サービス提案"のプロトタイプを展示する先輩も</div>
+            </div>
+          </div>
         </div>
 
         <div class="fade-block" style="transition-delay:0.14s">
@@ -1945,8 +1865,128 @@
       { num: '04', title: 'アプリ・サービス提案', desc: '社会課題や日常のニーズを起点に、デジタルサービスを企画・プロトタイプ。UXフローからUI設計まで担う。', color: '#AEE4FF' },
     ];
 
+    let prologuePlacement = null;
+
     const GRID_L = ['#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B'];
     const GRID_R = ['#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F'];
+
+    /* ══════════════════════════════
+       MINI POSTER（B4のbefore/after比較で共有）
+    ══════════════════════════════ */
+    function renderMiniPoster(p) {
+      const largeBg = p.large ? CHIPS[p.large].color + '55' : '#F1EFE8';
+      const centerChip = p.center ? `<div class="card-chip" style="background:${CHIPS[p.center].color}">${CHIPS[p.center].label}</div>` : '';
+      const badgeBg = p.small ? CHIPS[p.small].color : '#FFB3D1';
+      const badgeText = p.small ? CHIPS[p.small].label : '角';
+      return `
+      <div class="mini-poster">
+        <div class="mini-poster-bg" style="background:${largeBg}"></div>
+        <div class="mini-poster-card">
+          <div class="card-title">タイトル</div>
+          ${centerChip}
+        </div>
+        <div class="mini-poster-badge" style="background:${badgeBg}">${badgeText}</div>
+      </div>`;
+    }
+
+    /* ══════════════════════════════
+       SHARE CANVAS（ミニポスターを画像化して共有）
+    ══════════════════════════════ */
+    function roundRectPath(ctx, x, y, w, h, r) {
+      if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); return; }
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function wrapFillText(ctx, text, x, y, maxWidth, lineHeight) {
+      let line = '';
+      const lines = [];
+      for (const ch of text) {
+        const test = line + ch;
+        if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = ch; }
+        else line = test;
+      }
+      if (line) lines.push(line);
+      lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineHeight));
+      return lines.length;
+    }
+
+    async function renderShareCanvas(placement, d) {
+      await document.fonts.load('700 40px "Noto Sans JP"');
+      await document.fonts.load('400 24px "Noto Sans JP"');
+
+      const W = 640, H = 864;
+      const canvas = document.createElement('canvas');
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext('2d');
+
+      /* outer card */
+      ctx.fillStyle = '#FFFFFF';
+      roundRectPath(ctx, 0, 0, W, H, 24);
+      ctx.fill();
+      ctx.strokeStyle = '#FF1E8F';
+      ctx.lineWidth = 6;
+      roundRectPath(ctx, 3, 3, W - 6, H - 6, 22);
+      ctx.stroke();
+
+      /* poster background (large zone) */
+      const largeBg = placement.large ? CHIPS[placement.large].color : '#F1EFE8';
+      roundRectPath(ctx, 16, 16, W - 32, H - 32, 16);
+      ctx.fillStyle = largeBg;
+      ctx.fill();
+
+      /* center card */
+      const cardX = 48, cardY = 64, cardW = W - 96, cardH = H - 260;
+      roundRectPath(ctx, cardX, cardY, cardW, cardH, 12);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,30,143,0.3)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#7A0026';
+      ctx.font = '700 34px "Noto Sans JP", sans-serif';
+      ctx.textBaseline = 'top';
+      ctx.fillText('タイトル', cardX + 24, cardY + 24);
+
+      if (placement.center) {
+        const chipW = 260, chipY = cardY + 80;
+        roundRectPath(ctx, cardX + 24, chipY, chipW, 48, 24);
+        ctx.fillStyle = CHIPS[placement.center].color;
+        ctx.fill();
+        ctx.fillStyle = '#7A0026';
+        ctx.font = '700 20px "Noto Sans JP", sans-serif';
+        ctx.fillText(CHIPS[placement.center].label, cardX + 44, chipY + 14);
+      }
+
+      /* badge (small zone) */
+      if (placement.small) {
+        const badgeW = 220, badgeH = 56;
+        const bx = W - 48 - badgeW, by = H - 140 - badgeH;
+        roundRectPath(ctx, bx, by, badgeW, badgeH, 28);
+        ctx.fillStyle = CHIPS[placement.small].color;
+        ctx.fill();
+        ctx.fillStyle = '#7A0026';
+        ctx.font = '700 20px "Noto Sans JP", sans-serif';
+        wrapFillText(ctx, CHIPS[placement.small].label, bx + 20, by + 16, badgeW - 40, 24);
+      }
+
+      /* footer: result type + branding */
+      ctx.fillStyle = '#7A0026';
+      ctx.font = '700 26px "Noto Sans JP", sans-serif';
+      ctx.fillText(d.type, 48, H - 90);
+      ctx.font = '400 16px "Noto Sans JP", sans-serif';
+      ctx.fillStyle = 'rgba(122,0,38,0.55)';
+      ctx.fillText('未来大 情報デザインコース 特設サイト', 48, H - 48);
+
+      return canvas;
+    }
 
     /* ══════════════════════════════
        POSTER GAME
@@ -2083,7 +2123,7 @@
       if (mode === 'full') {
         diagnoseBtnEl = document.createElement('button');
         diagnoseBtnEl.className = 'diagnose-btn';
-        diagnoseBtnEl.textContent = '診断する →';
+        diagnoseBtnEl.textContent = 'つくる →';
         diagnoseBtnEl.addEventListener('click', showDiagnosis);
         gameEls.appendChild(diagnoseBtnEl);
 
@@ -2245,27 +2285,37 @@
         /* ゲームエリアをフェードアウト */
         gameEls.classList.add('hiding');
 
-        const largeBg = placement.large ? CHIPS[placement.large].color + '55' : '#F1EFE8';
-        const centerChip = placement.center ? `<div class="card-chip" style="background:${CHIPS[placement.center].color}">${CHIPS[placement.center].label}</div>` : '';
-        const badgeBg = placement.small ? CHIPS[placement.small].color : '#FFB3D1';
-        const badgeText = placement.small ? CHIPS[placement.small].label : '角';
+        const hasBefore = prologuePlacement &&
+          prologuePlacement.large && prologuePlacement.center && prologuePlacement.small;
+
+        const compareHTML = hasBefore ? `
+      <div class="result-compare">
+        <div class="result-compare-item">
+          <p class="result-compare-label">最初に置いた形</p>
+          ${renderMiniPoster(prologuePlacement)}
+        </div>
+        <div class="result-compare-item">
+          <p class="result-compare-label">意識して置いた形</p>
+          ${renderMiniPoster(placement)}
+        </div>
+      </div>
+      <p class="result-structure">"なんとなく"置いた最初の形と、意識して組み立てた今回の形。似ていても、違っていても——それが、あなたの"伝え方"のクセです。</p>`
+          : renderMiniPoster(placement);
+
+        const evidenceHTML = `
+      <p class="result-structure">実はこれ、2年生の実際の課題「情報設計・ポスター制作」と同じ考え方です。</p>
+      ${renderAssignmentCard(ASSIGNMENTS[2])}`;
 
         resultEl.innerHTML = `
-      <div class="mini-poster">
-        <div class="mini-poster-bg" style="background:${largeBg}"></div>
-        <div class="mini-poster-card">
-          <div class="card-title">タイトル</div>
-          ${centerChip}
-        </div>
-        <div class="mini-poster-badge" style="background:${badgeBg}">${badgeText}</div>
-      </div>
+      ${compareHTML}
       <div class="result-type-badge">${d.type}</div>
       <p class="result-hook">${d.hook}</p>
       <p class="result-structure">${d.structure}</p>
       <p class="result-detail">${d.detail}</p>
+      ${evidenceHTML}
       <div class="result-btns">
-        <button class="result-share-btn" id="share-btn-${mode}">このタイプをシェアする ↗</button>
-        <a class="result-oc-link" href="#section-cta">あなたのタイプをキャンパスで確かめよう →</a>
+        <button class="result-share-btn" id="share-btn-${mode}">この作品をシェアする ↗</button>
+        <a class="result-oc-link" href="#section-cta">あなたの作品と似た制作をキャンパスで見つけよう →</a>
         <button class="result-reset-btn" id="reset-btn-${mode}">もう一度試す</button>
       </div>`;
 
@@ -2289,16 +2339,35 @@
         gameEls.classList.remove('hiding');
       }
 
-      function shareResult() {
+      async function shareResult() {
         const key = `${placement.large}-${placement.center}-${placement.small}`;
         const d = DIAGNOSES[key];
         if (!d) return;
-        const text = `私のポスタータイプは「${d.type}」！\n${d.hook}\n未来大 情報デザインコース 特設サイト`;
-        if (navigator.share) {
-          navigator.share({ text });
-        } else {
-          navigator.clipboard.writeText(text).then(() => alert('クリップボードにコピーしました'));
-        }
+
+        const canvas = await renderShareCanvas(placement, d);
+        canvas.toBlob(async (blob) => {
+          if (!blob) return;
+          const fileName = `dezako-poster-${key}.png`;
+          const file = new File([blob], fileName, { type: 'image/png' });
+          const shareText = `私が作ったのは「${d.type}」スタイルのポスター！\n未来大 情報デザインコース 特設サイト`;
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({ files: [file], title: '未来大 情報デザインコース', text: shareText });
+              return;
+            } catch (err) {
+              if (err && err.name === 'AbortError') return;
+            }
+          }
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 4000);
+        }, 'image/png');
       }
     }
 
@@ -2351,56 +2420,27 @@
     }
 
     /* ══════════════════════════════
-       LEARNING SECTION
-       ── 通常スクロールに変更 ──
+       B2: ASSIGNMENT TAGS（4課題を軽く提示）
     ══════════════════════════════ */
-    function buildLearning() {
-      const nav = document.getElementById('side-nav');
-      const flow = document.getElementById('cards-flow');
-      const slots = [];
+    function renderAssignTags() {
+      const row = document.getElementById('assign-tag-row');
+      if (!row) return;
+      row.innerHTML = ASSIGNMENTS.map(a =>
+        `<span class="assign-tag" style="background:${a.color}">${a.title}</span>`
+      ).join('');
+    }
 
-      ASSIGNMENTS.forEach((a, i) => {
-        /* Bar indicator */
-        const bar = document.createElement('button');
-        bar.className = 'side-bar' + (i === 0 ? ' active' : '');
-        bar.title = a.title;
-        bar.addEventListener('click', () => slots[i].scrollIntoView({ behavior: 'smooth', block: 'start' }));
-        nav.appendChild(bar);
-
-        /* Card */
-        const slot = document.createElement('div');
-        slot.className = 'assignment-slot';
-        slot.innerHTML = `
+    /* ══════════════════════════════
+       ASSIGNMENT CARD（B4証拠カード・B5課題例で共有）
+    ══════════════════════════════ */
+    function renderAssignmentCard(a) {
+      return `
       <div class="assignment-card">
         <div class="assignment-num">課題 ${a.num}</div>
         <div class="assignment-title">${a.title}</div>
         <div class="assignment-img" style="background:${a.color}"><span>制作物イメージ</span></div>
         <div class="assignment-desc">${a.desc}</div>
       </div>`;
-        flow.appendChild(slot);
-        slots.push(slot);
-      });
-
-      /* ビューポート中央に最も近いカードをアクティブにする */
-      const bars = nav.querySelectorAll('.side-bar');
-      function updateActive() {
-        const viewCenter = window.innerHeight / 2;
-        let closestIdx = 0;
-        let minDist = Infinity;
-        slots.forEach((s, i) => {
-          const r = s.getBoundingClientRect();
-          const dist = Math.abs((r.top + r.height / 2) - viewCenter);
-          if (dist < minDist) { minDist = dist; closestIdx = i; }
-        });
-        bars.forEach((b, i) => b.classList.toggle('active', i === closestIdx));
-        slots.forEach((s, i) => s.classList.toggle('active', i === closestIdx));
-        if (window.__onCard04Seen) {
-          window.__onCard04Seen(closestIdx === slots.length - 1);
-        }
-      }
-      window.addEventListener('scroll', updateActive, { passive: true });
-      flow.addEventListener('scroll', updateActive, { passive: true });
-      updateActive();
     }
 
     /* ══════════════════════════════
@@ -2451,8 +2491,8 @@
        ── 1セクション1画面 ──
     ══════════════════════════════ */
     function initGuidedNav() {
-      const SECTION_IDS = ['section-kv', 'section-welcome', 'section-learning', 'section-diagnosis', 'section-cta'];
-      const LABELS = ['次へ ↓', '次へ ↓', '次へ ↓', '次へ ↓', '自由に見る ↓'];
+      const SECTION_IDS = ['section-kv', 'section-welcome', 'section-diagnosis', 'section-cta'];
+      const LABELS = ['次へ ↓', '次へ ↓', '次へ ↓', '自由に見る ↓'];
       let currentIdx = 0;
 
       /* スクロールロック */
@@ -2461,37 +2501,6 @@
       /* ナビボタン */
       const navBtn = document.getElementById('guided-nav-btn');
       navBtn.textContent = LABELS[0];
-
-      /* B3 ボトムシートパネル */
-      const b3 = document.getElementById('section-learning');
-      const panel = document.createElement('div');
-      panel.className = 'b3-question-panel';
-      panel.innerHTML =
-        '<p>座学はここまでです！<br>演習の準備はできましたか？</p>' +
-        '<div class="b3-choices">' +
-          '<button class="b3-choice primary">はい</button>' +
-          '<button class="b3-choice secondary">YES</button>' +
-        '</div>';
-      b3.appendChild(panel);
-      panel.querySelectorAll('.b3-choice').forEach(btn =>
-        btn.addEventListener('click', () => goToSection(3))
-      );
-
-      /* カード04検知コールバック（カード変化で表示/非表示）
-         B3滞在中（currentIdx===2）以外で発火したスクロールイベントは無視する
-         （B4以降へ進んだ後の残存スクロールイベントでナビボタンが再び隠れるのを防ぐ） */
-      window.__onCard04Seen = (isCard04) => {
-        if (currentIdx !== 2) return;
-        if (isCard04) {
-          navBtn.style.display = 'none';
-          setTimeout(() => { if (currentIdx === 2) panel.classList.add('visible'); }, 400);
-        } else {
-          panel.classList.remove('visible');
-          navBtn.style.display = '';
-          navBtn.disabled = true;
-          navBtn.textContent = 'カードを見てね ↓';
-        }
-      };
 
       function triggerFadeBlocks(sectionEl) {
         sectionEl.querySelectorAll('.fade-block, .venn-wrap, .cycle-svg-wrap').forEach(el =>
@@ -2505,17 +2514,9 @@
         const el = document.getElementById(SECTION_IDS[idx]);
         el.scrollIntoView({ behavior: 'smooth' });
 
-        if (idx === 2) {
-          /* B3: カード4に到達するまでは進行ボタンを無効化して待機ラベルに（消しはしない） */
-          panel.classList.remove('visible');
-          navBtn.style.display = '';
-          navBtn.disabled = true;
-          navBtn.textContent = 'カードを見てね ↓';
-        } else {
-          navBtn.style.display = '';
-          navBtn.disabled = false;
-          navBtn.textContent = LABELS[idx];
-        }
+        navBtn.style.display = '';
+        navBtn.disabled = false;
+        navBtn.textContent = LABELS[idx];
 
         /* フェードブロックを表示（scrollIntoViewの完了を待ってから） */
         setTimeout(() => triggerFadeBlocks(el), 480);
@@ -2529,7 +2530,6 @@
       function unlockScroll() {
         document.body.classList.remove('guided-mode');
         navBtn.style.display = 'none';
-        window.__onCard04Seen = null;
       }
     }
 
@@ -2545,6 +2545,8 @@
     const FLASH_REMOVE_DELAY = 350;   // 要素の削除までの余白
 
     function transitionToTop(placement) {
+      prologuePlacement = placement; // B4のbefore/after比較用に保持
+
       /* プロローグで選んだ「大」チップの色を引き継いだフラッシュ（未選択なら白） */
       const hasBuilt = !!(placement && placement.large && CHIPS[placement.large]);
       const flashColor = hasBuilt ? CHIPS[placement.large].color : '#FFFFFF';
@@ -2602,8 +2604,8 @@
         transitionToTop({ large: null, center: null, small: null });
       });
 
-      buildLearning();
       createPosterGame(document.getElementById('full-game'), 'full', null);
+      renderAssignTags();
       initNav();
       initFadeIn();
       buildKeyVisual(null);
