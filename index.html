@@ -851,14 +851,23 @@
       transform: translateY(0) scale(1);
     }
 
-    /* Venn & Cycle – 図とテキストを中央揃えで縦に積む */
+    /* Venn & Cycle – stack vertically on small screens */
     .venn-row,
     .cycle-row {
       display: flex;
-      flex-direction: column;
+      gap: 16px;
       align-items: center;
-      gap: 12px;
       margin-bottom: 40px;
+    }
+
+    @media (max-width: 400px) {
+
+      .venn-row,
+      .cycle-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
     }
 
     .venn-wrap {
@@ -866,6 +875,27 @@
       width: 230px;
       height: 230px;
       flex-shrink: 0;
+    }
+
+    .venn-stage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 230px;
+      height: 230px;
+    }
+
+    @media (min-width: 401px) {
+
+      .venn-wrap {
+        width: 150px;
+        height: 150px;
+      }
+
+      .venn-stage {
+        transform: scale(0.6522);
+        transform-origin: top left;
+      }
     }
 
     .bz-circle {
@@ -1019,17 +1049,17 @@
     }
 
     .venn-text {
+      flex: 1;
       font-size: 13px;
       color: var(--text);
       line-height: 1.7;
-      text-align: center;
     }
 
     .cycle-text {
+      flex: 1;
       font-size: 13px;
       color: var(--text);
       line-height: 1.7;
-      text-align: center;
     }
 
     .cycle-svg-wrap {
@@ -1745,19 +1775,22 @@
 
         <div class="fade-block venn-row" style="transition-delay:0.1s">
           <div class="venn-wrap">
-            <div class="bz-circle bz-c1"><span class="bz-label bz-label-c1">情報システム</span></div>
-            <div class="bz-circle bz-c3"><span class="bz-label bz-label-c3">知覚システム</span></div>
-            <div class="bz-circle bz-c4"><span class="bz-label bz-label-c4">複雑系</span></div>
-            <div class="bz-circle bz-c2">
-              <div class="bz-callout">
-                <span class="bz-callout-label">情報デザイン</span>
+            <div class="venn-stage">
+              <div class="bz-circle bz-c1"><span class="bz-label bz-label-c1">情報システム</span></div>
+              <div class="bz-circle bz-c3"><span class="bz-label bz-label-c3">知覚システム</span></div>
+              <div class="bz-circle bz-c4"><span class="bz-label bz-label-c4">複雑系</span></div>
+              <div class="bz-circle bz-c2">
+                <div class="bz-callout">
+                  <span class="bz-callout-label">情報デザイン</span>
+                </div>
               </div>
             </div>
           </div>
-          <p class="venn-text">未来大学には4つのコースがあり、2年生になると配属先が決まります。情報デザインコースはその中でも、「デザイン」について様々な角度から学ぶコースになっています。</p>
+          <p class="venn-text">未来大学には4つのコースがあり、情報デザインは「デザイン」を様々な角度から学びます。</p>
         </div>
 
         <div class="fade-block cycle-row" style="transition-delay:0.1s">
+          <p class="cycle-text">「計画」→「制作」→「評価」→「改善」を繰り返すサイクルを、PDCA（Plan, Do, Check, Action）サイクルと言います。</p>
           <div class="cycle-svg-wrap">
             <div class="pdca-wrap">
               <div class="pdca-scale">
@@ -1772,7 +1805,6 @@
               </div>
             </div>
           </div>
-          <p class="cycle-text">何かを作る時、「計画を立てる」→「作ってみる」→「作った作品を評価する」→「評価で気が付いたところを改善する」というサイクルを繰り返します。これをPDCA（Plan, Do, Check, Action）サイクルと言います。</p>
         </div>
 
         <div class="fade-block process-block" style="transition-delay:0.08s">
