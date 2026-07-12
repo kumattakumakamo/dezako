@@ -1210,38 +1210,29 @@
       line-height: 1.4;
     }
 
-    /* Tools — 5 items, single row */
+    /* Tools — 7 items, single row */
     .tools-row {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       margin-bottom: 32px;
-      overflow-x: auto;
     }
 
     .tool-tile {
       flex: 1;
-      min-width: 48px;
+      min-width: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 3px;
-      padding: 4px 4px;
+      padding: 4px 2px;
     }
 
     .tool-icon {
-      width: 40px;
-      height: 40px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 11px;
-      color: var(--text);
-      overflow: hidden;
-      padding: 6px;
     }
 
     .tool-icon img {
@@ -1601,7 +1592,7 @@
 
     #section-gate {
       position: relative;
-      min-height: 60vh;
+      min-height: 26vh;
       background: var(--bg);
       text-align: center;
       overflow: hidden;
@@ -1895,6 +1886,10 @@
             <div class="tool-tile">
               <div class="tool-icon"><img src="tool-gemini.png" alt="Gemini"></div>
               <div class="tool-name">Gemini</div>
+            </div>
+            <div class="tool-tile">
+              <div class="tool-icon"><img src="tool-arduino.png" alt="Arduino"></div>
+              <div class="tool-name">Arduino</div>
             </div>
           </div>
           <div class="facility-grid">
@@ -2644,35 +2639,23 @@
     ══════════════════════════════ */
     function buildKeyVisual(placement) {
       const kv = document.getElementById('section-kv');
-      const large = placement ? placement.large : null;
-      const small = placement ? placement.small : null;
 
-      let bgHTML = '';
-      if (large === 'concept') {
-        bgHTML = `<div class="kv-bg-concept"><div class="ghost-text">デザインとは<br>何か</div></div>`;
-      } else if (large === 'oc') {
-        bgHTML = `<div class="kv-bg-oc"><div class="kv-oc-poster">OC POSTER</div></div>`;
-      } else {
-        /* large === 'fun'（選択済み）と null（未選択）を見た目で区別する。
-           未選択時は同じブロック構成を彩度落とし＋白強めのオーバーレイでニュートラルに見せる */
-        const isNeutral = large !== 'fun';
-        const makeBlocks = (colors, isLeft) => colors.concat(colors).map((c, i) => {
-          const rot = isLeft ? (i % 2 === 0 ? 3 : -3) : (i % 2 === 0 ? -4 : 4);
-          const br = (!isLeft && i % 3 === 0) ? '50%' : '32px';
-          return `<div class="kv-block" style="background:${c};transform:rotate(${rot}deg);border-radius:${br}"></div>`;
-        }).join('');
-        bgHTML = `
-      <div class="kv-grid${isNeutral ? ' kv-grid--neutral' : ''}">
+      /* プロローグの結果に関わらず、常に同じ「写真が流れる」背景1通りに固定する */
+      const makeBlocks = (colors, isLeft) => colors.concat(colors).map((c, i) => {
+        const rot = isLeft ? (i % 2 === 0 ? 3 : -3) : (i % 2 === 0 ? -4 : 4);
+        const br = (!isLeft && i % 3 === 0) ? '50%' : '32px';
+        return `<div class="kv-block" style="background:${c};transform:rotate(${rot}deg);border-radius:${br}"></div>`;
+      }).join('');
+      const bgHTML = `
+      <div class="kv-grid">
         <div class="kv-col left"><div class="kv-col-inner">${makeBlocks(GRID_L, true)}</div></div>
         <div class="kv-col right"><div class="kv-col-inner">${makeBlocks(GRID_R, false)}</div></div>
       </div>
-      <div class="kv-overlay${isNeutral ? ' kv-overlay--neutral' : ''}"></div>`;
-      }
+      <div class="kv-overlay"></div>`;
 
-      /* small === 'concept' と null（未選択）を見分けられるよう、未選択専用のニュートラル文言を用意 */
-      const badgeBg = small === 'fun' ? '#FFF3AD' : small === 'oc' ? 'white' : small === 'concept' ? '#FF1E8F' : '#FFFFFF';
-      const badgeColor = small === 'oc' ? '#7A0026' : small === null ? 'var(--text-muted)' : 'white';
-      const badgeText = small === 'fun' ? '楽しい！' : small === 'oc' ? '8.1 OC →' : small === 'concept' ? '情報デザインコースってどんなとこ？' : '未来大 情報デザインコース';
+      const badgeBg = '#FFFFFF';
+      const badgeColor = 'var(--text-muted)';
+      const badgeText = '未来大 情報デザインコース';
 
       kv.innerHTML = `
     ${bgHTML}
@@ -2870,57 +2853,15 @@
 
     /* ══════════════════════════════
        SCREEN TRANSITION
-       ── ポスターの色を引き継ぐフラッシュ演出 ──
     ══════════════════════════════ */
-    const FLASH_FADE_IN = 220;        // 選んだ色へフェードイン
-    const FLASH_COLOR_HOLD = 150;     // 色を保持（キャプション表示開始）
-    const FLASH_COLOR_TO_WHITE = 260; // 色→白へ切り替え（この間に画面を差し替える）
-    const FLASH_CAPTION_FADE = 200;   // キャプションのフェード時間
-    const FLASH_FADE_OUT = 300;       // 白からフェードアウト
-    const FLASH_REMOVE_DELAY = 350;   // 要素の削除までの余白
-
     function transitionToTop(placement) {
-      /* プロローグで選んだ「大」チップの色を引き継いだフラッシュ（未選択なら白） */
-      const hasBuilt = !!(placement && placement.large && CHIPS[placement.large]);
-      const flashColor = hasBuilt ? CHIPS[placement.large].color : '#FFFFFF';
-
-      const flash = document.createElement('div');
-      flash.style.cssText = `position:fixed;inset:0;background:${flashColor};opacity:0;z-index:2000;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity ${FLASH_FADE_IN}ms ease`;
-
-      /* 選択の結果であることを明言する（スキップ時は中立な文言） */
-      const caption = document.createElement('span');
-      caption.textContent = hasBuilt ? 'あなたが選んだ色で、ページができていく。' : 'それじゃあ、サイトを見てみよう。';
-      caption.style.cssText = `font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:15px;color:#7A0026;opacity:0;transition:opacity ${FLASH_CAPTION_FADE}ms ease`;
-      flash.appendChild(caption);
-      document.body.appendChild(flash);
-
-      requestAnimationFrame(() => {
-        flash.style.opacity = '1';
-        setTimeout(() => {
-          caption.style.opacity = '1';
-          setTimeout(() => {
-            /* 色→白へ。この間にキャプションはフェードアウト */
-            flash.style.transition = `background-color ${FLASH_COLOR_TO_WHITE}ms ease`;
-            flash.style.backgroundColor = '#FFFFFF';
-            caption.style.opacity = '0';
-            setTimeout(() => {
-              /* 画面切り替え（この時点で白一色） */
-              Logger.log('screen_transition', { from: 'prologue', to: 'top' });
-              document.getElementById('screen-prologue').classList.remove('active');
-              const top = document.getElementById('screen-top');
-              top.classList.remove('screen');
-              top.classList.add('active');
-              window.scrollTo(0, 0);
-              buildKeyVisual(placement);
-
-              /* フェードアウト */
-              flash.style.transition = `opacity ${FLASH_FADE_OUT}ms ease`;
-              flash.style.opacity = '0';
-              setTimeout(() => flash.remove(), FLASH_REMOVE_DELAY);
-            }, FLASH_COLOR_TO_WHITE);
-          }, FLASH_COLOR_HOLD);
-        }, FLASH_FADE_IN);
-      });
+      Logger.log('screen_transition', { from: 'prologue', to: 'top' });
+      document.getElementById('screen-prologue').classList.remove('active');
+      const top = document.getElementById('screen-top');
+      top.classList.remove('screen');
+      top.classList.add('active');
+      window.scrollTo(0, 0);
+      buildKeyVisual(placement);
     }
 
     /* ══════════════════════════════
