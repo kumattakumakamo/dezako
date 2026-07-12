@@ -1550,6 +1550,50 @@
       background: white;
       color: var(--text);
     }
+
+    /* ══════════════════════════════
+       EXPERIMENT LOG EXPORT（研究用途・目立たせない）
+    ══════════════════════════════ */
+    .export-log-btn {
+      display: block;
+      width: auto;
+      max-width: 200px;
+      margin: 14px auto 0;
+      padding: 8px 16px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1.5px solid rgba(122, 0, 38, 0.15);
+      border-radius: 9999px;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .export-log-btn:active {
+      transform: scale(0.97);
+    }
+
+    .export-log-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 32px;
+      transform: translateX(-50%);
+      background: var(--text);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      z-index: 3000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .export-log-toast.visible {
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -1749,6 +1793,8 @@
           <p class="cta-btn-note">＊ 申し込みは大学公式サイトから（無料）</p>
         </div>
 
+        <button type="button" id="export-log-btn" class="export-log-btn">実験データをコピー</button>
+
         <div class="cta-wave" aria-hidden="true">
           <svg viewBox="0 0 430 32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
             <path d="M0,16 C72,32 144,0 215,16 C286,32 358,0 430,16 L430,32 L0,32 Z" fill="#FFB3D1" opacity="0.5" />
@@ -1776,6 +1822,21 @@
 
   <script>
     'use strict';
+
+    /* ══════════════════════════════
+       LOGGER — 実験データ収集（画面には一切表示しない）
+    ══════════════════════════════ */
+    const Logger = (function () {
+      const startTime = performance.now();
+      const events = [];
+      function log(type, detail) {
+        events.push(Object.assign({ t: Math.round(performance.now() - startTime), type: type }, detail || {}));
+      }
+      function toJSON() {
+        return JSON.stringify(events, null, 2);
+      }
+      return { log: log, toJSON: toJSON };
+    })();
 
     const CHIPS = {
       fun: { label: 'デザインって楽しい', color: '#FFF3AD' },
@@ -2048,7 +2109,10 @@
         diagnoseBtnEl = document.createElement('button');
         diagnoseBtnEl.className = 'diagnose-btn';
         diagnoseBtnEl.textContent = 'つくる →';
-        diagnoseBtnEl.addEventListener('click', showDiagnosis);
+        diagnoseBtnEl.addEventListener('click', () => {
+          Logger.log('button_click', { id: 'diagnose-btn', label: 'つくる →', mode: mode });
+          showDiagnosis();
+        });
         gameEls.appendChild(diagnoseBtnEl);
 
         /* gameEls と resultEl を同一ラッパーに入れて重ねる */
@@ -2150,7 +2214,10 @@
 
       /* ── Drag ── */
       function onChipDown(e, chipId) {
-        if (isPlaced(chipId)) return;
+        if (isPlaced(chipId)) {
+          Logger.log('chip_replace_attempt', { mode: mode, chipId: chipId });
+          return;
+        }
         if (hintEl) { hintEl.remove(); hintEl = null; }
         e.preventDefault();
         dragging = { chipId };
@@ -2287,8 +2354,18 @@
         <a class="result-oc-link" href="#section-cta">あなたの作品と似た制作をキャンパスで見つけよう →</a>
         <button class="result-reset-btn" id="reset-btn-${mode}">もう一度試す</button>
       </div>`;
-        resultEl.querySelector(`#reset-btn-${mode}`).addEventListener('click', resetGame);
-        resultEl.querySelector(`#share-btn-${mode}`).addEventListener('click', shareResult);
+        resultEl.querySelector(`#reset-btn-${mode}`).addEventListener('click', () => {
+          Logger.log('button_click', { id: 'result-reset-btn', label: 'もう一度試す', mode: mode });
+          resetGame();
+        });
+        resultEl.querySelector(`#share-btn-${mode}`).addEventListener('click', () => {
+          Logger.log('button_click', { id: 'result-share-btn', label: 'この作品をシェアする', mode: mode });
+          shareResult();
+        });
+        const ocLink = resultEl.querySelector('.result-oc-link');
+        if (ocLink) ocLink.addEventListener('click', () => {
+          Logger.log('button_click', { id: 'result-oc-link', label: 'あなたの作品と似た制作をキャンパスで見つけよう', mode: mode });
+        });
 
         /* フラッシュのピークで、ポスターがその場で完成イメージ画像に変身（大きさはまだ変えない） */
         setTimeout(() => {
@@ -2497,10 +2574,17 @@
         const isOpen = btn.classList.toggle('open');
         backdrop.classList.toggle('open', isOpen);
         panel.classList.toggle('open', isOpen);
+        Logger.log('button_click', { id: 'menu-btn', label: isOpen ? 'メニューを開く' : 'メニューを閉じる' });
       });
 
-      backdrop.addEventListener('click', closeMenu);
-      document.querySelectorAll('.nav-link').forEach(a => a.addEventListener('click', closeMenu));
+      backdrop.addEventListener('click', () => {
+        Logger.log('button_click', { id: 'drawer-backdrop', label: '背景クリックでメニューを閉じる' });
+        closeMenu();
+      });
+      document.querySelectorAll('.nav-link').forEach(a => a.addEventListener('click', (e) => {
+        Logger.log('button_click', { id: 'nav-link', label: e.currentTarget.textContent.trim(), href: e.currentTarget.getAttribute('href') });
+        closeMenu();
+      }));
     }
 
     /* ══════════════════════════════
@@ -2516,12 +2600,77 @@
         ctaSection.classList.remove('gated');
         gateSection.classList.add('gated');
         diagnosisSection.scrollIntoView({ behavior: 'smooth' });
+        Logger.log('screen_transition', { from: 'gate', to: 'diagnosis_cta' });
         /* 表示されて初めて正しいレイアウトが取れるため、ここで診断結果用の余白を再計算する */
         if (fullGame) requestAnimationFrame(() => fullGame.reserveResultSpace());
       }
 
-      document.getElementById('gate-btn-ja').addEventListener('click', reveal);
-      document.getElementById('gate-btn-en').addEventListener('click', reveal);
+      document.getElementById('gate-btn-ja').addEventListener('click', () => {
+        Logger.log('button_click', { id: 'gate-btn-ja', label: 'はい' });
+        reveal();
+      });
+      document.getElementById('gate-btn-en').addEventListener('click', () => {
+        Logger.log('button_click', { id: 'gate-btn-en', label: 'YES' });
+        reveal();
+      });
+    }
+
+    /* ══════════════════════════════
+       LOGGING — 未計装リンクへのログ付与 ＋ ログ書き出しボタン
+    ══════════════════════════════ */
+    function initLogging() {
+      const ctaBtn = document.querySelector('.cta-btn');
+      if (ctaBtn) ctaBtn.addEventListener('click', () => {
+        Logger.log('button_click', { id: 'cta-btn', label: '参加を申し込む' });
+      });
+
+      const mapLink = document.querySelector('.cta-map-link');
+      if (mapLink) mapLink.addEventListener('click', () => {
+        Logger.log('button_click', { id: 'cta-map-link', label: 'Google マップで開く' });
+      });
+
+      document.querySelectorAll('.site-footer-links a').forEach(a => {
+        a.addEventListener('click', () => {
+          Logger.log('button_click', { id: 'site-footer-link', label: a.textContent.trim() });
+        });
+      });
+
+      /* ── ログ書き出しボタン ── */
+      const exportBtn = document.getElementById('export-log-btn');
+      if (!exportBtn) return;
+
+      const toast = document.createElement('div');
+      toast.className = 'export-log-toast';
+      toast.textContent = 'コピーしました！';
+      document.body.appendChild(toast);
+
+      let toastTimer = null;
+      function showToast() {
+        clearTimeout(toastTimer);
+        toast.classList.add('visible');
+        toastTimer = setTimeout(() => toast.classList.remove('visible'), 2000);
+      }
+
+      function fallbackCopy(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (err) { /* no-op */ }
+        ta.remove();
+      }
+
+      exportBtn.addEventListener('click', () => {
+        const json = Logger.toJSON();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(json).then(showToast, () => { fallbackCopy(json); showToast(); });
+        } else {
+          fallbackCopy(json);
+          showToast();
+        }
+      });
     }
 
     /* ══════════════════════════════
@@ -2561,6 +2710,7 @@
             caption.style.opacity = '0';
             setTimeout(() => {
               /* 画面切り替え（この時点で白一色） */
+              Logger.log('screen_transition', { from: 'prologue', to: 'top' });
               document.getElementById('screen-prologue').classList.remove('active');
               const top = document.getElementById('screen-top');
               top.classList.remove('screen');
@@ -2593,6 +2743,7 @@
       initNav();
       initFadeIn();
       initGate(fullGame);
+      initLogging();
       buildKeyVisual(null);
     })();
   </script>
