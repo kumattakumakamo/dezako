@@ -1601,10 +1601,8 @@
 
     #section-gate {
       background: var(--bg);
-      min-height: 60vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      min-height: 100svh;
+      position: relative;
       text-align: center;
       overflow: hidden;
     }
@@ -1614,18 +1612,22 @@
     }
 
     .gate-board {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
       width: 100%;
-      padding: 64px 20px;
+      padding: 56px 20px 48px;
       background: var(--hero-bg-dark);
       opacity: 0;
-      transform: translateY(90px) scale(0.92);
+      transform: translateY(100%);
       transition: opacity 0.7s cubic-bezier(0.34, 1.4, 0.64, 1),
                   transform 0.7s cubic-bezier(0.34, 1.4, 0.64, 1);
     }
 
     .gate-board.visible {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translateY(0);
     }
 
     .gate-question {
@@ -2720,11 +2722,18 @@
       const obs = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (!e.isIntersecting) return;
+          if (e.target.id === 'section-gate') {
+            const board = e.target.querySelector('.gate-board');
+            if (board) board.classList.add('visible');
+            return;
+          }
           e.target.classList.add('visible');
         });
       }, { threshold: 0.12 });
 
-      document.querySelectorAll('.fade-block, .gate-board').forEach(el => obs.observe(el));
+      document.querySelectorAll('.fade-block').forEach(el => obs.observe(el));
+      const gateSection = document.getElementById('section-gate');
+      if (gateSection) obs.observe(gateSection);
 
       const obs2 = new IntersectionObserver(entries => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
