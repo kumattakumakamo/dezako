@@ -1221,7 +1221,7 @@
     }
 
     .cta-bridge-badge {
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       gap: 6px;
@@ -1236,6 +1236,11 @@
       color: var(--text);
       letter-spacing: 0.03em;
       box-shadow: 2px 2px 0 var(--border);
+    }
+
+    /* ポスターの診断結果が表示されている間だけ見せる */
+    .cta-bridge-badge.result-shown {
+      display: flex;
     }
 
     .cta-intro-heading {
@@ -1622,7 +1627,7 @@
 
       <!-- B5: CTA -->
       <section id="section-cta" class="gated">
-        <div class="fade-block cta-bridge-badge">✦ あなたの作品ができた！ ✦</div>
+        <div class="cta-bridge-badge" id="cta-bridge-badge">✦ あなたの作品ができた！ ✦</div>
 
         <h2 class="fade-block cta-intro-heading" style="transition-delay:0.08s">未来大の情報デザインコースでは、<br>これらを学ぶための環境が整っています</h2>
 
@@ -2189,6 +2194,10 @@
         if (subtitleBr) subtitleBr.style.display = 'none';
         if (subtitle) subtitle.style.display = 'none';
 
+        /* 「あなたの作品ができた！」バッジは診断結果が出ている間だけ表示する */
+        const ctaBadge = document.getElementById('cta-bridge-badge');
+        if (ctaBadge) ctaBadge.classList.add('result-shown');
+
         /* 変身フラッシュ：選んだ「大」ブロックの色でポスターが一瞬光る */
         if (transformFlashEl) {
           transformFlashEl.style.background = placement.large ? CHIPS[placement.large].color : '#FFFFFF';
@@ -2236,7 +2245,13 @@
             resultEl.style.top = Math.max(0, wrapRect.bottom - overlayRect.top + 8) + 'px';
           }
           resultEl.classList.add('entering');
-          requestAnimationFrame(() => resultEl.classList.add('visible'));
+          requestAnimationFrame(() => {
+            resultEl.classList.add('visible');
+            /* resultEl は position:absolute のため、その高さ分だけ overlayWrap を広げ、次のセクションとの重なりを防ぐ */
+            if (overlayWrap) {
+              overlayWrap.style.minHeight = (resultEl.offsetTop + resultEl.offsetHeight) + 'px';
+            }
+          });
         });
 
         showResult = true;
@@ -2250,6 +2265,7 @@
         updateChipTray();
         if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
         if (resultEl) { resultEl.classList.remove('visible', 'entering'); resultEl.style.top = ''; }
+        if (overlayWrap) { overlayWrap.style.minHeight = ''; }
         if (transformFlashEl) { transformFlashEl.classList.remove('active'); }
         tray.classList.remove('fading-out');
         wrap.classList.remove('shrink-up');
@@ -2260,6 +2276,8 @@
         const subtitle = document.getElementById('diagnosis-subtitle');
         if (subtitleBr) subtitleBr.style.display = '';
         if (subtitle) subtitle.style.display = '';
+        const ctaBadge = document.getElementById('cta-bridge-badge');
+        if (ctaBadge) ctaBadge.classList.remove('result-shown');
       }
 
       async function shareResult() {
