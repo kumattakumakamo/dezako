@@ -470,6 +470,21 @@
       align-items: center;
     }
 
+    .result-poster {
+      width: 110px;
+      border: 2px solid var(--border);
+      box-shadow: 3px 3px 0 rgba(174, 228, 255, 0.7);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0 auto 16px;
+    }
+
+    .result-poster img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
     .result-compare {
       display: flex;
       justify-content: center;
@@ -2260,6 +2275,8 @@
         const hasBefore = prologuePlacement &&
           prologuePlacement.large && prologuePlacement.center && prologuePlacement.small;
 
+        const resultPosterHTML = `<div class="result-poster"><img src="${d.type}.png" alt="${d.type}"></div>`;
+
         const compareHTML = hasBefore ? `
       <div class="result-compare">
         <div class="result-compare-item">
@@ -2268,11 +2285,11 @@
         </div>
         <div class="result-compare-item">
           <p class="result-compare-label">意識して置いた形</p>
-          ${renderMiniPoster(placement)}
+          ${resultPosterHTML}
         </div>
       </div>
       <p class="result-structure">"なんとなく"置いた最初の形と、意識して組み立てた今回の形。似ていても、違っていても——それが、あなたの"伝え方"のクセです。</p>`
-          : renderMiniPoster(placement);
+          : resultPosterHTML;
 
         resultEl.innerHTML = `
       ${compareHTML}
