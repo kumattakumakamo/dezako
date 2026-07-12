@@ -430,6 +430,32 @@
       height: auto;
     }
 
+    /* 「作る」ボタンを押した瞬間、選んだ色で一瞬光り、完成ポスターへ変身する演出 */
+    .poster-transform-flash {
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 5;
+      transition: opacity 0.28s ease;
+    }
+
+    .poster-transform-flash.active {
+      opacity: 1;
+      transition: opacity 0.12s ease;
+    }
+
+    @keyframes poster-reveal {
+      0%   { opacity: 0; transform: scale(0.5) rotate(-10deg); filter: brightness(1.9) saturate(1.4); }
+      55%  { opacity: 1; transform: scale(1.08) rotate(3deg); filter: brightness(1.15) saturate(1.1); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1) saturate(1); }
+    }
+
+    .result-poster.revealing img {
+      animation: poster-reveal 0.65s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+    }
+
     .result-type-badge {
       display: inline-block;
       background: var(--orange);
@@ -1893,6 +1919,7 @@
       const zoneEls = {};
       let diagnoseBtnEl = null;
       let resultEl = null;
+      let transformFlashEl = null;
       let gameEls = null; // wrapper to hide on diagnosis
       let hintEl = null;
 
@@ -2028,6 +2055,10 @@
         resultEl = document.createElement('div');
         resultEl.className = 'diagnosis-result';
         overlayWrap.appendChild(resultEl);
+
+        transformFlashEl = document.createElement('div');
+        transformFlashEl.className = 'poster-transform-flash';
+        overlayWrap.appendChild(transformFlashEl);
       }
 
       /* ── Zone display ── */
@@ -2174,6 +2205,13 @@
         const d = DIAGNOSES[key];
         if (!d) return;
 
+        /* 変身フラッシュ：選んだ「大」ブロックの色でポスターが一瞬光る */
+        if (transformFlashEl) {
+          transformFlashEl.style.background = placement.large ? CHIPS[placement.large].color : '#FFFFFF';
+          transformFlashEl.classList.add('active');
+          setTimeout(() => transformFlashEl.classList.remove('active'), 260);
+        }
+
         /* ゲームエリアをフェードアウト */
         gameEls.classList.add('hiding');
 
@@ -2191,9 +2229,13 @@
         <button class="result-reset-btn" id="reset-btn-${mode}">もう一度試す</button>
       </div>`;
 
-        /* 少し遅れて結果エリアをフェードイン */
+        /* フラッシュのピークに合わせて結果エリアをフェードイン、ポスターを変身させる */
         resultEl.classList.add('entering');
-        setTimeout(() => resultEl.classList.add('visible'), 50);
+        setTimeout(() => {
+          resultEl.classList.add('visible');
+          const posterEl = resultEl.querySelector('.result-poster');
+          if (posterEl) posterEl.classList.add('revealing');
+        }, 220);
 
         resultEl.querySelector(`#reset-btn-${mode}`).addEventListener('click', resetGame);
         resultEl.querySelector(`#share-btn-${mode}`).addEventListener('click', shareResult);
@@ -2208,6 +2250,7 @@
         updateChipTray();
         if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
         if (resultEl) { resultEl.classList.remove('visible', 'entering'); }
+        if (transformFlashEl) { transformFlashEl.classList.remove('active'); }
         gameEls.classList.remove('hiding');
       }
 
