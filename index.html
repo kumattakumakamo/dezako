@@ -2037,6 +2037,9 @@
         transformFlashEl = document.createElement('div');
         transformFlashEl.className = 'poster-transform-flash';
         frame.appendChild(transformFlashEl);
+
+        /* 最初から、診断結果表示時に必要になる最大の余白を確保しておく（次のセクションが見切れるのを防ぐ） */
+        reserveResultSpace();
       }
 
       /* ── Zone display ── */
@@ -2178,6 +2181,47 @@
         checkAllPlaced();
       });
 
+      /* 診断結果（テキスト・ボタン）が表示された時の最大の高さを事前に測っておき、
+         overlayWrap に確保する。ゲーム実行中も含め、常に次のセクションが見切れないようにするため。 */
+      function reserveResultSpace() {
+        if (!overlayWrap || !resultEl) return;
+
+        /* shrink-up 後のポスター下端位置を、アニメーションなしで即座に取得 */
+        const originalTransition = wrap.style.transition;
+        wrap.style.transition = 'none';
+        wrap.classList.add('shrink-up');
+        void wrap.offsetHeight;
+        const wrapRect = wrap.getBoundingClientRect();
+        const overlayRect = overlayWrap.getBoundingClientRect();
+        const topOffset = Math.max(0, wrapRect.bottom - overlayRect.top + 8);
+        wrap.classList.remove('shrink-up');
+        void wrap.offsetHeight;
+        wrap.style.transition = originalTransition;
+
+        /* 診断結果は文章の長さでタイプごとに高さが変わるため、全パターンの中で最大の高さを測る */
+        const originalDisplay = resultEl.style.display;
+        resultEl.style.display = 'block';
+        let maxHeight = 0;
+        Object.keys(DIAGNOSES).forEach(key => {
+          const d = DIAGNOSES[key];
+          resultEl.innerHTML = `
+      <div class="result-type-badge">${d.type}</div>
+      <p class="result-hook">${d.hook}</p>
+      <p class="result-structure">${d.structure}</p>
+      <p class="result-detail">${d.detail}</p>
+      <div class="result-btns">
+        <button class="result-share-btn">この作品をシェアする ↗</button>
+        <a class="result-oc-link" href="#section-cta">あなたの作品と似た制作をキャンパスで見つけよう →</a>
+        <button class="result-reset-btn">もう一度試す</button>
+      </div>`;
+          maxHeight = Math.max(maxHeight, resultEl.offsetHeight);
+        });
+        resultEl.innerHTML = '';
+        resultEl.style.display = originalDisplay;
+
+        overlayWrap.style.minHeight = (topOffset + maxHeight) + 'px';
+      }
+
       /* ── Diagnosis animation ── */
       function showDiagnosis() {
         if (!resultEl) return;
@@ -2247,9 +2291,11 @@
           resultEl.classList.add('entering');
           requestAnimationFrame(() => {
             resultEl.classList.add('visible');
-            /* resultEl は position:absolute のため、その高さ分だけ overlayWrap を広げ、次のセクションとの重なりを防ぐ */
+            /* reserveResultSpace() で事前確保した高さで通常足りるが、念のため実測値が上回れば広げる */
             if (overlayWrap) {
-              overlayWrap.style.minHeight = (resultEl.offsetTop + resultEl.offsetHeight) + 'px';
+              const needed = resultEl.offsetTop + resultEl.offsetHeight;
+              const current = parseFloat(overlayWrap.style.minHeight) || 0;
+              if (needed > current) overlayWrap.style.minHeight = needed + 'px';
             }
           });
         });
@@ -2265,7 +2311,7 @@
         updateChipTray();
         if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
         if (resultEl) { resultEl.classList.remove('visible', 'entering'); resultEl.style.top = ''; }
-        if (overlayWrap) { overlayWrap.style.minHeight = ''; }
+        /* overlayWrap の min-height は reserveResultSpace() で最初に確保した分を維持し続ける（クリアしない） */
         if (transformFlashEl) { transformFlashEl.classList.remove('active'); }
         tray.classList.remove('fading-out');
         wrap.classList.remove('shrink-up');
@@ -2310,6 +2356,8 @@
           setTimeout(() => URL.revokeObjectURL(url), 4000);
         }, 'image/png');
       }
+
+      return { reserveResultSpace };
     }
 
     /* ══════════════════════════════
@@ -2428,7 +2476,7 @@
     /* ══════════════════════════════
        GATE — 座学から演習への切り替え確認
     ══════════════════════════════ */
-    function initGate() {
+    function initGate(fullGame) {
       const gateSection = document.getElementById('section-gate');
       const diagnosisSection = document.getElementById('section-diagnosis');
       const ctaSection = document.getElementById('section-cta');
@@ -2438,6 +2486,8 @@
         ctaSection.classList.remove('gated');
         gateSection.classList.add('gated');
         diagnosisSection.scrollIntoView({ behavior: 'smooth' });
+        /* 表示されて初めて正しいレイアウトが取れるため、ここで診断結果用の余白を再計算する */
+        if (fullGame) requestAnimationFrame(() => fullGame.reserveResultSpace());
       }
 
       document.getElementById('gate-btn-ja').addEventListener('click', reveal);
@@ -2508,11 +2558,11 @@
         placement => transitionToTop(placement)
       );
 
-      createPosterGame(document.getElementById('full-game'), 'full', null);
+      const fullGame = createPosterGame(document.getElementById('full-game'), 'full', null);
       renderAssignTags();
       initNav();
       initFadeIn();
-      initGate();
+      initGate(fullGame);
       buildKeyVisual(null);
     })();
   </script>
