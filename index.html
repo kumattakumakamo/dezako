@@ -415,61 +415,6 @@
       pointer-events: auto;
     }
 
-    .mini-poster {
-      width: 110px;
-      height: 149px;
-      border: 2px solid var(--border);
-      box-shadow: 3px 3px 0 rgba(174, 228, 255, 0.7);
-      border-radius: 4px;
-      overflow: hidden;
-      margin: 0 auto 16px;
-      position: relative;
-    }
-
-    .mini-poster-bg {
-      position: absolute;
-      inset: 0;
-    }
-
-    .mini-poster-card {
-      position: absolute;
-      inset: 8px 8px 32px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 4px;
-    }
-
-    .mini-poster-card .card-title {
-      font-size: 6px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.4;
-    }
-
-    .mini-poster-card .card-chip {
-      font-size: 5px;
-      border-radius: 2px;
-      padding: 1px 3px;
-      color: var(--text);
-      margin-top: 2px;
-      display: inline-block;
-    }
-
-    .mini-poster-badge {
-      position: absolute;
-      bottom: 6px;
-      right: 6px;
-      border-radius: 9999px;
-      padding: 2px 4px;
-      font-size: 5px;
-      font-weight: 700;
-      color: var(--text);
-      min-height: 12px;
-      display: flex;
-      align-items: center;
-    }
-
     .result-poster {
       width: 110px;
       border: 2px solid var(--border);
@@ -483,25 +428,6 @@
       display: block;
       width: 100%;
       height: auto;
-    }
-
-    .result-compare {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 12px;
-    }
-
-    .result-compare-item {
-      text-align: center;
-    }
-
-    .result-compare-label {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 6px;
     }
 
     .result-type-badge {
@@ -1852,29 +1778,8 @@
       { num: '04', title: 'アプリ・サービス提案', desc: '社会課題や日常のニーズを起点に、デジタルサービスを企画・プロトタイプする課題。', color: '#AEE4FF' },
     ];
 
-    let prologuePlacement = null;
-
     const GRID_L = ['#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B'];
     const GRID_R = ['#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F'];
-
-    /* ══════════════════════════════
-       MINI POSTER（B4のbefore/after比較で共有）
-    ══════════════════════════════ */
-    function renderMiniPoster(p) {
-      const largeBg = p.large ? CHIPS[p.large].color + '55' : '#F1EFE8';
-      const centerChip = p.center ? `<div class="card-chip" style="background:${CHIPS[p.center].color}">${CHIPS[p.center].label}</div>` : '';
-      const badgeBg = p.small ? CHIPS[p.small].color : '#FFB3D1';
-      const badgeText = p.small ? CHIPS[p.small].label : '角';
-      return `
-      <div class="mini-poster">
-        <div class="mini-poster-bg" style="background:${largeBg}"></div>
-        <div class="mini-poster-card">
-          <div class="card-title">タイトル</div>
-          ${centerChip}
-        </div>
-        <div class="mini-poster-badge" style="background:${badgeBg}">${badgeText}</div>
-      </div>`;
-    }
 
     /* ══════════════════════════════
        SHARE CANVAS（ミニポスターを画像化して共有）
@@ -2272,24 +2177,7 @@
         /* ゲームエリアをフェードアウト */
         gameEls.classList.add('hiding');
 
-        const hasBefore = prologuePlacement &&
-          prologuePlacement.large && prologuePlacement.center && prologuePlacement.small;
-
-        const resultPosterHTML = `<div class="result-poster"><img src="${d.type}.png" alt="${d.type}"></div>`;
-
-        const compareHTML = hasBefore ? `
-      <div class="result-compare">
-        <div class="result-compare-item">
-          <p class="result-compare-label">最初に置いた形</p>
-          ${renderMiniPoster(prologuePlacement)}
-        </div>
-        <div class="result-compare-item">
-          <p class="result-compare-label">意識して置いた形</p>
-          ${resultPosterHTML}
-        </div>
-      </div>
-      <p class="result-structure">"なんとなく"置いた最初の形と、意識して組み立てた今回の形。似ていても、違っていても——それが、あなたの"伝え方"のクセです。</p>`
-          : resultPosterHTML;
+        const compareHTML = `<div class="result-poster"><img src="${d.type}.png" alt="${d.type}"></div>`;
 
         resultEl.innerHTML = `
       ${compareHTML}
@@ -2527,8 +2415,6 @@
     const FLASH_REMOVE_DELAY = 350;   // 要素の削除までの余白
 
     function transitionToTop(placement) {
-      prologuePlacement = placement; // B4のbefore/after比較用に保持
-
       /* プロローグで選んだ「大」チップの色を引き継いだフラッシュ（未選択なら白） */
       const hasBuilt = !!(placement && placement.large && CHIPS[placement.large]);
       const flashColor = hasBuilt ? CHIPS[placement.large].color : '#FFFFFF';
