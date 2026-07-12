@@ -1600,17 +1600,31 @@
     }
 
     #section-gate {
-      padding: 64px 20px;
-      background: var(--hero-bg-dark);
+      position: relative;
       min-height: 60vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: var(--bg);
       text-align: center;
+      overflow: hidden;
     }
 
     #section-gate.gated {
       display: none;
+    }
+
+    .gate-board {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--hero-bg-dark);
+      border-radius: 20px 20px 0 0;
+      padding: 28px 24px 36px;
+      transform: translateY(100%);
+      transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+
+    .gate-board.visible {
+      transform: translateY(0);
     }
 
     .gate-question {
@@ -1832,7 +1846,7 @@
 
       <!-- Gate: 座学 → 演習 -->
       <section id="section-gate">
-        <div class="fade-block">
+        <div class="gate-board">
           <p class="gate-question">座学はここまでです！<br>演習の準備はできましたか？</p>
           <div class="gate-btns">
             <button class="gate-btn gate-btn-primary" id="gate-btn-ja">はい</button>
@@ -2705,11 +2719,18 @@
       const obs = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (!e.isIntersecting) return;
+          if (e.target.id === 'section-gate') {
+            const board = e.target.querySelector('.gate-board');
+            if (board) board.classList.add('visible');
+            return;
+          }
           e.target.classList.add('visible');
         });
       }, { threshold: 0.12 });
 
       document.querySelectorAll('.fade-block').forEach(el => obs.observe(el));
+      const gateSection = document.getElementById('section-gate');
+      if (gateSection) obs.observe(gateSection);
 
       const obs2 = new IntersectionObserver(entries => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
