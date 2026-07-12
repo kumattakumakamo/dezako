@@ -128,23 +128,6 @@
       padding: 32px 16px 96px;
     }
 
-    #skip-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 8px 16px;
-      border-radius: 9999px;
-      background: rgba(255, 30, 143, 0.15);
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
-      backdrop-filter: blur(4px);
-      font-family: inherit;
-      z-index: 100;
-    }
-
     /* ── Poster Game ── */
     .game-title {
       text-align: center;
@@ -1257,6 +1240,19 @@
       line-height: 1.6;
     }
 
+    .cta-intro-heading {
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    /* ツール紹介・設備環境をひとつのまとまりに見せる */
+    .cta-tools-facility .tools-row {
+      margin-bottom: 12px;
+    }
+
     .cta-heading {
       font-size: 44px;
       font-weight: 900;
@@ -1580,7 +1576,6 @@
     <div class="prologue-main">
       <div id="prologue-game"></div>
     </div>
-    <button id="skip-btn">スキップ</button>
   </div>
 
   <!-- ════════════════════════════
@@ -1666,32 +1661,9 @@
           </svg>
         </div>
 
-        <div class="fade-block" style="transition-delay:0.08s">
-          <h2 class="cta-heading">オープン<br><span class="accent">キャンパス</span><span class="year">2026</span></h2>
-          <p class="cta-lead">友達を誘って、二人で先輩の作品を見に行こう。生の声を聴いたり、気になることを質問したり——一人より、二人の方がきっと楽しい。</p>
-        </div>
+        <h2 class="fade-block cta-intro-heading" style="transition-delay:0.08s">未来大の情報デザインコースでは、<br>これらを学ぶための環境が整っています</h2>
 
-        <div class="fade-block" style="transition-delay:0.11s">
-          <div class="facility-grid">
-            <div>
-              <div class="facility-img" style="background:#FFF3AD"></div>
-              <div class="facility-name">工房</div>
-              <div class="facility-desc">レーザーカッター・3Dプリンタを備える</div>
-            </div>
-            <div>
-              <div class="facility-img" style="background:#FFB3D1;transform:rotate(-2deg)"></div>
-              <div class="facility-name">アトリエ</div>
-              <div class="facility-desc">大型スクリーンと可動家具のラボ</div>
-            </div>
-            <div>
-              <div class="facility-img" style="background:#AEE4FF;transform:rotate(2deg)"></div>
-              <div class="facility-name">ミュージアム</div>
-              <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="fade-block" style="transition-delay:0.13s">
+        <div class="fade-block cta-tools-facility" style="transition-delay:0.11s">
           <div class="tools-row">
             <div class="tool-tile">
               <div class="tool-icon">✦</div>
@@ -1714,6 +1686,28 @@
               <div class="tool-name">Arduino</div>
             </div>
           </div>
+          <div class="facility-grid">
+            <div>
+              <div class="facility-img" style="background:#FFF3AD"></div>
+              <div class="facility-name">工房</div>
+              <div class="facility-desc">レーザーカッター・3Dプリンタを備える</div>
+            </div>
+            <div>
+              <div class="facility-img" style="background:#FFB3D1;transform:rotate(-2deg)"></div>
+              <div class="facility-name">アトリエ</div>
+              <div class="facility-desc">大型スクリーンと可動家具のラボ</div>
+            </div>
+            <div>
+              <div class="facility-img" style="background:#AEE4FF;transform:rotate(2deg)"></div>
+              <div class="facility-name">ミュージアム</div>
+              <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fade-block" style="transition-delay:0.13s">
+          <h2 class="cta-heading">オープン<br><span class="accent">キャンパス</span><span class="year">2026</span></h2>
+          <p class="cta-lead">一人より、二人の方がきっと楽しい。</p>
         </div>
 
         <div class="fade-block" style="transition-delay:0.14s">
@@ -2539,10 +2533,6 @@
         'prologue',
         placement => transitionToTop(placement)
       );
-
-      document.getElementById('skip-btn').addEventListener('click', () => {
-        transitionToTop({ large: null, center: null, small: null });
-      });
 
       createPosterGame(document.getElementById('full-game'), 'full', null);
       renderAssignTags();
