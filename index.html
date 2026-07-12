@@ -154,21 +154,16 @@
       margin-bottom: 20px;
     }
 
-    .game-elements {
-      transition: opacity 0.35s, transform 0.35s;
-    }
-
-    .game-elements.hiding {
-      opacity: 0;
-      transform: scale(0.9);
-      pointer-events: none;
-    }
-
     .poster-frame-wrap {
       position: relative;
       width: 272px;
       height: 368px;
       margin: 0 auto;
+      transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .poster-frame-wrap.shrink-up {
+      transform: translateY(-92px) scale(0.404);
     }
 
     .poster-frame {
@@ -180,6 +175,35 @@
       box-shadow: 6px 6px 0 rgba(174, 228, 255, 1);
       overflow: hidden;
       transition: background-color 0.3s;
+    }
+
+    /* 「つくる」ボタン押下後：ブロック配置を隠し、完成イメージ画像に変身させる */
+    .poster-frame.showing-result .zone-large,
+    .poster-frame.showing-result .center-card,
+    .poster-frame.showing-result .zone-small {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .frame-result-overlay {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: inherit;
+    }
+
+    .frame-result-overlay.active {
+      opacity: 1;
+    }
+
+    .frame-result-overlay img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     /* Large zone — fills entire frame bg */
@@ -307,6 +331,12 @@
       margin-top: 24px;
       flex-wrap: wrap;
       padding: 0 8px;
+      transition: opacity 0.3s ease;
+    }
+
+    .chip-tray.fading-out {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .chip {
@@ -415,26 +445,11 @@
       pointer-events: auto;
     }
 
-    .result-poster {
-      width: 110px;
-      border: 2px solid var(--border);
-      box-shadow: 3px 3px 0 rgba(174, 228, 255, 0.7);
-      border-radius: 4px;
-      overflow: hidden;
-      margin: 0 auto 16px;
-    }
-
-    .result-poster img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
     /* 「作る」ボタンを押した瞬間、選んだ色で一瞬光り、完成ポスターへ変身する演出 */
     .poster-transform-flash {
       position: absolute;
       inset: 0;
-      border-radius: 16px;
+      border-radius: inherit;
       opacity: 0;
       pointer-events: none;
       z-index: 5;
@@ -444,16 +459,6 @@
     .poster-transform-flash.active {
       opacity: 1;
       transition: opacity 0.12s ease;
-    }
-
-    @keyframes poster-reveal {
-      0%   { opacity: 0; transform: scale(0.5) rotate(-10deg); filter: brightness(1.9) saturate(1.4); }
-      55%  { opacity: 1; transform: scale(1.08) rotate(3deg); filter: brightness(1.15) saturate(1.1); }
-      100% { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1) saturate(1); }
-    }
-
-    .result-poster.revealing img {
-      animation: poster-reveal 0.65s cubic-bezier(0.3, 1.5, 0.5, 1) both;
     }
 
     .result-type-badge {
@@ -1920,6 +1925,7 @@
       let diagnoseBtnEl = null;
       let resultEl = null;
       let transformFlashEl = null;
+      let overlayWrap = null;
       let gameEls = null; // wrapper to hide on diagnosis
       let hintEl = null;
 
@@ -2047,7 +2053,7 @@
         gameEls.appendChild(diagnoseBtnEl);
 
         /* gameEls と resultEl を同一ラッパーに入れて重ねる */
-        const overlayWrap = document.createElement('div');
+        overlayWrap = document.createElement('div');
         overlayWrap.style.cssText = 'position:relative';
         container.insertBefore(overlayWrap, gameEls);
         overlayWrap.appendChild(gameEls);
@@ -2058,7 +2064,7 @@
 
         transformFlashEl = document.createElement('div');
         transformFlashEl.className = 'poster-transform-flash';
-        overlayWrap.appendChild(transformFlashEl);
+        frame.appendChild(transformFlashEl);
       }
 
       /* ── Zone display ── */
@@ -2205,6 +2211,9 @@
         const d = DIAGNOSES[key];
         if (!d) return;
 
+        /* 「つくる →」ボタンを隠す */
+        if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
+
         /* 変身フラッシュ：選んだ「大」ブロックの色でポスターが一瞬光る */
         if (transformFlashEl) {
           transformFlashEl.style.background = placement.large ? CHIPS[placement.large].color : '#FFFFFF';
@@ -2212,13 +2221,8 @@
           setTimeout(() => transformFlashEl.classList.remove('active'), 260);
         }
 
-        /* ゲームエリアをフェードアウト */
-        gameEls.classList.add('hiding');
-
-        const compareHTML = `<div class="result-poster"><img src="${d.type}.png" alt="${d.type}"></div>`;
-
+        /* 結果テキストを準備（まだ非表示のまま） */
         resultEl.innerHTML = `
-      ${compareHTML}
       <div class="result-type-badge">${d.type}</div>
       <p class="result-hook">${d.hook}</p>
       <p class="result-structure">${d.structure}</p>
@@ -2228,17 +2232,38 @@
         <a class="result-oc-link" href="#section-cta">あなたの作品と似た制作をキャンパスで見つけよう →</a>
         <button class="result-reset-btn" id="reset-btn-${mode}">もう一度試す</button>
       </div>`;
-
-        /* フラッシュのピークに合わせて結果エリアをフェードイン、ポスターを変身させる */
-        resultEl.classList.add('entering');
-        setTimeout(() => {
-          resultEl.classList.add('visible');
-          const posterEl = resultEl.querySelector('.result-poster');
-          if (posterEl) posterEl.classList.add('revealing');
-        }, 220);
-
         resultEl.querySelector(`#reset-btn-${mode}`).addEventListener('click', resetGame);
         resultEl.querySelector(`#share-btn-${mode}`).addEventListener('click', shareResult);
+
+        /* フラッシュのピークで、ポスターがその場で完成イメージ画像に変身（大きさはまだ変えない） */
+        setTimeout(() => {
+          frame.classList.add('showing-result');
+          const overlay = document.createElement('div');
+          overlay.className = 'frame-result-overlay';
+          overlay.innerHTML = `<img src="${d.type}.png" alt="${d.type}">`;
+          frame.appendChild(overlay);
+          requestAnimationFrame(() => overlay.classList.add('active'));
+        }, 220);
+
+        /* 変身が定着したら、ポスターを縮めながら上へスライドし、チップ置き場を消す */
+        setTimeout(() => {
+          tray.classList.add('fading-out');
+          wrap.classList.add('shrink-up');
+        }, 900);
+
+        /* スライドが収まったのと同時に、その下に説明テキストを表示する */
+        wrap.addEventListener('transitionend', function onShrinkEnd(e) {
+          if (e.propertyName !== 'transform') return;
+          wrap.removeEventListener('transitionend', onShrinkEnd);
+          if (overlayWrap) {
+            const wrapRect = wrap.getBoundingClientRect();
+            const overlayRect = overlayWrap.getBoundingClientRect();
+            resultEl.style.top = Math.max(0, wrapRect.bottom - overlayRect.top + 8) + 'px';
+          }
+          resultEl.classList.add('entering');
+          requestAnimationFrame(() => resultEl.classList.add('visible'));
+        });
+
         showResult = true;
       }
 
@@ -2249,9 +2274,13 @@
         ['large', 'center', 'small'].forEach(z => updateZoneDisplay(z, null));
         updateChipTray();
         if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
-        if (resultEl) { resultEl.classList.remove('visible', 'entering'); }
+        if (resultEl) { resultEl.classList.remove('visible', 'entering'); resultEl.style.top = ''; }
         if (transformFlashEl) { transformFlashEl.classList.remove('active'); }
-        gameEls.classList.remove('hiding');
+        tray.classList.remove('fading-out');
+        wrap.classList.remove('shrink-up');
+        frame.classList.remove('showing-result');
+        const overlay = frame.querySelector('.frame-result-overlay');
+        if (overlay) overlay.remove();
       }
 
       async function shareResult() {
