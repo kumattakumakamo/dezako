@@ -1077,6 +1077,14 @@
       border-radius: 12px;
       border: 1.5px solid rgba(255, 30, 143, 0.25);
       margin-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .facility-img img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .facility-name {
@@ -1175,6 +1183,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
+    }
+
+    .assignment-img img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .assignment-img span {
@@ -1656,17 +1672,17 @@
           </div>
           <div class="facility-grid">
             <div>
-              <div class="facility-img" style="background:#FFF3AD"></div>
+              <div class="facility-img"><img src="工房.JPG" alt="工房"></div>
               <div class="facility-name">工房</div>
               <div class="facility-desc">レーザーカッター・3Dプリンタを備える</div>
             </div>
             <div>
-              <div class="facility-img" style="background:#FFB3D1;transform:rotate(-2deg)"></div>
+              <div class="facility-img" style="transform:rotate(-2deg)"><img src="アトリエ.JPG" alt="アトリエ"></div>
               <div class="facility-name">アトリエ</div>
               <div class="facility-desc">大型スクリーンと可動家具のラボ</div>
             </div>
             <div>
-              <div class="facility-img" style="background:#AEE4FF;transform:rotate(2deg)"></div>
+              <div class="facility-img" style="transform:rotate(2deg)"><img src="ミュージアム.jpg" alt="ミュージアム"></div>
               <div class="facility-name">ミュージアム</div>
               <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
             </div>
@@ -1774,7 +1790,7 @@
 
     /* 課題01と02を入れ替え、ナンバリングを01〜04に変更 */
     const ASSIGNMENTS = [
-      { num: '01', title: '仮想生物デザイン', desc: '実在しない生物を、設定から造形まで一貫してデザインする課題。', color: '#FFB3D1' },
+      { num: '01', title: '仮想生物デザイン', desc: '実在しない生物を、設定から造形まで一貫してデザインする課題。', color: '#FFB3D1', img: '仮想生物1.jpg' },
       { num: '02', title: 'フィールドリサーチ', desc: '街に出て人々の行動や場の様子を観察・記録し、課題を発見する課題。', color: '#FFF3AD' },
       { num: '03', title: '情報設計・ポスター制作', desc: '収集した情報を整理・階層化し、伝わるポスターに落とし込む課題。', color: '#FFF3AD' },
       { num: '04', title: 'アプリ・サービス提案', desc: '社会課題や日常のニーズを起点に、デジタルサービスを企画・プロトタイプする課題。', color: '#AEE4FF' },
@@ -2421,11 +2437,14 @@
        ASSIGNMENT CARD（B2課題カードで共有）
     ══════════════════════════════ */
     function renderAssignmentCard(a) {
+      const imgHTML = a.img
+        ? `<div class="assignment-img"><img src="${a.img}" alt="${a.title}"></div>`
+        : `<div class="assignment-img" style="background:${a.color}"><span>制作物イメージ</span></div>`;
       return `
       <div class="assignment-card">
         <div class="assignment-num">課題 ${a.num}</div>
         <div class="assignment-title">${a.title}</div>
-        <div class="assignment-img" style="background:${a.color}"><span>制作物イメージ</span></div>
+        ${imgHTML}
         <div class="assignment-desc">${a.desc}</div>
       </div>`;
     }
