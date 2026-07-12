@@ -1540,28 +1540,22 @@
       margin-bottom: 12px;
     }
 
-    /* 診断結果が表示されている間、下部固定の「次へ」ボタンと重ならないよう余白を確保 */
-    body.diagnosis-locked #section-diagnosis.result-shown {
-      padding-bottom: 76px;
-    }
-
+    /* 「次へ」ボタンは診断結果の「もう一度試す」ボタンの直下に、通常フローの一部として表示する */
     .diagnosis-next-btn {
-      position: fixed;
-      left: 50%;
-      bottom: 20px;
-      transform: translateX(-50%);
-      z-index: 500;
+      display: none;
+      width: 100%;
+      margin-top: 4px;
+      padding: 14px 16px;
       background: var(--hero-bg-dark);
       color: #fff;
       border: 3px solid var(--border);
       border-radius: 9999px;
-      padding: 10px 26px;
       font-size: 15px;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       box-shadow: 4px 4px 0 rgba(255, 30, 143, 1);
-      display: none;
+      text-align: center;
     }
 
     .diagnosis-next-btn.visible {
@@ -2312,6 +2306,7 @@
       <div class="result-btns">
         <button class="result-share-btn">この作品をシェアする ↗</button>
         <button class="result-reset-btn">もう一度試す</button>
+        <button class="diagnosis-next-btn visible">次へ ↓</button>
       </div>`;
           maxHeight = Math.max(maxHeight, resultEl.offsetHeight);
         });
@@ -2348,6 +2343,11 @@
           setTimeout(() => transformFlashEl.classList.remove('active'), 260);
         }
 
+        /* 「次へ」ボタンは resultEl の子孫になっているため、innerHTML の書き換えに巻き込まれて
+           消えてしまわないよう、書き換え前に一旦 body 直下へ退避させる */
+        const nextBtnEl = document.getElementById('diagnosis-next-btn');
+        if (nextBtnEl) document.body.appendChild(nextBtnEl);
+
         /* 結果テキストを準備（まだ非表示のまま） */
         resultEl.innerHTML = `
       <div class="result-type-badge">${d.type}</div>
@@ -2366,6 +2366,11 @@
           Logger.log('button_click', { id: 'result-share-btn', label: 'この作品をシェアする', mode: mode });
           shareResult();
         });
+        /* 「次へ」ボタンを「もう一度試す」の直下（result-btnsの末尾）に配置する */
+        if (mode === 'full' && nextBtnEl) {
+          const resultBtns = resultEl.querySelector('.result-btns');
+          if (resultBtns) resultBtns.appendChild(nextBtnEl);
+        }
 
         /* フラッシュのピークで、ポスターがその場で完成イメージ画像に変身（大きさはまだ変えない） */
         setTimeout(() => {
@@ -2401,10 +2406,8 @@
               const current = parseFloat(overlayWrap.style.minHeight) || 0;
               if (needed > current) overlayWrap.style.minHeight = needed + 'px';
             }
-            /* ポスターが完成したら「次へ」ボタンを表示し、もう一度試すボタンと重ならない余白を確保 */
+            /* ポスターが完成したら「次へ」ボタンを表示する */
             if (mode === 'full') {
-              const diagnosisSection = document.getElementById('section-diagnosis');
-              if (diagnosisSection) diagnosisSection.classList.add('result-shown');
               const nextBtn = document.getElementById('diagnosis-next-btn');
               if (nextBtn) nextBtn.classList.add('visible');
             }
@@ -2436,8 +2439,6 @@
         const ctaBadge = document.getElementById('cta-bridge-badge');
         if (ctaBadge) ctaBadge.classList.remove('result-shown');
         if (mode === 'full') {
-          const diagnosisSection = document.getElementById('section-diagnosis');
-          if (diagnosisSection) diagnosisSection.classList.remove('result-shown');
           const nextBtn = document.getElementById('diagnosis-next-btn');
           if (nextBtn) nextBtn.classList.remove('visible');
         }
@@ -2633,7 +2634,6 @@
         nextBtn.addEventListener('click', () => {
           Logger.log('button_click', { id: 'diagnosis-next-btn', label: '次へ' });
           document.body.classList.remove('diagnosis-locked');
-          diagnosisSection.classList.remove('result-shown');
           nextBtn.classList.remove('visible');
           ctaSection.classList.remove('gated');
           Logger.log('screen_transition', { from: 'diagnosis', to: 'cta' });
