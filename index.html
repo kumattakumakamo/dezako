@@ -40,8 +40,6 @@
       --bg: #FFFFFF;
       --page-bg: #FFF2EF;
       --text-muted: rgba(122, 0, 38, 0.55);
-      --paper: #FFFDF6;
-      --paper-line: rgba(122, 0, 38, 0.15);
       --sticky-fold: rgba(122, 0, 38, 0.18);
       --hero-bg-dark: var(--text);
       --hero-bg-accent: var(--sub);
@@ -140,15 +138,8 @@
       margin-bottom: 20px;
     }
 
-    /* ── Sticky note (shared pattern) ──
-       data-chip="fun|concept|oc" を持つ要素の子として使う実要素。
-       色は下の属性セレクタで決まる。折れ影（fold）は付箋サイズが約30px以上の箇所のみ使用。 */
-    .sticky-note {
-      position: absolute;
-      border-radius: 1px;
-      box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.25);
-    }
-
+    /* ── Sticky note fold (shared pattern) ──
+       .chip / #ghost-chip 自体に付与し、付箋のめくれた角を表現する。 */
     .sticky-note--fold-br::after,
     .sticky-note--fold-bl::after {
       content: '';
@@ -160,10 +151,6 @@
     }
     .sticky-note--fold-br::after { right: 0; bottom: 0; border-width: 0 0 var(--fold, 10px) var(--fold, 10px); }
     .sticky-note--fold-bl::after { left: 0;  bottom: 0; border-width: 0 var(--fold, 10px) var(--fold, 10px) 0; }
-
-    [data-chip="fun"]     .sticky-note { background: var(--yellow); }
-    [data-chip="concept"] .sticky-note { background: var(--pink); }
-    [data-chip="oc"]      .sticky-note { background: var(--blue); }
 
     .poster-frame-wrap {
       position: relative;
@@ -225,15 +212,6 @@
       transition: background-color 0.3s;
     }
 
-    .zone-sticky--large {
-      width: 70%;
-      height: 62%;
-      top: 12%;
-      left: 16%;
-      transform: rotate(-3deg);
-      --fold: 20px;
-    }
-
     /* Center card */
     .center-card {
       position: absolute;
@@ -278,30 +256,16 @@
     }
 
     .zone-center-chip {
-      position: relative;
       width: 100%;
       height: 100%;
       min-height: 60px;
-      background: var(--paper);
-      border-radius: 0 0 4px 4px;
-    }
-    .zone-sticky--medium {
-      width: 42px;
-      height: 42px;
-      top: 4px;
-      left: 4px;
-      transform: rotate(-6deg);
-      --fold: 12px;
-    }
-    .zone-center-label {
-      position: absolute;
-      left: 8px;
-      right: 8px;
-      bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: 700;
-      font-size: 10px;
-      line-height: 1.3;
+      font-size: 12px;
       color: var(--text);
+      border-radius: 0 0 4px 4px;
     }
 
     .zone-center-placeholder {
@@ -330,7 +294,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
       transition: background-color 0.3s, border 0.15s;
       border: 2px dashed rgba(255, 30, 143, 0.35);
     }
@@ -341,20 +304,7 @@
     }
 
     .zone-small.filled {
-      border: 1px solid var(--paper-line);
-      background: var(--paper);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.14);
-      min-width: 88px;
-      padding: 0 10px 0 6px;
-      justify-content: flex-start;
-    }
-    .zone-sticky--small {
-      position: relative;
-      width: 18px;
-      height: 18px;
-      flex: none;
-      transform: rotate(-6deg);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      border: none;
     }
 
     .zone-small-placeholder {
@@ -390,16 +340,18 @@
     .chip {
       position: relative;
       width: 88px;
-      height: 66px;
-      border-radius: 5px;
-      border: 3px solid var(--border);
-      box-shadow: 4px 4px 0 rgba(255, 30, 143, 1);
-      background: var(--paper);
+      min-height: 62px;
+      padding: 8px 10px 16px;
+      border-radius: 2px;
+      box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.25);
       touch-action: none;
       user-select: none;
       cursor: grab;
       transition: opacity 0.2s;
       -webkit-user-select: none;
+      display: flex;
+      align-items: center;
+      --fold: 14px;
     }
 
     .chip.placed {
@@ -407,28 +359,16 @@
       cursor: default;
     }
 
-    .chip[data-id="fun"] { transform: rotate(-2deg); }
-    .chip[data-id="concept"] { transform: rotate(2deg); }
-    .chip[data-id="oc"] { transform: rotate(-1deg); }
+    .chip[data-id="fun"]     { background: var(--yellow); transform: rotate(-2deg); }
+    .chip[data-id="concept"] { background: var(--pink);   transform: rotate(2deg); }
+    .chip[data-id="oc"]      { background: var(--blue);   transform: rotate(-1deg); }
 
     .chip-label {
-      position: absolute;
-      left: 8px;
-      right: 8px;
-      bottom: 6px;
       font-weight: 700;
-      font-size: 10px;
-      line-height: 1.3;
+      font-size: 11px;
+      line-height: 1.35;
       color: var(--text);
     }
-    .chip-sticky {
-      width: 30px;
-      height: 30px;
-      --fold: 10px;
-    }
-    .chip[data-id="fun"]     .chip-sticky { top: -10px; left: -8px;  transform: rotate(-8deg); }
-    .chip[data-id="concept"] .chip-sticky { top: -8px;  right: -8px; transform: rotate(7deg); }
-    .chip[data-id="oc"]      .chip-sticky { top: -10px; left: 22px;  transform: rotate(-4deg); }
 
     /* ── Ghost chip ── */
     #ghost-chip {
@@ -436,18 +376,21 @@
       z-index: 999;
       pointer-events: none;
       width: 92px;
-      height: 68px;
-      border-radius: 5px;
-      border: 3px solid var(--border);
-      box-shadow: 8px 8px 0 rgba(255, 30, 143, 1);
-      background: var(--paper);
+      min-height: 64px;
+      padding: 8px 10px 16px;
+      border-radius: 2px;
+      box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.3);
       transform: scale(1.06) rotate(-3deg);
+      align-items: center;
       display: none;
+      --fold: 14px;
     }
-    #ghost-chip .chip-sticky { width: 32px; height: 32px; top: -10px; left: -8px; --fold: 10px; }
+    #ghost-chip[data-chip="fun"]     { background: var(--yellow); }
+    #ghost-chip[data-chip="concept"] { background: var(--pink); }
+    #ghost-chip[data-chip="oc"]      { background: var(--blue); }
 
     #ghost-chip.active {
-      display: block;
+      display: flex;
     }
 
 
@@ -1800,8 +1743,7 @@
     </div>
   </div>
 
-  <div id="ghost-chip">
-    <span class="chip-sticky sticky-note sticky-note--fold-br"></span>
+  <div id="ghost-chip" class="sticky-note--fold-br">
     <span class="chip-label"></span>
   </div>
 
@@ -2066,12 +2008,9 @@
 
       ['fun', 'concept', 'oc'].forEach(id => {
         const chip = document.createElement('div');
-        chip.className = 'chip';
+        chip.className = `chip ${STICKY_FOLD[id]}`;
         chip.dataset.id = id;
-        chip.dataset.chip = id;   // [data-chip="..."] .sticky-note の色ルールを適用するため
-        chip.innerHTML = `
-      <span class="chip-sticky sticky-note ${STICKY_FOLD[id]}"></span>
-      <span class="chip-label"></span>`;
+        chip.innerHTML = '<span class="chip-label"></span>';
         chip.querySelector('.chip-label').textContent = CHIPS[id].label;
         chip.addEventListener('pointerdown', e => onChipDown(e, id));
         tray.appendChild(chip);
@@ -2105,23 +2044,19 @@
         const el = zoneEls[zone];
         if (zone === 'large') {
           if (chipId) {
-            el.dataset.chip = chipId;
-            el.style.backgroundColor = 'var(--paper)';
+            /* 枠内全域をチップ色で塗りつぶし・縁なし */
+            el.style.backgroundColor = CHIPS[chipId].color;
             el.style.border = 'none';
-            el.innerHTML = `<span class="zone-sticky zone-sticky--large sticky-note ${STICKY_FOLD[chipId]}"></span>`;
+            el.innerHTML = '';
           } else {
-            delete el.dataset.chip;
             el.style.backgroundColor = '';
             el.style.border = '';
             el.innerHTML = '';
           }
         } else if (zone === 'center') {
           if (chipId) {
-            el.innerHTML = `
-      <div class="zone-center-chip" data-chip="${chipId}">
-        <span class="zone-sticky zone-sticky--medium sticky-note ${STICKY_FOLD[chipId]}"></span>
-        <span class="zone-center-label">${CHIPS[chipId].label}</span>
-      </div>`;
+            /* 中ゾーン全体を色で塗りつぶし */
+            el.innerHTML = `<div class="zone-center-chip" style="background:${CHIPS[chipId].color}">${CHIPS[chipId].label}</div>`;
             el.style.outline = 'none';
           } else {
             el.innerHTML = '<div class="zone-center-placeholder"><span style="font-size:0"></span></div>';
@@ -2129,14 +2064,12 @@
         } else if (zone === 'small') {
           if (chipId) {
             el.classList.add('filled');
-            el.dataset.chip = chipId;
-            el.style.border = ''; /* .zone-small.filled のCSS borderを適用させる */
-            el.innerHTML = `
-      <span class="zone-sticky--small sticky-note"></span>
-      <span class="zone-small-chip">${CHIPS[chipId].label}</span>`;
+            el.style.backgroundColor = CHIPS[chipId].color;
+            el.style.border = 'none'; /* 縁を消す */
+            el.innerHTML = `<span class="zone-small-chip">${CHIPS[chipId].label}</span>`;
           } else {
             el.classList.remove('filled');
-            delete el.dataset.chip;
+            el.style.backgroundColor = '';
             el.style.border = '';
             el.innerHTML = '<div class="zone-small-placeholder"></div>';
           }
@@ -2192,6 +2125,8 @@
         e.preventDefault();
         dragging = { chipId };
         ghost.dataset.chip = chipId;
+        ghost.classList.remove('sticky-note--fold-br', 'sticky-note--fold-bl');
+        ghost.classList.add(STICKY_FOLD[chipId]);
         ghost.querySelector('.chip-label').textContent = CHIPS[chipId].label;
         ghost.classList.add('active');
         moveGhost(e.clientX, e.clientY);
