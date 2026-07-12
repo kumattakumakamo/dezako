@@ -863,64 +863,159 @@
 
     .venn-wrap {
       position: relative;
-      width: 150px;
-      height: 110px;
+      width: 230px;
+      height: 230px;
       flex-shrink: 0;
     }
 
-    .venn-circle {
+    .bz-circle {
       position: absolute;
-      width: 86px;
-      height: 86px;
+      left: 50%;
+      top: 50%;
+      width: 92px;
+      height: 92px;
       border-radius: 50%;
-      border: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--text);
-      top: 10px;
       opacity: 0;
-      transition: left 0.8s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.8s;
+      animation: bzMoveIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-play-state: paused;
     }
 
-    .venn-circle.left-c {
-      background: rgba(174, 228, 255, 0.8);
-      left: 22px;
+    .venn-wrap.visible .bz-circle,
+    .venn-wrap.visible .bz-label {
+      animation-play-state: running;
     }
 
-    .venn-circle.right-c {
-      background: rgba(255, 243, 173, 0.8);
-      left: 44px;
-      transition-delay: 0.1s;
+    .bz-c1 {
+      background: rgba(255, 243, 147, 0.6);
+      color: #B88448;
+      border: 2px solid #F8E884;
+      --x-start: 83px; --y-start: 0px;
+      --x-end: 37px; --y-end: 0px;
+      animation-delay: 0.30s;
     }
 
-    .venn-wrap.visible .venn-circle.left-c {
-      left: 0;
-      opacity: 1;
+    .bz-c3 {
+      background: rgba(255, 243, 147, 0.6);
+      color: #B88448;
+      border: 2px solid #F8E884;
+      --x-start: -83px; --y-start: 0px;
+      --x-end: -37px; --y-end: 0px;
+      animation-delay: 0.15s;
     }
 
-    .venn-wrap.visible .venn-circle.right-c {
-      left: 64px;
-      opacity: 1;
+    .bz-c4 {
+      background: rgba(255, 243, 147, 0.6);
+      color: #B88448;
+      border: 2px solid #F8E884;
+      --x-start: 0px; --y-start: -83px;
+      --x-end: 0px; --y-end: -37px;
+      animation-delay: 0s;
     }
 
-    .venn-overlap {
+    .bz-c2 {
+      background: rgba(255, 120, 150, 0.55);
+      border: 2px solid #ff1E8F;
+      color: #fff;
+      --x-start: 0px; --y-start: 83px;
+      --x-end: 0px; --y-end: 46px;
+      animation-delay: 0.60s;
+    }
+
+    @keyframes bzMoveIn {
+      from {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x-start)), calc(-50% + var(--y-start)));
+      }
+      to {
+        opacity: 1;
+        transform: translate(calc(-50% + var(--x-end)), calc(-50% + var(--y-end)));
+      }
+    }
+
+    .bz-label,
+    .bz-callout-label {
       position: absolute;
-      left: 42px;
-      top: 36px;
-      width: 66px;
-      font-size: 9px;
       font-weight: 700;
-      color: var(--text);
-      text-align: center;
+      white-space: nowrap;
       opacity: 0;
-      transition: opacity 0.4s 0.6s;
+      animation-play-state: paused;
     }
 
-    .venn-wrap.visible .venn-overlap {
-      opacity: 1;
+    .bz-label-c1 {
+      left: 70%;
+      top: 50%;
+      font-size: 11px;
+      color: var(--text);
+      animation: bzLabelRightIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: 0.30s;
+    }
+
+    @keyframes bzLabelRightIn {
+      from { opacity: 0; transform: translate(-40%, -50%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    .bz-label-c3 {
+      left: 30%;
+      top: 50%;
+      font-size: 11px;
+      color: var(--text);
+      animation: bzLabelLeftIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: 0.15s;
+    }
+
+    @keyframes bzLabelLeftIn {
+      from { opacity: 0; transform: translate(-60%, -50%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    .bz-label-c4 {
+      left: 50%;
+      top: 28%;
+      font-size: 11px;
+      color: var(--text);
+      animation: bzLabelTopIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: 0s;
+    }
+
+    @keyframes bzLabelTopIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    .bz-callout {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 166px;
+      height: 92px;
+      pointer-events: none;
+    }
+
+    .bz-callout-label {
+      left: 2px;
+      top: 14px;
+      font-size: 17px;
+      animation: bzLabelBottomIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: 0.60s;
+    }
+
+    @keyframes bzLabelBottomIn {
+      from { opacity: 0; transform: translate(-50%, -40%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    .bz-c2 .bz-callout-label {
+      color: #fff;
+      text-shadow:
+        2px 0 0 #ff1e8f,
+        -2px 0 0 #ff1e8f,
+        0 2px 0 #ff1e8f,
+        0 -2px 0 #ff1e8f,
+        1.5px 1.5px 0 #ff1e8f,
+        -1.5px 1.5px 0 #ff1e8f,
+        1.5px -1.5px 0 #ff1e8f,
+        -1.5px -1.5px 0 #ff1e8f;
     }
 
     .venn-text {
@@ -1650,9 +1745,14 @@
 
         <div class="fade-block venn-row" style="transition-delay:0.1s">
           <div class="venn-wrap">
-            <div class="venn-circle left-c">情報</div>
-            <div class="venn-circle right-c">デザイン</div>
-            <div class="venn-overlap">情報<br>デザイン</div>
+            <div class="bz-circle bz-c1"><span class="bz-label bz-label-c1">情報システム</span></div>
+            <div class="bz-circle bz-c3"><span class="bz-label bz-label-c3">知覚システム</span></div>
+            <div class="bz-circle bz-c4"><span class="bz-label bz-label-c4">複雑系</span></div>
+            <div class="bz-circle bz-c2">
+              <div class="bz-callout">
+                <span class="bz-callout-label">情報デザイン</span>
+              </div>
+            </div>
           </div>
           <p class="venn-text">未来大学には4つのコースがあり、2年生になると配属先が決まります。情報デザインコースはその中でも、「デザイン」について様々な角度から学ぶコースになっています。</p>
         </div>

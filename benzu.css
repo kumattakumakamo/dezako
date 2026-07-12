@@ -1,0 +1,278 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap');
+
+body {
+    margin: 0;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    background: white;
+}
+
+.venn {
+    position: relative;
+    width: 500px;
+    height: 500px;
+}
+
+/* =========================
+   共通円
+   ========================= */
+.circle {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    border-radius: 50%;
+
+    opacity: 0;
+
+    animation: moveIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* =========================
+   各円
+   ========================= */
+/* 情報デザイン */
+.c2 {
+    width: 200px;
+    height: 200px;
+
+    background: rgba(255, 120, 150, 0.5);
+    border: 2px solid #ff1E8F;
+
+    color: #fff;
+    -text-shadow: 2px #ff1E8F;
+
+    --x-start: 0px;
+    --y-start: 180px;
+
+    --x-end: 0px;
+    --y-end: 100px;
+
+    animation-delay: 0.60s;
+}
+
+
+/* 情報システム */
+.c1 {
+    width: 200px;
+    height: 200px;
+
+    background: rgba(255, 243, 147, 0.5);
+    color: #B88448;
+    border: 2px solid #F8E884;
+
+    --x-start: 180px;
+    --y-start: 0px;
+
+    --x-end: 80px;
+    --y-end: 0px;
+
+    animation-delay: 0.30s;
+}
+
+
+/* 知覚システム */
+.c3 {
+    width: 200px;
+    height: 200px;
+
+    background: rgba(255, 243, 147, 0.5);
+    color: #B88448;
+    border: 2px solid #F8E884;
+
+    --x-start: -180px;
+    --y-start: 0px;
+
+    --x-end: -80px;
+    --y-end: 0px;
+
+    animation-delay: 0.15s;
+}
+
+/* 複雑系 */
+.c4 {
+    width: 200px;
+    height: 200px;
+
+    background: rgba(255, 243, 147, 0.5);
+    color: #B88448;
+    border: 2px solid #F8E884;
+    --x-start: 0px;
+    --y-start: -180px;
+
+    --x-end: 0px;
+    --y-end: -80px;
+
+    animation-delay: 0s;
+}
+
+/* =========================
+   円登場
+   ========================= */
+@keyframes moveIn {
+    from {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--x-start)),
+                calc(-50% + var(--y-start)));
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(calc(-50% + var(--x-end)),
+                calc(-50% + var(--y-end)));
+    }
+}
+
+/* =========================
+   ラベル共通
+   ========================= */
+.label,
+.callout-label {
+    position: absolute;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+    white-space: nowrap;
+
+    opacity: 0;
+}
+
+/* =========================
+   青ラベル
+   ========================= */
+.label-c1 {
+    left: 70%;
+    top: 50%;
+
+    font-size: 14px;
+
+    animation:
+        labelRightIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+    animation-delay: 0.30s;
+}
+
+@keyframes labelRightIn {
+    from {
+        opacity: 0;
+        transform: translate(-40%, -50%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* =========================
+   オレンジラベル
+   ========================= */
+.label-c3 {
+    left: 30%;
+    top: 50%;
+
+    font-size: 14px;
+
+    animation:
+        labelLeftIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+    animation-delay: 0.15s;
+}
+
+@keyframes labelLeftIn {
+    from {
+        opacity: 0;
+        transform: translate(-60%, -50%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* =========================
+   緑ラベル
+   ========================= */
+.label-c4 {
+    left: 50%;
+    top: 30%;
+
+    font-size: 14px;
+
+    animation:
+        labelTopIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+    animation-delay: 0s;
+}
+
+@keyframes labelTopIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* =========================
+   コールアウト
+   ========================= */
+.callout {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 360px;
+    height: 200px;
+
+    pointer-events: none;
+}
+
+/* =========================
+   情報デザイン
+   ========================= */
+.callout-label {
+    left: 3px;
+    top: 30px;
+
+    font-size: 25px;
+    font-weight: 500;
+
+    animation:
+        labelBottomIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+    animation-delay: 0.60s;
+}
+
+@keyframes labelBottomIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.c2 .callout-label {
+    color: #fff;
+
+    text-shadow:
+        3px 0 0 #ff1e8f,
+        -3px 0 0 #ff1e8f,
+        0 3px 0 #ff1e8f,
+        0 -3px 0 #ff1e8f,
+        2px 2px 0 #ff1e8f,
+        -2px 2px 0 #ff1e8f,
+        2px -2px 0 #ff1e8f,
+        -2px -2px 0 #ff1e8f;
+
+}
