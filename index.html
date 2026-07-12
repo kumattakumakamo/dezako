@@ -784,7 +784,6 @@
       border-radius: 4px;
       width: 240px;
       padding: 16px 16px 20px;
-      transform: rotate(-1deg);
     }
 
     .kv-card .futu-label {
@@ -1152,13 +1151,6 @@
       overflow: hidden;
     }
 
-    .assignment-card:nth-child(odd) {
-      transform: rotate(1deg);
-    }
-
-    .assignment-card:nth-child(even) {
-      transform: rotate(-1deg);
-    }
 
     .assignment-num {
       padding: 20px 16px 4px;
@@ -1677,12 +1669,12 @@
               <div class="facility-desc">レーザーカッター・3Dプリンタを備える</div>
             </div>
             <div>
-              <div class="facility-img" style="transform:rotate(-2deg)"><img src="アトリエ.JPG" alt="アトリエ"></div>
+              <div class="facility-img"><img src="アトリエ.JPG" alt="アトリエ"></div>
               <div class="facility-name">アトリエ</div>
               <div class="facility-desc">大型スクリーンと可動家具のラボ</div>
             </div>
             <div>
-              <div class="facility-img" style="transform:rotate(2deg)"><img src="ミュージアム.jpg" alt="ミュージアム"></div>
+              <div class="facility-img"><img src="ミュージアム.jpg" alt="ミュージアム"></div>
               <div class="facility-name">ミュージアム</div>
               <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
             </div>
@@ -1790,10 +1782,10 @@
 
     /* 課題01と02を入れ替え、ナンバリングを01〜04に変更 */
     const ASSIGNMENTS = [
-      { num: '01', title: '仮想生物デザイン', desc: '実在しない生物を、設定から造形まで一貫してデザインする課題。', color: '#FFB3D1', img: '仮想生物1.jpg' },
-      { num: '02', title: 'フィールドリサーチ', desc: '街に出て人々の行動や場の様子を観察・記録し、課題を発見する課題。', color: '#FFF3AD' },
-      { num: '03', title: '情報設計・ポスター制作', desc: '収集した情報を整理・階層化し、伝わるポスターに落とし込む課題。', color: '#FFF3AD' },
-      { num: '04', title: 'アプリ・サービス提案', desc: '社会課題や日常のニーズを起点に、デジタルサービスを企画・プロトタイプする課題。', color: '#AEE4FF' },
+      { num: '01', title: '仮想生物', desc: '未来大や自分の地元にちなんだ、動いて光る仮想生物を作成しました。素材からキャラクターデザイン、背景のストーリーまでの全てを考えて作っています。', color: '#FFB3D1', img: '仮想生物1.jpg' },
+      { num: '02', title: 'フィールドワークポスター', desc: '五稜郭エリアでのフィールドワークを通して人々の創意工夫から生まれた「本来意図されていない使われ方をしているもの」を調査し、その発見や驚きをまとめたポスターを制作しました。', color: '#FFF3AD' },
+      { num: '03', title: '遊びのデザイン', desc: 'デザインコースで初めてのグループワークです。身体制限を課した新しい遊びを提案し、実際に道具まで作って遊べるところまで制作しました。', color: '#FFF3AD' },
+      { num: '04', title: 'AIサービスデザイン', desc: '5年後のAIを想定した、「一人暮らしを始めたての大学1年生をサポートするAIサービス」を考えました。中にはサイト画面を作るに留まらず、実際に操作できるよう、モックアップを制作したグループもいました。', color: '#AEE4FF' },
     ];
 
     const GRID_L = ['#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B'];
