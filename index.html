@@ -515,28 +515,6 @@
       transform: scale(0.97);
     }
 
-    .result-oc-link {
-      display: block;
-      width: 100%;
-      padding: 12px 16px;
-      background: white;
-      color: var(--text);
-      border: 2px solid var(--border);
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      margin-bottom: 8px;
-      text-align: center;
-      text-decoration: none;
-      transition: transform 0.1s;
-    }
-
-    .result-oc-link:active {
-      transform: scale(0.97);
-    }
-
     .result-reset-btn {
       display: block;
       width: 100%;
@@ -797,6 +775,7 @@
       font-size: 22px;
       color: var(--text);
       line-height: 1.3;
+      text-align: center;
     }
 
     .kv-card .kv-badge {
@@ -872,23 +851,14 @@
       transform: translateY(0) scale(1);
     }
 
-    /* Venn & Cycle – stack vertically on small screens */
+    /* Venn & Cycle – 図とテキストを中央揃えで縦に積む */
     .venn-row,
     .cycle-row {
       display: flex;
-      gap: 16px;
+      flex-direction: column;
       align-items: center;
+      gap: 12px;
       margin-bottom: 40px;
-    }
-
-    @media (max-width: 400px) {
-
-      .venn-row,
-      .cycle-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
     }
 
     .venn-wrap {
@@ -954,17 +924,17 @@
     }
 
     .venn-text {
-      flex: 1;
       font-size: 13px;
       color: var(--text);
       line-height: 1.7;
+      text-align: center;
     }
 
     .cycle-text {
-      flex: 1;
       font-size: 13px;
       color: var(--text);
       line-height: 1.7;
+      text-align: center;
     }
 
     .cycle-svg-wrap {
@@ -1389,7 +1359,7 @@
       overflow: hidden;
       border: 1.5px solid var(--pink);
       margin-top: 4px;
-      height: 320px;
+      height: 160px;
       position: relative;
     }
 
@@ -1551,6 +1521,53 @@
       color: var(--text);
     }
 
+    /* ── ポスター制作中は1画面に固定し、CTAへスクロールできないようにする ── */
+    body.diagnosis-locked {
+      overflow: hidden;
+    }
+
+    body.diagnosis-locked #section-diagnosis {
+      height: calc(100svh - 44px);
+      overflow: hidden;
+      padding: 16px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    body.diagnosis-locked #section-diagnosis h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    /* 診断結果が表示されている間、下部固定の「次へ」ボタンと重ならないよう余白を確保 */
+    body.diagnosis-locked #section-diagnosis.result-shown {
+      padding-bottom: 76px;
+    }
+
+    .diagnosis-next-btn {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      z-index: 500;
+      background: var(--hero-bg-dark);
+      color: #fff;
+      border: 3px solid var(--border);
+      border-radius: 9999px;
+      padding: 10px 26px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 rgba(255, 30, 143, 1);
+      display: none;
+    }
+
+    .diagnosis-next-btn.visible {
+      display: block;
+    }
+
     /* ══════════════════════════════
        EXPERIMENT LOG EXPORT（研究用途・目立たせない）
     ══════════════════════════════ */
@@ -1643,11 +1660,10 @@
             <div class="venn-circle right-c">デザイン</div>
             <div class="venn-overlap">情報<br>デザイン</div>
           </div>
-          <p class="venn-text">「情報」と「デザイン」が重なる場所を探求するコース。人・社会・テクノロジーをつなぐ視点で、伝わる表現を学びます。</p>
+          <p class="venn-text">未来大学には4つのコースがあり、2年生になると配属先が決まります。情報デザインコースはその中でも、「デザイン」について様々な角度から学ぶコースになっています。</p>
         </div>
 
         <div class="fade-block cycle-row" style="transition-delay:0.1s">
-          <p class="cycle-text">計画・制作・評価・改善を繰り返す制作サイクルで、実践的なデザイン思考を身につけます。</p>
           <div class="cycle-svg-wrap">
             <div class="pdca-wrap">
               <div class="pdca-scale">
@@ -1662,6 +1678,7 @@
               </div>
             </div>
           </div>
+          <p class="cycle-text">何かを作る時、「計画を立てる」→「作ってみる」→「作った作品を評価する」→「評価で気が付いたところを改善する」というサイクルを繰り返します。これをPDCA（Plan, Do, Check, Action）サイクルと言います。</p>
         </div>
 
         <div class="fade-block process-block" style="transition-delay:0.08s">
@@ -1758,38 +1775,25 @@
         <div class="fade-block cta-card" style="transition-delay:0.2s">
           <p class="cta-card-label">イベント詳細</p>
           <div>
-            <span class="cta-event-label">日時</span>
-            <span class="cta-event-value">2026年8月1日（土）</span>
-          </div>
-          <div>
-            <span class="cta-event-label">時間</span>
-            <span class="cta-event-value">11:00〜15:00</span>
+            <span class="cta-event-label">開催日程</span>
+            <span class="cta-event-value">2026年8月1日（土）　11:00〜15:00</span>
           </div>
           <div>
             <span class="cta-event-label">会場</span>
-            <span class="cta-event-value">公立はこだて未来大学<br>キャンパス内（北海道函館市）</span>
           </div>
-          <div>
-            <span class="cta-event-label">申込期間</span>
-            <span class="cta-event-value">2026年6月15日（月）〜<br>7月27日（月）</span>
-          </div>
-        </div>
-
-        <div class="fade-block cta-card" style="transition-delay:0.24s">
-          <p class="cta-card-label">アクセス</p>
-          <div class="cta-access-row"><span class="cta-access-from">函館駅から</span><span class="cta-access-time">バスで約1時間</span></div>
-          <div class="cta-access-row"><span class="cta-access-from">新函館北斗駅から</span><span class="cta-access-time">バスで約1時間</span></div>
-          <div class="cta-access-row"><span class="cta-access-from">函館空港から</span><span class="cta-access-time">バスで約1時間半</span></div>
           <div class="cta-map-embed">
             <iframe title="公立はこだて未来大学 地図"
               src="https://maps.google.com/maps?q=Future+University+Hakodate,Hakodate,Hokkaido,Japan&output=embed&z=15&hl=ja"
               loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
           <a class="cta-map-link" href="https://maps.google.com/maps?q=公立はこだて未来大学" target="_blank" rel="noopener noreferrer">Google マップで開く →</a>
+          <div class="cta-access-row"><span class="cta-access-from">函館駅から</span><span class="cta-access-time">バスで約1時間</span></div>
+          <div class="cta-access-row"><span class="cta-access-from">新函館北斗駅から</span><span class="cta-access-time">バスで約1時間</span></div>
+          <div class="cta-access-row"><span class="cta-access-from">函館空港から</span><span class="cta-access-time">バスで約1時間半</span></div>
         </div>
 
         <div class="fade-block" style="transition-delay:0.3s">
-          <a href="#" class="cta-btn">参加を申し込む →</a>
+          <a href="https://www.fun.ac.jp/admission/open-campus/" class="cta-btn">参加を申し込む →</a>
           <p class="cta-btn-note">＊ 申し込みは大学公式サイトから（無料）</p>
         </div>
 
@@ -1819,6 +1823,8 @@
   <div id="ghost-chip" class="sticky-note--fold-br">
     <span class="chip-label"></span>
   </div>
+
+  <button type="button" id="diagnosis-next-btn" class="diagnosis-next-btn">次へ ↓</button>
 
   <script>
     'use strict';
@@ -2305,7 +2311,6 @@
       <p class="result-detail">${d.detail}</p>
       <div class="result-btns">
         <button class="result-share-btn">この作品をシェアする ↗</button>
-        <a class="result-oc-link" href="#section-cta">あなたの作品と似た制作をキャンパスで見つけよう →</a>
         <button class="result-reset-btn">もう一度試す</button>
       </div>`;
           maxHeight = Math.max(maxHeight, resultEl.offsetHeight);
@@ -2351,7 +2356,6 @@
       <p class="result-detail">${d.detail}</p>
       <div class="result-btns">
         <button class="result-share-btn" id="share-btn-${mode}">この作品をシェアする ↗</button>
-        <a class="result-oc-link" href="#section-cta">あなたの作品と似た制作をキャンパスで見つけよう →</a>
         <button class="result-reset-btn" id="reset-btn-${mode}">もう一度試す</button>
       </div>`;
         resultEl.querySelector(`#reset-btn-${mode}`).addEventListener('click', () => {
@@ -2361,10 +2365,6 @@
         resultEl.querySelector(`#share-btn-${mode}`).addEventListener('click', () => {
           Logger.log('button_click', { id: 'result-share-btn', label: 'この作品をシェアする', mode: mode });
           shareResult();
-        });
-        const ocLink = resultEl.querySelector('.result-oc-link');
-        if (ocLink) ocLink.addEventListener('click', () => {
-          Logger.log('button_click', { id: 'result-oc-link', label: 'あなたの作品と似た制作をキャンパスで見つけよう', mode: mode });
         });
 
         /* フラッシュのピークで、ポスターがその場で完成イメージ画像に変身（大きさはまだ変えない） */
@@ -2401,6 +2401,13 @@
               const current = parseFloat(overlayWrap.style.minHeight) || 0;
               if (needed > current) overlayWrap.style.minHeight = needed + 'px';
             }
+            /* ポスターが完成したら「次へ」ボタンを表示し、もう一度試すボタンと重ならない余白を確保 */
+            if (mode === 'full') {
+              const diagnosisSection = document.getElementById('section-diagnosis');
+              if (diagnosisSection) diagnosisSection.classList.add('result-shown');
+              const nextBtn = document.getElementById('diagnosis-next-btn');
+              if (nextBtn) nextBtn.classList.add('visible');
+            }
           });
         });
 
@@ -2428,6 +2435,12 @@
         if (subtitle) subtitle.style.display = '';
         const ctaBadge = document.getElementById('cta-bridge-badge');
         if (ctaBadge) ctaBadge.classList.remove('result-shown');
+        if (mode === 'full') {
+          const diagnosisSection = document.getElementById('section-diagnosis');
+          if (diagnosisSection) diagnosisSection.classList.remove('result-shown');
+          const nextBtn = document.getElementById('diagnosis-next-btn');
+          if (nextBtn) nextBtn.classList.remove('visible');
+        }
       }
 
       async function shareResult() {
@@ -2594,13 +2607,15 @@
       const gateSection = document.getElementById('section-gate');
       const diagnosisSection = document.getElementById('section-diagnosis');
       const ctaSection = document.getElementById('section-cta');
+      const nextBtn = document.getElementById('diagnosis-next-btn');
 
       function reveal() {
         diagnosisSection.classList.remove('gated');
-        ctaSection.classList.remove('gated');
         gateSection.classList.add('gated');
+        /* ポスターが完成するまでは、CTA（オープンキャンパス）へスクロールできないよう固定する */
+        document.body.classList.add('diagnosis-locked');
         diagnosisSection.scrollIntoView({ behavior: 'smooth' });
-        Logger.log('screen_transition', { from: 'gate', to: 'diagnosis_cta' });
+        Logger.log('screen_transition', { from: 'gate', to: 'diagnosis' });
         /* 表示されて初めて正しいレイアウトが取れるため、ここで診断結果用の余白を再計算する */
         if (fullGame) requestAnimationFrame(() => fullGame.reserveResultSpace());
       }
@@ -2613,6 +2628,18 @@
         Logger.log('button_click', { id: 'gate-btn-en', label: 'YES' });
         reveal();
       });
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          Logger.log('button_click', { id: 'diagnosis-next-btn', label: '次へ' });
+          document.body.classList.remove('diagnosis-locked');
+          diagnosisSection.classList.remove('result-shown');
+          nextBtn.classList.remove('visible');
+          ctaSection.classList.remove('gated');
+          Logger.log('screen_transition', { from: 'diagnosis', to: 'cta' });
+          requestAnimationFrame(() => ctaSection.scrollIntoView({ behavior: 'smooth' }));
+        });
+      }
     }
 
     /* ══════════════════════════════
