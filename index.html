@@ -1448,105 +1448,66 @@
     }
 
     /* ══════════════════════════════
-       GUIDED MODE — 1セクション1画面
+       GATE — 座学から演習への切り替え確認
     ══════════════════════════════ */
-    body.guided-mode {
-      overflow: hidden;
-    }
-    /* ガイドモード中はフリースクロール不可のため、機能しない「スクロール」指示は隠す */
-    body.guided-mode .kv-scroll-hint {
+    #section-diagnosis.gated,
+    #section-cta.gated {
       display: none;
     }
-    body.guided-mode #section-kv,
-    body.guided-mode #section-welcome,
-    body.guided-mode #section-diagnosis,
-    body.guided-mode #section-cta {
-      scroll-margin-top: 44px;
-    }
-    body.guided-mode #section-kv {
-      height: calc(100svh - 44px);
-    }
-    body.guided-mode #section-welcome,
-    body.guided-mode #section-diagnosis,
-    body.guided-mode #section-cta {
-      height: calc(100svh - 44px);
-      overflow: hidden;
-    }
-    body.guided-mode #section-welcome {
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
 
-    /* ── セクション間ナビゲーションボタン ── */
-    #guided-nav-btn {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 200;
+    #section-gate {
+      padding: 64px 20px;
       background: var(--hero-bg-dark);
-      color: #fff;
-      border: 3px solid var(--border);
-      border-radius: 9999px;
-      padding: 10px 22px;
-      font-size: 15px;
-      font-weight: 700;
-      font-family: 'Noto Sans JP', sans-serif;
-      cursor: pointer;
-      box-shadow: 4px 4px 0 rgba(255,30,143,1);
-      display: none;
+      min-height: 60vh;
+      display: flex;
       align-items: center;
-      gap: 8px;
-      transition: opacity 0.3s;
-      white-space: nowrap;
-    }
-    body.guided-mode #guided-nav-btn { display: flex; }
-    #guided-nav-btn:disabled { opacity: 0.28; cursor: default; pointer-events: none; }
-
-    /* ── B2 ガイドモード：余白縮小 ── */
-    body.guided-mode #section-welcome {
-      padding: 16px 20px 8px;
-      overflow-y: auto;
-    }
-    body.guided-mode #section-welcome h2 {
-      font-size: 17px;
-      margin-bottom: 12px;
-    }
-    body.guided-mode .venn-row,
-    body.guided-mode .cycle-row {
-      margin-bottom: 12px;
-      gap: 12px;
-    }
-    body.guided-mode .process-block { margin-bottom: 8px; }
-    body.guided-mode .venn-wrap { width: 120px; height: 90px; }
-    body.guided-mode .venn-circle { width: 70px; height: 70px; font-size: 12px; top: 8px; }
-    body.guided-mode .venn-circle.left-c { left: 18px; }
-    body.guided-mode .venn-circle.right-c { left: 36px; }
-    body.guided-mode .venn-wrap.visible .venn-circle.right-c { left: 50px; }
-    body.guided-mode .pdca-wrap { width: 120px; height: 120px; }
-    body.guided-mode .pdca-scale { transform: scale(0.2308); }
-    body.guided-mode .facility-grid { margin-bottom: 12px; gap: 6px; }
-    body.guided-mode .facility-img { height: 56px; margin-bottom: 4px; }
-    body.guided-mode .tools-row { margin-bottom: 8px; }
-    body.guided-mode .oc-note { font-size: 11px; }
-
-    /* ── B4 ガイドモード：余白縮小 ── */
-    body.guided-mode #section-diagnosis {
-      padding: 16px 20px 80px;
-    }
-    body.guided-mode #section-diagnosis h2 {
-      font-size: 18px;
-      margin-bottom: 12px;
+      justify-content: center;
+      text-align: center;
     }
 
-    /* ── B5 ガイドモード：余白縮小・内部スクロール ── */
-    body.guided-mode #section-cta {
-      padding: 16px 20px 24px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+    #section-gate.gated {
+      display: none;
     }
-    body.guided-mode .cta-map-embed {
-      height: 200px;
+
+    .gate-question {
+      font-weight: 700;
+      font-size: 22px;
+      color: white;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .gate-btns {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .gate-btn {
+      padding: 14px 32px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 16px;
+      border: 3px solid var(--border);
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 4px 4px 0 rgba(255, 30, 143, 1);
+      transition: transform 0.1s;
+    }
+
+    .gate-btn:active {
+      transform: scale(0.97);
+    }
+
+    .gate-btn-primary {
+      background: var(--orange);
+      color: white;
+    }
+
+    .gate-btn-secondary {
+      background: white;
+      color: var(--text);
     }
   </style>
 </head>
@@ -1628,8 +1589,19 @@
         </div>
       </section>
 
+      <!-- Gate: 座学 → 演習 -->
+      <section id="section-gate">
+        <div class="fade-block">
+          <p class="gate-question">座学はここまでです！<br>演習の準備はできましたか？</p>
+          <div class="gate-btns">
+            <button class="gate-btn gate-btn-primary" id="gate-btn-ja">はい</button>
+            <button class="gate-btn gate-btn-secondary" id="gate-btn-en">YES</button>
+          </div>
+        </div>
+      </section>
+
       <!-- B4: Diagnosis -->
-      <section id="section-diagnosis">
+      <section id="section-diagnosis" class="gated">
         <div class="fade-block">
           <h2>もう一度、<br>ポスターをつくってみよう<br><span
               style="font-size:13px;font-weight:400;color:var(--text-muted)">同じ3つのブロックを、今度は意識して配置してみよう。</span></h2>
@@ -1638,7 +1610,7 @@
       </section>
 
       <!-- B5: CTA -->
-      <section id="section-cta">
+      <section id="section-cta" class="gated">
         <div class="fade-block cta-bridge-badge">✦ あなたの作品ができた！ ✦</div>
 
         <h2 class="fade-block cta-intro-heading" style="transition-delay:0.08s">未来大の情報デザインコースでは、<br>これらを学ぶための環境が整っています</h2>
@@ -2403,50 +2375,22 @@
     }
 
     /* ══════════════════════════════
-       GUIDED NAVIGATION
-       ── 1セクション1画面 ──
+       GATE — 座学から演習への切り替え確認
     ══════════════════════════════ */
-    function initGuidedNav() {
-      const SECTION_IDS = ['section-kv', 'section-welcome', 'section-diagnosis', 'section-cta'];
-      const LABELS = ['次へ ↓', '次へ ↓', '次へ ↓', '自由に見る ↓'];
-      let currentIdx = 0;
+    function initGate() {
+      const gateSection = document.getElementById('section-gate');
+      const diagnosisSection = document.getElementById('section-diagnosis');
+      const ctaSection = document.getElementById('section-cta');
 
-      /* スクロールロック */
-      document.body.classList.add('guided-mode');
-
-      /* ナビボタン */
-      const navBtn = document.getElementById('guided-nav-btn');
-      navBtn.textContent = LABELS[0];
-
-      function triggerFadeBlocks(sectionEl) {
-        sectionEl.querySelectorAll('.fade-block, .venn-wrap, .cycle-svg-wrap').forEach(el =>
-          el.classList.add('visible')
-        );
+      function reveal() {
+        diagnosisSection.classList.remove('gated');
+        ctaSection.classList.remove('gated');
+        gateSection.classList.add('gated');
+        diagnosisSection.scrollIntoView({ behavior: 'smooth' });
       }
 
-      function goToSection(idx) {
-        if (idx >= SECTION_IDS.length) { unlockScroll(); return; }
-        currentIdx = idx;
-        const el = document.getElementById(SECTION_IDS[idx]);
-        el.scrollIntoView({ behavior: 'smooth' });
-
-        navBtn.style.display = '';
-        navBtn.disabled = false;
-        navBtn.textContent = LABELS[idx];
-
-        /* フェードブロックを表示（scrollIntoViewの完了を待ってから） */
-        setTimeout(() => triggerFadeBlocks(el), 480);
-      }
-
-      navBtn.addEventListener('click', () => {
-        if (currentIdx >= SECTION_IDS.length - 1) { unlockScroll(); }
-        else { goToSection(currentIdx + 1); }
-      });
-
-      function unlockScroll() {
-        document.body.classList.remove('guided-mode');
-        navBtn.style.display = 'none';
-      }
+      document.getElementById('gate-btn-ja').addEventListener('click', reveal);
+      document.getElementById('gate-btn-en').addEventListener('click', reveal);
     }
 
     /* ══════════════════════════════
@@ -2492,7 +2436,6 @@
               top.classList.add('active');
               window.scrollTo(0, 0);
               buildKeyVisual(placement);
-              initGuidedNav();
 
               /* フェードアウト */
               flash.style.transition = `opacity ${FLASH_FADE_OUT}ms ease`;
@@ -2518,10 +2461,10 @@
       renderAssignTags();
       initNav();
       initFadeIn();
+      initGate();
       buildKeyVisual(null);
     })();
   </script>
-  <button id="guided-nav-btn">次へ ↓</button>
 </body>
 
 </html>
