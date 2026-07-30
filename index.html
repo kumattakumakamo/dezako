@@ -42,30 +42,9 @@
       --text-muted: rgba(122, 0, 38, 0.55);
       --sticky-fold: rgba(122, 0, 38, 0.18);
       --hero-bg-dark: var(--text);
-      --hero-bg-accent: var(--sub);
     }
 
     /* ── Animations ── */
-    @keyframes scrollUp {
-      from {
-        transform: translateY(0);
-      }
-
-      to {
-        transform: translateY(-50%);
-      }
-    }
-
-    @keyframes scrollDown {
-      from {
-        transform: translateY(-50%);
-      }
-
-      to {
-        transform: translateY(0);
-      }
-    }
-
     /* Transition flash */
     @keyframes flashIn {
       from {
@@ -717,174 +696,55 @@
     /* ── Key Visual (B1) ── */
     #section-kv {
       position: relative;
-      height: 100svh;
-      min-height: 600px;
-      overflow: hidden;
+      background: var(--page-bg);
+      padding-bottom: 10px;
     }
 
-    .kv-grid {
+    .kv-photo {
+      position: relative;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .kv-photo:last-child {
+      margin-bottom: 0;
+    }
+
+    .kv-photo img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* タイトル文字が写真に埋もれないよう、左側だけページ背景色で薄く覆う */
+    .kv-hero-overlay {
       position: absolute;
       inset: 0;
-      display: flex;
-      gap: 8px;
-      padding: 0 8px;
-    }
-
-    .kv-col {
-      flex: 1;
-      overflow: hidden;
-      padding: 0 8px;
-    }
-
-    .kv-col.left .kv-col-inner {
-      animation: scrollUp 18s linear infinite;
-    }
-
-    .kv-col.right .kv-col-inner {
-      animation: scrollDown 18s linear infinite;
-    }
-
-    .kv-block {
-      height: 96px;
-      border-radius: 32px;
-      border: 1.5px solid rgba(255, 30, 143, 0.3);
-      margin-bottom: 16px;
-    }
-
-    .kv-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 242, 239, 0.7);
-    }
-
-    /* プロローグ未選択（スキップ）時のニュートラル表現：彩度を落とし白を強める */
-    .kv-grid--neutral .kv-block {
-      filter: grayscale(0.55) opacity(0.75);
-    }
-
-    .kv-overlay--neutral {
-      background: rgba(255, 242, 239, 0.92);
-    }
-
-    .kv-bg-concept {
-      position: absolute;
-      inset: 0;
-      background: var(--hero-bg-dark);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .kv-bg-concept .ghost-text {
-      font-size: 72px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.06);
-      line-height: 1.1;
-      text-align: center;
-      user-select: none;
-    }
-
-    .kv-bg-oc {
-      position: absolute;
-      inset: 0;
-      background: var(--hero-bg-accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .kv-oc-poster {
-      width: 280px;
-      height: 400px;
-      background: var(--orange);
-      border: 3px solid var(--border);
-      box-shadow: 6px 6px 0 rgba(174, 228, 255, 1);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
-      color: white;
-    }
-
-    .kv-center {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    .kv-card {
-      background: white;
-      border: 2px solid var(--border);
-      box-shadow: 6px 6px 0 rgba(174, 228, 255, 0.9);
-      border-radius: 4px;
-      width: 240px;
-      padding: 16px 16px 20px;
-    }
-
-    .kv-card .futu-label {
-      font-size: 10px;
-      color: #888;
-      margin-bottom: 4px;
-    }
-
-    .kv-card .kv-title {
-      font-weight: 700;
-      font-size: 22px;
-      color: var(--text);
-      line-height: 1.3;
-      text-align: center;
-    }
-
-    .kv-card .kv-badge {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 4px 10px;
-      border-radius: 4px;
-      /* バッジらしく見えないよう角丸を減らす */
-      font-weight: 700;
-      font-size: 10px;
-      background: var(--orange);
-      color: white;
-      white-space: nowrap;
-      cursor: default;
-      pointer-events: none;
-      /* 押せそうに見えない */
-    }
-
-    .kv-corner-badge {
-      position: absolute;
-      bottom: 24px;
-      right: 16px;
-      border-radius: 9999px;
-      padding: 8px 16px;
-      font-weight: 700;
-      font-size: 12px;
-      border: 2px solid var(--border);
-      box-shadow: 3px 3px 0 rgba(174, 228, 255, 1);
-      cursor: default;
-      pointer-events: none;
-      /* 押せそうに見えない */
-    }
-
-    .kv-scroll-hint {
-      position: absolute;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 4px;
+      justify-content: center;
+      padding: 8px 12px 8px 20px;
+      background: linear-gradient(100deg,
+        rgba(255, 242, 239, 0.92) 0%,
+        rgba(255, 242, 239, 0.78) 40%,
+        rgba(255, 242, 239, 0) 65%);
     }
 
-    .kv-scroll-hint span {
-      font-size: 10px;
-      color: var(--text-muted);
+    .kv-hero-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      opacity: 0.75;
+      margin-bottom: 6px;
+      text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
+    }
+
+    .kv-hero-title-img {
+      display: block;
+      width: 60%;
+      max-width: 230px;
+      height: auto;
     }
 
     /* ── Welcome (B2) ── */
@@ -2218,9 +2078,6 @@
       { num: '１２・１月', title: 'AIサービスデザイン', desc: '5年後のAIを想定した、「一人暮らしを始めたての大学1年生をサポートするAIサービス」を考えました。中にはサイト画面を作るに留まらず、実際に操作できるよう、モックアップを制作したグループもいました。', color: '#AEE4FF', img: 'AIサービスデザイン.jpg' },
     ];
 
-    const GRID_L = ['#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B'];
-    const GRID_R = ['#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F', '#FFD5CC', '#FF4B2B', '#FF1E8F'];
-
     /* ══════════════════════════════
        SHARE CANVAS（ミニポスターを画像化して共有）
     ══════════════════════════════ */
@@ -2854,34 +2711,18 @@
     function buildKeyVisual(placement) {
       const kv = document.getElementById('section-kv');
 
-      /* プロローグの結果に関わらず、常に同じ「写真が流れる」背景1通りに固定する */
-      const makeBlocks = (colors, isLeft) => colors.concat(colors).map((c, i) => {
-        const rot = isLeft ? (i % 2 === 0 ? 3 : -3) : (i % 2 === 0 ? -4 : 4);
-        const br = (!isLeft && i % 3 === 0) ? '50%' : '32px';
-        return `<div class="kv-block" style="background:${c};transform:rotate(${rot}deg);border-radius:${br}"></div>`;
-      }).join('');
-      const bgHTML = `
-      <div class="kv-grid">
-        <div class="kv-col left"><div class="kv-col-inner">${makeBlocks(GRID_L, true)}</div></div>
-        <div class="kv-col right"><div class="kv-col-inner">${makeBlocks(GRID_R, false)}</div></div>
-      </div>
-      <div class="kv-overlay"></div>`;
-
-      const badgeBg = '#FFFFFF';
-      const badgeColor = 'var(--text-muted)';
-      const badgeText = '未来大 情報デザインコース';
-
+      /* プロローグの結果に関わらず、常に同じ実写真ギャラリーを1通り表示する */
       kv.innerHTML = `
-    ${bgHTML}
-    <div class="kv-center">
-      <div class="kv-card">
-        <div class="futu-label">FUTURE UNIVERSITY HAKODATE</div>
-        <div class="kv-title">未来大<br>情報デザインコース<br>特設サイト</div>
-        <div class="kv-badge">「デザイン」の解像度を上げるサイト</div>
+    <div class="kv-photo kv-photo--hero">
+      <img src="kv-photo-1.png" alt="展示会場の様子">
+      <div class="kv-hero-overlay">
+        <p class="kv-hero-label">FUTURE UNIVERSITY HAKODATE</p>
+        <img class="kv-hero-title-img" src="kv-title.png" alt="情報デザインコース 特設サイト">
       </div>
     </div>
-    <div class="kv-corner-badge" style="background:${badgeBg};color:${badgeColor}">${badgeText}</div>
-    <div class="kv-scroll-hint"><span>スクロール</span><span>↓</span></div>`;
+    <div class="kv-photo"><img src="kv-photo-2.png" alt="学生作品ポスターの展示"></div>
+    <div class="kv-photo"><img src="kv-photo-3.png" alt="制作物の展示"></div>
+    <div class="kv-photo"><img src="kv-photo-4.png" alt="学生同士の交流の様子"></div>`;
     }
 
     /* ══════════════════════════════
