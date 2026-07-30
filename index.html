@@ -609,6 +609,13 @@
       justify-content: space-between;
       padding: 0 16px;
       z-index: 50;
+      transition: transform 0.3s ease;
+    }
+
+    /* ポスター制作中は、直前のコンテンツが一切見えないよう
+       ヘッダーごと画面上端の外へ隠し、診断セクションを画面いっぱいに使う */
+    body.diagnosis-locked #top-header {
+      transform: translateX(-50%) translateY(-100%);
     }
 
     #top-header .logo {
@@ -1725,7 +1732,8 @@
     }
 
     body.diagnosis-locked #section-diagnosis {
-      height: calc(100svh - 44px);
+      /* ヘッダーは非表示になるため、画面の高さをまるごと使う */
+      height: 100svh;
       overflow-y: auto;
       overflow-x: hidden;
       padding: 16px 20px 24px;
@@ -2949,12 +2957,11 @@
            チップを3つ配置し終えるまでの間に読み込みが完了しやすくなり、
            「つくる」を押した瞬間の表示カクつきを防げる */
         preloadAllPosterImages();
-        /* ポスターが完成するまでは、CTA（オープンキャンパス）へスクロールできないよう固定する */
+        /* ポスターが完成するまでは、CTA（オープンキャンパス）へスクロールできないよう固定する。
+           このときヘッダーごと画面上端の外へ隠すため（CSS側 body.diagnosis-locked #top-header）、
+           オフセットなしで画面の一番上（y=0）に合わせる */
         document.body.classList.add('diagnosis-locked');
-        /* scrollIntoView() + scroll-margin-top はブラウザによって挙動が揺れるため、
-           固定ヘッダー（44px）の分を確実に差し引いた位置へ自前で計算してスクロールする */
-        const headerOffset = 44;
-        const targetY = Math.max(0, diagnosisSection.getBoundingClientRect().top + window.scrollY - headerOffset);
+        const targetY = Math.max(0, diagnosisSection.getBoundingClientRect().top + window.scrollY);
         window.scrollTo({ top: targetY, behavior: 'smooth' });
         Logger.log('screen_transition', { from: 'gate', to: 'diagnosis' });
         /* 表示されて初めて正しいレイアウトが取れるため、ここで診断結果用の余白を再計算する */
