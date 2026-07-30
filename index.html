@@ -2865,6 +2865,14 @@
     /* ══════════════════════════════
        GATE — 座学から演習への切り替え確認
     ══════════════════════════════ */
+    /* #screen-top がまだ display:none（プロローグ表示中）のうちに initGate() が
+       走ると、board.offsetHeight が 0 のまま syncGateHeight() されて
+       #section-gate の高さが 0px に固定されてしまう。以後はリサイズでしか直らず、
+       PC ではアドレスバーの出没によるリサイズが発生しないため、座学ボードが
+       ずっと height:0 の overflow:hidden に隠れたままになる。
+       transitionToTop() で #screen-top が実際に表示された直後に再計算できるよう、
+       syncGateHeight をここに退避しておく */
+    let syncGateHeightFn = null;
     function initGate(fullGame) {
       const gateSection = document.getElementById('section-gate');
       const diagnosisSection = document.getElementById('section-diagnosis');
@@ -2881,6 +2889,7 @@
         if (!gateSection || !board) return;
         gateSection.style.minHeight = board.offsetHeight + 'px';
       }
+      syncGateHeightFn = syncGateHeight;
       syncGateHeight();
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(syncGateHeight);
@@ -3044,6 +3053,9 @@
       top.classList.remove('screen');
       top.classList.add('active');
       window.scrollTo(0, 0);
+      /* #screen-top が display:none の間は測れなかった座学ボードの高さを、
+         表示された今このタイミングで正しく測り直す */
+      if (syncGateHeightFn) syncGateHeightFn();
       buildKeyVisual(placement);
     }
 
