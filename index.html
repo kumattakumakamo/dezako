@@ -2881,12 +2881,17 @@
            チップを3つ配置し終えるまでの間に読み込みが完了しやすくなり、
            「つくる」を押した瞬間の表示カクつきを防げる */
         preloadAllPosterImages();
+        /* ユーザーがスクロール操作中（フリック中の慣性スクロールなど）に「はい」を
+           押した場合、スムーズスクロールのアニメーションと overflow:hidden の
+           ロックが競合し、意図しない中途半端な位置で画面が固まってしまうことが
+           あった。アニメーションなしで即座に目的位置へ移動してからロックすることで、
+           競合の余地をなくす */
+        const targetY = Math.max(0, diagnosisSection.getBoundingClientRect().top + window.scrollY);
+        window.scrollTo({ top: targetY, behavior: 'auto' });
         /* ポスターが完成するまでは、CTA（オープンキャンパス）へスクロールできないよう固定する。
            このときヘッダーごと画面上端の外へ隠すため（CSS側 body.diagnosis-locked #top-header）、
            オフセットなしで画面の一番上（y=0）に合わせる */
         document.body.classList.add('diagnosis-locked');
-        const targetY = Math.max(0, diagnosisSection.getBoundingClientRect().top + window.scrollY);
-        window.scrollTo({ top: targetY, behavior: 'smooth' });
         Logger.log('screen_transition', { from: 'gate', to: 'diagnosis' });
         /* 表示されて初めて正しいレイアウトが取れるため、ここで診断結果用の余白を再計算し、
            1画面に収まるようフィットさせる（フォント読み込み完了時にも念のため再計算） */
