@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>未来大 情報デザインコース 特設サイト</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *,
@@ -1913,17 +1914,17 @@
             </div>
             <div class="fade-block facility-grid" style="transition-delay:0.14s">
               <div>
-                <div class="facility-img"><img src="工房.JPG" alt="工房"></div>
+                <div class="facility-img"><img src="工房.JPG" alt="工房" loading="lazy" decoding="async"></div>
                 <div class="facility-name">工房</div>
                 <div class="facility-desc">レーザーカッター・3Dプリンタを備える</div>
               </div>
               <div>
-                <div class="facility-img"><img src="アトリエ.JPG" alt="アトリエ"></div>
+                <div class="facility-img"><img src="アトリエ.JPG" alt="アトリエ" loading="lazy" decoding="async"></div>
                 <div class="facility-name">アトリエ</div>
                 <div class="facility-desc">大型スクリーンと可動家具のラボ</div>
               </div>
               <div>
-                <div class="facility-img"><img src="ミュージアム.jpg" alt="ミュージアム"></div>
+                <div class="facility-img"><img src="ミュージアム.jpg" alt="ミュージアム" loading="lazy" decoding="async"></div>
                 <div class="facility-name">ミュージアム</div>
                 <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
               </div>
@@ -2766,7 +2767,7 @@
     ══════════════════════════════ */
     function renderAssignmentCard(a) {
       const imgHTML = a.img
-        ? `<div class="assignment-img"><img src="${a.img}" alt="${a.title}"></div>`
+        ? `<div class="assignment-img"><img src="${a.img}" alt="${a.title}" loading="lazy" decoding="async"></div>`
         : `<div class="assignment-img" style="background:${a.color}"><span>制作物イメージ</span></div>`;
       return `
       <div class="assignment-card">
