@@ -798,23 +798,17 @@
       transform: translateY(0) scale(1);
     }
 
-    /* Venn & Cycle – stack vertically on small screens */
+    /* Venn & Cycle – スマホ幅（〜599px）では常に縦並びで統一し、
+       機種によって説明文と図の位置関係が変わらないようにする。
+       横並びに切り替えるのはタブレット・PC幅（レスポンシブ対応の
+       カード拡幅と同じ600px）からのみ */
     .venn-row,
     .cycle-row {
       display: flex;
-      gap: 16px;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
       margin-bottom: 40px;
-    }
-
-    @media (max-width: 400px) {
-
-      .venn-row,
-      .cycle-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
     }
 
     .venn-wrap {
@@ -832,7 +826,14 @@
       height: 230px;
     }
 
-    @media (min-width: 401px) {
+    @media (min-width: 600px) {
+
+      .venn-row,
+      .cycle-row {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+      }
 
       .venn-wrap {
         width: 150px;
