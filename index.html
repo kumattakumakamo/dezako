@@ -1747,6 +1747,15 @@
       margin-bottom: 12px;
     }
 
+    /* JS（fitDiagnosisToScreen）が、画面の高さに収まるよう必要に応じて
+       このラッパーごと縮小表示する。transform-origin は上端中央に固定し、
+       ヘッダー同様のスライド演出と合わせて自然に見えるようにする */
+    #diagnosis-fit {
+      width: 100%;
+      transform-origin: top center;
+      transition: transform 0.25s ease, height 0.25s ease;
+    }
+
     /* 「次へ」ボタンは診断結果の「もう一度試す」ボタンの直下に、通常フローの一部として表示する */
     .diagnosis-next-btn {
       display: none;
@@ -1946,11 +1955,13 @@
 
       <!-- B4: Diagnosis -->
       <section id="section-diagnosis" class="gated">
-        <div class="fade-block">
-          <h2>もう一度、<br>ポスターをつくってみよう<br id="diagnosis-subtitle-br"><span id="diagnosis-subtitle"
-              style="font-size:13px;font-weight:400;color:var(--text-muted)">同じ3つのブロックを、今度は意識して配置してみよう。</span></h2>
+        <div id="diagnosis-fit">
+          <div class="fade-block">
+            <h2>もう一度、<br>ポスターをつくってみよう<br id="diagnosis-subtitle-br"><span id="diagnosis-subtitle"
+                style="font-size:13px;font-weight:400;color:var(--text-muted)">同じ3つのブロックを、今度は意識して配置してみよう。</span></h2>
+          </div>
+          <div id="full-game"></div>
         </div>
-        <div id="full-game"></div>
       </section>
 
       <!-- B5: CTA -->
@@ -2523,6 +2534,8 @@
             }, 300);
           } else if (mode === 'full' && diagnoseBtnEl) {
             diagnoseBtnEl.classList.add('visible');
+            /* 「つくる →」ボタンが増えた分、1画面に収まるよう再フィットする */
+            requestAnimationFrame(() => fitDiagnosisToScreen());
           }
         }
       }
@@ -2646,6 +2659,7 @@
         const subtitle = document.getElementById('diagnosis-subtitle');
         if (subtitleBr) subtitleBr.style.display = 'none';
         if (subtitle) subtitle.style.display = 'none';
+        if (mode === 'full') requestAnimationFrame(() => fitDiagnosisToScreen());
 
         /* 「あなたの作品ができた！」バッジは診断結果が出ている間だけ表示する */
         const ctaBadge = document.getElementById('cta-bridge-badge');
@@ -2767,6 +2781,7 @@
         if (mode === 'full') {
           const nextBtn = document.getElementById('diagnosis-next-btn');
           if (nextBtn) nextBtn.classList.remove('visible');
+          requestAnimationFrame(() => fitDiagnosisToScreen());
         }
       }
 
@@ -2923,6 +2938,34 @@
     }
 
     /* ══════════════════════════════
+       DIAGNOSIS FIT — ポスター制作中の画面を、スクロール不要で
+       1画面に収まるよう #diagnosis-fit ごと縮小表示する
+    ══════════════════════════════ */
+    function fitDiagnosisToScreen() {
+      if (!document.body.classList.contains('diagnosis-locked')) return;
+      const section = document.getElementById('section-diagnosis');
+      const fit = document.getElementById('diagnosis-fit');
+      if (!section || !fit) return;
+
+      /* 実寸（縮小前）の高さを測るため、一旦リセットしてから測定する */
+      fit.style.transform = 'none';
+      fit.style.height = 'auto';
+
+      const style = getComputedStyle(section);
+      const available = section.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+      const natural = fit.scrollHeight;
+      if (!available || !natural) return;
+
+      const scale = Math.min(1, available / natural);
+      if (scale < 1) {
+        fit.style.transform = `scale(${scale})`;
+        /* 縮小後の見た目の高さに合わせてラッパー自体の専有スペースも縮め、
+           余白（＝スクロールが必要になる原因）が残らないようにする */
+        fit.style.height = (natural * scale) + 'px';
+      }
+    }
+
+    /* ══════════════════════════════
        GATE — 座学から演習への切り替え確認
     ══════════════════════════════ */
     function initGate(fullGame) {
@@ -2947,7 +2990,10 @@
       let resizeTimer = null;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(syncGateHeight, 150);
+        resizeTimer = setTimeout(() => {
+          syncGateHeight();
+          fitDiagnosisToScreen();
+        }, 150);
       });
 
       function reveal() {
@@ -2964,8 +3010,17 @@
         const targetY = Math.max(0, diagnosisSection.getBoundingClientRect().top + window.scrollY);
         window.scrollTo({ top: targetY, behavior: 'smooth' });
         Logger.log('screen_transition', { from: 'gate', to: 'diagnosis' });
-        /* 表示されて初めて正しいレイアウトが取れるため、ここで診断結果用の余白を再計算する */
-        if (fullGame) requestAnimationFrame(() => fullGame.reserveResultSpace());
+        /* 表示されて初めて正しいレイアウトが取れるため、ここで診断結果用の余白を再計算し、
+           1画面に収まるようフィットさせる（フォント読み込み完了時にも念のため再計算） */
+        if (fullGame) {
+          requestAnimationFrame(() => {
+            fullGame.reserveResultSpace();
+            fitDiagnosisToScreen();
+          });
+        }
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(fitDiagnosisToScreen);
+        }
       }
 
       document.getElementById('gate-btn-ja').addEventListener('click', () => {
