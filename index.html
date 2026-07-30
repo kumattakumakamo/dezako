@@ -798,23 +798,22 @@
       transform: translateY(0) scale(1);
     }
 
-    /* Venn & Cycle – スマホ幅（〜599px）では常に縦並びで統一し、
-       機種によって説明文と図の位置関係が変わらないようにする。
-       横並びに切り替えるのはタブレット・PC幅（レスポンシブ対応の
-       カード拡幅と同じ600px）からのみ */
+    /* Venn & Cycle – 画面幅によらず常に横並び（図＋説明文）を維持し、
+       文章量は変えずに説明文側の幅だけを画面幅に応じて可変にすることで、
+       位置関係（並び順・左右配置）がモバイル〜PCまで変わらないようにする */
     .venn-row,
     .cycle-row {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
       margin-bottom: 40px;
     }
 
     .venn-wrap {
       position: relative;
-      width: 230px;
-      height: 230px;
+      width: 150px;
+      height: 150px;
       flex-shrink: 0;
     }
 
@@ -824,26 +823,8 @@
       left: 0;
       width: 230px;
       height: 230px;
-    }
-
-    @media (min-width: 600px) {
-
-      .venn-row,
-      .cycle-row {
-        flex-direction: row;
-        align-items: center;
-        gap: 16px;
-      }
-
-      .venn-wrap {
-        width: 150px;
-        height: 150px;
-      }
-
-      .venn-stage {
-        transform: scale(0.6522);
-        transform-origin: top left;
-      }
+      transform: scale(0.6522);
+      transform-origin: top left;
     }
 
     .bz-circle {
@@ -998,6 +979,7 @@
 
     .venn-text {
       flex: 1;
+      min-width: 0;
       font-size: 13px;
       color: var(--text);
       line-height: 1.7;
@@ -1005,6 +987,7 @@
 
     .cycle-text {
       flex: 1;
+      min-width: 0;
       font-size: 13px;
       color: var(--text);
       line-height: 1.7;
@@ -1804,6 +1787,7 @@
         <h2 class="fade-block">未来大の情報デザインコースでは<br>ポスターのレイアウトを含む、<br>情報設計について学んでいます。</h2>
 
         <div class="fade-block venn-row" style="transition-delay:0.1s">
+          <p class="venn-text">未来大学には4つのコースがあり、情報デザインは「デザイン」を様々な角度から学びます。</p>
           <div class="venn-wrap">
             <div class="venn-stage">
               <div class="bz-circle bz-c1"><span class="bz-label bz-label-c1">情報システム</span></div>
@@ -1816,7 +1800,6 @@
               </div>
             </div>
           </div>
-          <p class="venn-text">未来大学には4つのコースがあり、情報デザインは「デザイン」を様々な角度から学びます。</p>
         </div>
 
         <div class="fade-block cycle-row" style="transition-delay:0.1s">
