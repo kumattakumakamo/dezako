@@ -1406,6 +1406,21 @@
       scroll-margin-top: 44px;
     }
 
+    /* 「次へ」到達直後の1画面（バッジ〜ツール／設備紹介まで）を、
+       .cta-heading の手前でちょうど1画面（固定ヘッダー44px＋本セクションの
+       padding-top 48pxを除いた残り）に収める。scroll-snapや強制ページ送りは
+       使わず、この直後は通常のスクロールで .cta-heading 以降へ地続きに続く
+       （内容が多い端末では自然にはみ出してスクロールが伸びるだけで、
+       レイアウトが壊れることはない）。
+       space-evenly により、余白を画面中央に集めて「独立したカード」に
+       見せるのではなく、各要素の間隔として広く分配する */
+    .cta-first-screen {
+      min-height: calc(100svh - 44px - 48px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+    }
+
     .cta-bridge-badge {
       display: none;
       align-items: center;
@@ -1973,56 +1988,58 @@
 
       <!-- B5: CTA -->
       <section id="section-cta" class="gated">
-        <div class="cta-bridge-badge" id="cta-bridge-badge">✦ あなたの作品ができた！ ✦</div>
+        <div class="cta-first-screen">
+          <div class="cta-bridge-badge" id="cta-bridge-badge">✦ あなたの作品ができた！ ✦</div>
 
-        <h2 class="fade-block cta-intro-heading" style="transition-delay:0.08s">未来大の情報デザインコースでは、<br>これらを学ぶための環境が整っています</h2>
+          <h2 class="fade-block cta-intro-heading" style="transition-delay:0.08s">未来大の情報デザインコースでは、<br>これらを学ぶための環境が整っています</h2>
 
-        <div class="fade-block cta-tools-facility" style="transition-delay:0.11s">
-          <div class="tools-row">
-            <div class="tool-tile">
-              <div class="tool-icon"><img src="tool-figma.png" alt="Figma"></div>
-              <div class="tool-name">Figma</div>
+          <div class="fade-block cta-tools-facility" style="transition-delay:0.11s">
+            <div class="tools-row">
+              <div class="tool-tile">
+                <div class="tool-icon"><img src="tool-figma.png" alt="Figma"></div>
+                <div class="tool-name">Figma</div>
+              </div>
+              <div class="tool-tile">
+                <div class="tool-icon"><img src="tool-illustrator.png" alt="Illustrator"></div>
+                <div class="tool-name">Illustrator</div>
+              </div>
+              <div class="tool-tile">
+                <div class="tool-icon"><img src="tool-photoshop.png" alt="Photoshop"></div>
+                <div class="tool-name">Photoshop</div>
+              </div>
+              <div class="tool-tile">
+                <div class="tool-icon"><img src="tool-chatgpt.png" alt="ChatGPT"></div>
+                <div class="tool-name">ChatGPT</div>
+              </div>
+              <div class="tool-tile">
+                <div class="tool-icon"><img src="tool-notebooklm.png" alt="NotebookLM"></div>
+                <div class="tool-name">NotebookLM</div>
+              </div>
+              <div class="tool-tile">
+                <div class="tool-icon"><img src="tool-gemini.png" alt="Gemini"></div>
+                <div class="tool-name">Gemini</div>
+              </div>
+              <div class="tool-tile">
+                <div class="tool-icon"><img src="tool-arduino.png" alt="Arduino"></div>
+                <div class="tool-name">Arduino</div>
+              </div>
             </div>
-            <div class="tool-tile">
-              <div class="tool-icon"><img src="tool-illustrator.png" alt="Illustrator"></div>
-              <div class="tool-name">Illustrator</div>
-            </div>
-            <div class="tool-tile">
-              <div class="tool-icon"><img src="tool-photoshop.png" alt="Photoshop"></div>
-              <div class="tool-name">Photoshop</div>
-            </div>
-            <div class="tool-tile">
-              <div class="tool-icon"><img src="tool-chatgpt.png" alt="ChatGPT"></div>
-              <div class="tool-name">ChatGPT</div>
-            </div>
-            <div class="tool-tile">
-              <div class="tool-icon"><img src="tool-notebooklm.png" alt="NotebookLM"></div>
-              <div class="tool-name">NotebookLM</div>
-            </div>
-            <div class="tool-tile">
-              <div class="tool-icon"><img src="tool-gemini.png" alt="Gemini"></div>
-              <div class="tool-name">Gemini</div>
-            </div>
-            <div class="tool-tile">
-              <div class="tool-icon"><img src="tool-arduino.png" alt="Arduino"></div>
-              <div class="tool-name">Arduino</div>
-            </div>
-          </div>
-          <div class="facility-grid">
-            <div>
-              <div class="facility-img"><img src="工房.JPG" alt="工房"></div>
-              <div class="facility-name">工房</div>
-              <div class="facility-desc">レーザーカッター・3Dプリンタを備える</div>
-            </div>
-            <div>
-              <div class="facility-img"><img src="アトリエ.JPG" alt="アトリエ"></div>
-              <div class="facility-name">アトリエ</div>
-              <div class="facility-desc">大型スクリーンと可動家具のラボ</div>
-            </div>
-            <div>
-              <div class="facility-img"><img src="ミュージアム.jpg" alt="ミュージアム"></div>
-              <div class="facility-name">ミュージアム</div>
-              <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
+            <div class="facility-grid">
+              <div>
+                <div class="facility-img"><img src="工房.JPG" alt="工房"></div>
+                <div class="facility-name">工房</div>
+                <div class="facility-desc">レーザーカッター・3Dプリンタを備える</div>
+              </div>
+              <div>
+                <div class="facility-img"><img src="アトリエ.JPG" alt="アトリエ"></div>
+                <div class="facility-name">アトリエ</div>
+                <div class="facility-desc">大型スクリーンと可動家具のラボ</div>
+              </div>
+              <div>
+                <div class="facility-img"><img src="ミュージアム.jpg" alt="ミュージアム"></div>
+                <div class="facility-name">ミュージアム</div>
+                <div class="facility-desc">学生作品を展示する学内ギャラリー</div>
+              </div>
             </div>
           </div>
         </div>
