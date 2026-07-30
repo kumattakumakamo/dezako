@@ -2627,7 +2627,7 @@
             frame.classList.add('showing-result');
             const overlay = document.createElement('div');
             overlay.className = 'frame-result-overlay';
-            overlay.innerHTML = `<img src="${d.type}.webp" alt="${d.type}">`;
+            overlay.innerHTML = `<img src="${d.type}.webp" alt="診断結果: ${d.type}のポスター">`;
             frame.appendChild(overlay);
             requestAnimationFrame(() => overlay.classList.add('active'));
             spawnMagicBurst(wrap);
@@ -2767,7 +2767,7 @@
     ══════════════════════════════ */
     function renderAssignmentCard(a) {
       const imgHTML = a.img
-        ? `<div class="assignment-img"><img src="${a.img}" alt="${a.title}" loading="lazy" decoding="async"></div>`
+        ? `<div class="assignment-img"><img src="${a.img}" alt="制作課題「${a.title}」の作品例" loading="lazy" decoding="async"></div>`
         : `<div class="assignment-img" style="background:${a.color}"><span>制作物イメージ</span></div>`;
       return `
       <div class="assignment-card">
