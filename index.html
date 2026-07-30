@@ -1747,6 +1747,13 @@
       margin-bottom: 12px;
     }
 
+    /* 「つくる →」を押してサブテキストが消えると見出しの行数が減り、
+       その分ポスターとの距離が詰まって見えてしまうため、
+       サブテキストが無くなった分の余白を補って近さを解消する */
+    body.diagnosis-locked #section-diagnosis h2.diagnosis-heading--result {
+      margin-bottom: 32px;
+    }
+
     /* JS（fitDiagnosisToScreen）が、画面の高さに収まるよう必要に応じて
        このラッパーごと縮小表示する。transform-origin は上端中央に固定し、
        ヘッダー同様のスライド演出と合わせて自然に見えるようにする */
@@ -1957,7 +1964,7 @@
       <section id="section-diagnosis" class="gated">
         <div id="diagnosis-fit">
           <div class="fade-block">
-            <h2>もう一度、<br>ポスターをつくってみよう<br id="diagnosis-subtitle-br"><span id="diagnosis-subtitle"
+            <h2 id="diagnosis-heading">もう一度、<br>ポスターをつくってみよう<br id="diagnosis-subtitle-br"><span id="diagnosis-subtitle"
                 style="font-size:13px;font-weight:400;color:var(--text-muted)">同じ3つのブロックを、今度は意識して配置してみよう。</span></h2>
           </div>
           <div id="full-game"></div>
@@ -2654,11 +2661,14 @@
         /* 「つくる →」ボタンを隠す */
         if (diagnoseBtnEl) diagnoseBtnEl.classList.remove('visible');
 
-        /* 見出し下のサブテキストを消し、生まれた余白の分だけ下のコンテンツを詰める */
+        /* 見出し下のサブテキストを消す。行数が減ってポスターと近づきすぎないよう、
+           減った分の余白を diagnosis-heading--result クラスで補う */
         const subtitleBr = document.getElementById('diagnosis-subtitle-br');
         const subtitle = document.getElementById('diagnosis-subtitle');
+        const headingEl = document.getElementById('diagnosis-heading');
         if (subtitleBr) subtitleBr.style.display = 'none';
         if (subtitle) subtitle.style.display = 'none';
+        if (headingEl) headingEl.classList.add('diagnosis-heading--result');
         if (mode === 'full') requestAnimationFrame(() => fitDiagnosisToScreen());
 
         /* 「あなたの作品ができた！」バッジは診断結果が出ている間だけ表示する */
@@ -2774,8 +2784,10 @@
         if (overlay) overlay.remove();
         const subtitleBr = document.getElementById('diagnosis-subtitle-br');
         const subtitle = document.getElementById('diagnosis-subtitle');
+        const headingEl = document.getElementById('diagnosis-heading');
         if (subtitleBr) subtitleBr.style.display = '';
         if (subtitle) subtitle.style.display = '';
+        if (headingEl) headingEl.classList.remove('diagnosis-heading--result');
         const ctaBadge = document.getElementById('cta-bridge-badge');
         if (ctaBadge) ctaBadge.classList.remove('result-shown');
         if (mode === 'full') {
