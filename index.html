@@ -703,6 +703,26 @@
     .kv-photo {
       position: relative;
       width: 100%;
+      overflow: hidden;
+    }
+
+    /* 各写真には斜めカットの透明な余白が焼き込まれており、そのまま並べると
+       想像以上に大きな隙間になる。実測した透明部分の量に合わせて
+       負のmargin-topで重ね、隙間を薄いスリット程度に詰める
+       （margin指定は要素の幅基準で解決されるため、レスポンシブでカード幅が
+       変わっても写真の拡大縮小と一緒に比率が保たれる） */
+    /* ヒーロー写真だけはタイトルロゴが重なり部分に沈み込まないよう、
+       他の写真間より控えめな重なり量にとどめる */
+    .kv-photo--overlap-1 {
+      margin-top: -3.5%;
+    }
+
+    .kv-photo--overlap-2 {
+      margin-top: -7.5%;
+    }
+
+    .kv-photo--overlap-3 {
+      margin-top: -10%;
     }
 
     .kv-photo img {
@@ -735,10 +755,13 @@
       text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
     }
 
+    /* ヒーロー写真は横長（縦横比が浅い）のに対しロゴは縦長のため、
+       幅基準のまま大きくするとロゴが写真の高さをはみ出してしまう。
+       写真の高さに収まる比率まで幅を抑える */
     .kv-hero-title-img {
       display: block;
-      width: 60%;
-      max-width: 230px;
+      width: 38%;
+      max-width: 185px;
       height: auto;
     }
 
@@ -2715,9 +2738,9 @@
         <img class="kv-hero-title-img" src="kv-title.png" alt="情報デザインコース 特設サイト">
       </div>
     </div>
-    <div class="kv-photo"><img src="kv-photo-2.png" alt="学生作品ポスターの展示"></div>
-    <div class="kv-photo"><img src="kv-photo-3.png" alt="制作物の展示"></div>
-    <div class="kv-photo"><img src="kv-photo-4.png" alt="学生同士の交流の様子"></div>`;
+    <div class="kv-photo kv-photo--overlap-1"><img src="kv-photo-2.png" alt="学生作品ポスターの展示"></div>
+    <div class="kv-photo kv-photo--overlap-2"><img src="kv-photo-3.png" alt="制作物の展示"></div>
+    <div class="kv-photo kv-photo--overlap-3"><img src="kv-photo-4.png" alt="学生同士の交流の様子"></div>`;
     }
 
     /* ══════════════════════════════
