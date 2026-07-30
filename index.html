@@ -2049,7 +2049,7 @@
         const img = new Image();
         img.onload = () => resolve(img);
         img.onerror = () => resolve(null);
-        img.src = `${type}.png`;
+        img.src = `${type}.webp`;
       });
       return posterImageCache[type];
     }
@@ -2626,7 +2626,7 @@
             frame.classList.add('showing-result');
             const overlay = document.createElement('div');
             overlay.className = 'frame-result-overlay';
-            overlay.innerHTML = `<img src="${d.type}.png" alt="${d.type}">`;
+            overlay.innerHTML = `<img src="${d.type}.webp" alt="${d.type}">`;
             frame.appendChild(overlay);
             requestAnimationFrame(() => overlay.classList.add('active'));
             spawnMagicBurst(wrap);
@@ -2741,15 +2741,15 @@
       /* プロローグの結果に関わらず、常に同じ実写真ギャラリーを1通り表示する */
       kv.innerHTML = `
     <div class="kv-photo kv-photo--hero">
-      <img src="kv-photo-1.png" alt="展示会場の様子">
+      <img src="kv-photo-1.webp" alt="展示会場の様子">
       <div class="kv-hero-overlay">
         <p class="kv-hero-label">FUTURE UNIVERSITY HAKODATE</p>
         <img class="kv-hero-title-img" src="kv-title.png" alt="情報デザインコース 特設サイト">
       </div>
     </div>
-    <div class="kv-photo kv-photo--overlap-1"><img src="kv-photo-2.png" alt="学生作品ポスターの展示"></div>
-    <div class="kv-photo kv-photo--overlap-2"><img src="kv-photo-3.png" alt="制作物の展示"></div>
-    <div class="kv-photo kv-photo--overlap-3"><img src="kv-photo-4.png" alt="学生同士の交流の様子"></div>`;
+    <div class="kv-photo kv-photo--overlap-1"><img src="kv-photo-2.webp" alt="学生作品ポスターの展示"></div>
+    <div class="kv-photo kv-photo--overlap-2"><img src="kv-photo-3.webp" alt="制作物の展示"></div>
+    <div class="kv-photo kv-photo--overlap-3"><img src="kv-photo-4.webp" alt="学生同士の交流の様子"></div>`;
     }
 
     /* ══════════════════════════════
