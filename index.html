@@ -2916,6 +2916,25 @@
       const diagnosisSection = document.getElementById('section-diagnosis');
       const ctaSection = document.getElementById('section-cta');
       const nextBtn = document.getElementById('diagnosis-next-btn');
+      const board = gateSection ? gateSection.querySelector('.gate-board') : null;
+
+      /* #section-gate の高さ（min-height: 26vh 固定）がボードの実際の中の文章量より
+         小さいと、overflow: hidden で上端が切り取られ「直前のコンテンツより背面に
+         隠れている」ように見えてしまう。ボードの実測高さに合わせて section の高さを
+         都度そろえることで、スライドアップ時に取りこぼしなく全体を表示する */
+      function syncGateHeight() {
+        if (!gateSection || !board) return;
+        gateSection.style.minHeight = board.offsetHeight + 'px';
+      }
+      syncGateHeight();
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(syncGateHeight);
+      }
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(syncGateHeight, 150);
+      });
 
       function reveal() {
         diagnosisSection.classList.remove('gated');
