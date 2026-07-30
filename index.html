@@ -706,15 +706,21 @@
       overflow: hidden;
     }
 
+    /* タイトルロゴが写真の重なり部分に沈んでも隠れないよう、
+       ヒーロー写真だけは自身をより前面（z-index）に出し、
+       overlayが下の写真の上に重なって見えるようにする */
+    .kv-photo--hero {
+      z-index: 2;
+      overflow: visible;
+    }
+
     /* 各写真には斜めカットの透明な余白が焼き込まれており、そのまま並べると
        想像以上に大きな隙間になる。実測した透明部分の量に合わせて
        負のmargin-topで重ね、隙間を薄いスリット程度に詰める
        （margin指定は要素の幅基準で解決されるため、レスポンシブでカード幅が
        変わっても写真の拡大縮小と一緒に比率が保たれる） */
-    /* ヒーロー写真だけはタイトルロゴが重なり部分に沈み込まないよう、
-       他の写真間より控えめな重なり量にとどめる */
     .kv-photo--overlap-1 {
-      margin-top: -3.5%;
+      margin-top: -8.5%;
     }
 
     .kv-photo--overlap-2 {
@@ -731,13 +737,16 @@
       height: auto;
     }
 
-    /* タイトル文字が写真に埋もれないよう、左側だけページ背景色で薄く覆う */
+    /* タイトル文字が写真に埋もれないよう、左側だけページ背景色で薄く覆う。
+       ロゴを大きくした分ヒーロー写真の高さをはみ出すため、上寄せにして
+       上方向にはみ出さないようにする（下方向は .kv-photo--hero の
+       z-index により次の写真の上に重なって表示されるため問題ない） */
     .kv-hero-overlay {
       position: absolute;
       inset: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       padding: 8px 12px 8px 20px;
       background: linear-gradient(100deg,
         rgba(255, 242, 239, 0.92) 0%,
@@ -755,13 +764,10 @@
       text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
     }
 
-    /* ヒーロー写真は横長（縦横比が浅い）のに対しロゴは縦長のため、
-       幅基準のまま大きくするとロゴが写真の高さをはみ出してしまう。
-       写真の高さに収まる比率まで幅を抑える */
     .kv-hero-title-img {
       display: block;
-      width: 38%;
-      max-width: 185px;
+      width: 50%;
+      max-width: 210px;
       height: auto;
     }
 
