@@ -1726,11 +1726,12 @@
 
     body.diagnosis-locked #section-diagnosis {
       height: calc(100svh - 44px);
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
       padding: 16px 20px 24px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
     }
 
     body.diagnosis-locked #section-diagnosis h2 {
@@ -2950,7 +2951,11 @@
         preloadAllPosterImages();
         /* ポスターが完成するまでは、CTA（オープンキャンパス）へスクロールできないよう固定する */
         document.body.classList.add('diagnosis-locked');
-        diagnosisSection.scrollIntoView({ behavior: 'smooth' });
+        /* scrollIntoView() + scroll-margin-top はブラウザによって挙動が揺れるため、
+           固定ヘッダー（44px）の分を確実に差し引いた位置へ自前で計算してスクロールする */
+        const headerOffset = 44;
+        const targetY = Math.max(0, diagnosisSection.getBoundingClientRect().top + window.scrollY - headerOffset);
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
         Logger.log('screen_transition', { from: 'gate', to: 'diagnosis' });
         /* 表示されて初めて正しいレイアウトが取れるため、ここで診断結果用の余白を再計算する */
         if (fullGame) requestAnimationFrame(() => fullGame.reserveResultSpace());
