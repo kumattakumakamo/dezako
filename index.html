@@ -1646,6 +1646,25 @@
       transition: transform 0.25s ease, height 0.25s ease;
     }
 
+    /* 座学ゲート通過直後、診断コンテンツを下からせり上がりながらフェードインさせる
+       （.gate-board / .fade-block と同じ transform+transition の手法）。
+       実際のスクロール位置移動（window.scrollTo）は瞬間ジャンプのまま維持し、
+       見た目の演出だけをここで分離して与えることで、スクロール操作中の
+       競合バグ（overflow:hidden ロックとの衝突）を再発させない。
+       #diagnosis-fit 自体の transform は fitDiagnosisToScreen() の縮小率専用のため、
+       スライドインは一つ外側の #section-diagnosis 側で担当し、プロパティの取り合いを避ける */
+    #section-diagnosis.diagnosis-enter {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+
+    #section-diagnosis.diagnosis-enter-active {
+      transition: opacity 0.5s cubic-bezier(0.34, 1.4, 0.64, 1),
+                  transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* 「次へ」ボタンは診断結果の「もう一度試す」ボタンの直下に、通常フローの一部として表示する */
     .diagnosis-next-btn {
       display: none;
@@ -2851,6 +2870,7 @@
       const diagnosisSection = document.getElementById('section-diagnosis');
       const ctaSection = document.getElementById('section-cta');
       const nextBtn = document.getElementById('diagnosis-next-btn');
+      const diagnosisFit = document.getElementById('diagnosis-fit');
       const board = gateSection ? gateSection.querySelector('.gate-board') : null;
 
       /* #section-gate の高さ（min-height: 26vh 固定）がボードの実際の中の文章量より
@@ -2893,6 +2913,26 @@
            オフセットなしで画面の一番上（y=0）に合わせる */
         document.body.classList.add('diagnosis-locked');
         Logger.log('screen_transition', { from: 'gate', to: 'diagnosis' });
+
+        /* 診断パネルのスライドイン演出。targetY の計算・スクロール（上）より後に
+           transform を付与することで、getBoundingClientRect() が transform の
+           影響を受けてスクロール位置がズレてしまうのを防いでいる */
+        diagnosisSection.classList.add('diagnosis-enter');
+        /* 見出しの .fade-block（IntersectionObserver駆動）が個別に遅れてフェードインすると
+           パネル全体のスライドインと二重の動きに見えるため、あらかじめ表示済みにし、
+           演出をパネル全体のスライドインに一本化する */
+        const headingFadeBlock = diagnosisSection.querySelector('.fade-block');
+        if (headingFadeBlock) headingFadeBlock.classList.add('visible');
+        /* 上で付与した「隠れている/ずれている」状態を一度ブラウザに確実に描画させてから
+           .diagnosis-enter-active を付与することで transition を発火させる
+           （reflow を挟まないと、同一フレーム内でのクラス切り替えとみなされ
+           アニメーションなしで最終状態に飛んでしまうことがある） */
+        void diagnosisSection.offsetHeight;
+        requestAnimationFrame(() => {
+          diagnosisSection.classList.add('diagnosis-enter-active');
+          diagnosisSection.classList.remove('diagnosis-enter');
+        });
+
         /* 表示されて初めて正しいレイアウトが取れるため、ここで診断結果用の余白を再計算し、
            1画面に収まるようフィットさせる（フォント読み込み完了時にも念のため再計算） */
         if (fullGame) {
@@ -2919,6 +2959,15 @@
         nextBtn.addEventListener('click', () => {
           Logger.log('button_click', { id: 'diagnosis-next-btn', label: '次へ' });
           document.body.classList.remove('diagnosis-locked');
+          /* diagnosis-locked 解除後は fitDiagnosisToScreen() が早期returnして
+             二度と呼ばれなくなるため、直前まで適用されていた縮小・高さ固定の
+             inline style をここで明示的に解除する。解除しないと、ナビメニューの
+             「ポスターをつくる」リンクなどで #section-diagnosis に再訪した際に、
+             縮小されたまま・高さが固定されたままの見た目が残ってしまう */
+          if (diagnosisFit) {
+            diagnosisFit.style.transform = '';
+            diagnosisFit.style.height = '';
+          }
           nextBtn.classList.remove('visible');
           ctaSection.classList.remove('gated');
           Logger.log('screen_transition', { from: 'diagnosis', to: 'cta' });
